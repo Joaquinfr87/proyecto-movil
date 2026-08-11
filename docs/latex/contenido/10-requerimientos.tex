@@ -1,35 +1,103 @@
+% ============================================================================
+%  SECCIÓN 10: REQUERIMIENTOS PRELIMINARES
+% ============================================================================
+
 \section{Requerimientos preliminares}
 
+Los requerimientos describen lo que el sistema debe hacer (requerimientos
+funcionales) y las restricciones o cualidades que debe cumplir
+(requerimientos no funcionales) \citep{sommerville2011, kendall2011}. A
+continuaci\'on se presentan los requerimientos preliminares del sistema web y
+m\'ovil, que servir\'an de base para el desarrollo del MVP.
+
 \subsection{Requerimientos funcionales (RF)}
+
 \begin{table}[H]
   \centering
   \caption{Requerimientos funcionales preliminares}
-  \begin{tabular}{@{}l l p{9cm}@{}}
-    \toprule
-    \textbf{ID} & \textbf{Nombre} & \textbf{Descripci\'on} \\
-    \midrule
-    RF-01 &  &  \\
-    RF-02 &  &  \\
-    RF-03 &  &  \\
-    RF-04 &  &  \\
-    RF-05 &  &  \\
-    \bottomrule
-  \end{tabular}
+  \begin{tablaAPA}
+    \begin{tabular}{@{}p{2.0cm}p{3.4cm}p{10.4cm}@{}}
+      \toprule
+      \textbf{ID} & \textbf{Nombre} & \textbf{Descripci\'on} \\
+      \midrule
+      RF-01 & Registro de usuarios & El sistema permitir\'a a los usuarios
+      registrarse indicando nombres, correo electr\'onico y contrase\~na, y
+      seleccionar su perfil (asistente, gestor o administrador). \\
+      \addlinespace
+      RF-02 & Inicio de sesi\'on & El sistema permitir\'a a los usuarios iniciar
+      sesi\'on con su correo y contrase\~na, y cerrar sesi\'on de forma segura. \\
+      \addlinespace
+      RF-03 & Cat\'alogo de escenarios & El sistema mostrar\'a el listado de
+      escenarios deportivos registrados con su informaci\'on b\'asica. \\
+      \addlinespace
+      RF-04 & B\'usqueda y filtros & El sistema permitir\'a buscar escenarios por
+      nombre, deporte, ciudad y tipo de escenario. \\
+      \addlinespace
+      RF-05 & Mapa interactivo & El sistema mostrar\'a la ubicaci\'on de los
+      escenarios en un mapa georreferenciado y permitir\'a consultar los m\'as
+      cercanos a la ubicaci\'on del usuario. \\
+      \addlinespace
+      RF-06 & Detalle del escenario & El sistema mostrar\'a la ficha de cada
+      escenario con sus caracter\'isticas, disciplinas, horarios, servicios y
+      eventos. \\
+      \addlinespace
+      RF-07 & Gesti\'on de favoritos & El sistema permitir\'a al usuario guardar
+      escenarios como favoritos y consultar la lista de sus favoritos. \\
+      \addlinespace
+      RF-08 & Gesti\'on de contenido & El sistema permitir\'a a los gestores
+      registrar, editar y desactivar la informaci\'on de sus escenarios. \\
+      \addlinespace
+      RF-09 & Notificaciones & El sistema enviar\'a notificaciones sobre eventos
+      y novedades de los escenarios guardados como favoritos. \\
+      \addlinespace
+      RF-10 & Administraci\'on & El sistema permitir\'a al administrador gestionar
+      usuarios y validar la informaci\'on publicada por los gestores. \\
+      \bottomrule
+    \end{tabular}
+  \end{tablaAPA}
 \end{table}
 
 \subsection{Requerimientos no funcionales (RNF)}
+
 \begin{table}[H]
   \centering
   \caption{Requerimientos no funcionales preliminares}
-  \begin{tabular}{@{}l l p{9cm}@{}}
-    \toprule
-    \textbf{ID} & \textbf{Atributo} & \textbf{Descripci\'on} \\
-    \midrule
-    RNF-01 & Usabilidad &  \\
-    RNF-02 & Rendimiento &  \\
-    RNF-03 & Seguridad &  \\
-    RNF-04 & Compatibilidad &  \\
-    RNF-05 & Accesibilidad &  \\
-    \bottomrule
-  \end{tabular}
+  \begin{tablaAPA}
+    \begin{tabular}{@{}p{2.0cm}p{3.4cm}p{10.4cm}@{}}
+      \toprule
+      \textbf{ID} & \textbf{Atributo} & \textbf{Descripci\'on} \\
+      \midrule
+      RNF-01 & Usabilidad & La interfaz deber\'a ser intuitiva y de f\'acil uso
+      para usuarios sin experiencia previa, siguiendo principios de dise\~no
+      centrado en el usuario \citep{nielsen1994}. \\
+      \addlinespace
+      RNF-02 & Rendimiento & El sistema deber\'a responder a las consultas en un
+      tiempo m\'aximo de 3 segundos en condiciones normales y el mapa deber\'a
+      mostrarse de forma fluida en dispositivos m\'oviles. \\
+      \addlinespace
+      RNF-03 & Seguridad & La autenticaci\'on y el manejo de datos personales
+      deber\'an cumplir las pr\'acticas de seguridad est\'andar, protegiendo la
+      informaci\'on de los usuarios. \\
+      \addlinespace
+      RNF-04 & Compatibilidad & La aplicaci\'on m\'ovil deber\'a funcionar en los
+      sistemas operativos iOS y Android, y el sistema web en los navegadores
+      m\'as utilizados. \\
+      \addlinespace
+      RNF-05 & Accesibilidad & La interfaz deber\'a considerar pautas de
+      accesibilidad que permitan su uso por personas con discapacidad,
+      incluyendo contraste adecuado y textos alternativos. \\
+      \addlinespace
+      RNF-06 & Disponibilidad & El sistema deber\'a estar disponible al menos el
+      99\,\% del tiempo durante el periodo de evaluaci\'on. \\
+      \addlinespace
+      RNF-07 & Portabilidad & El c\'odigo deber\'a estar organizado por m\'odulos
+      para facilitar su mantenimiento y la incorporaci\'on de nuevas
+      funcionalidades. \\
+      \addlinespace
+      RNF-08 & Calidad de software & El sistema deber\'a satisfacer los atributos
+      de calidad establecidos en el modelo ISO/IEC 25010, como funcionalidad,
+      eficiencia y mantenibilidad \citep{iso25010}. \\
+      \bottomrule
+    \end{tabular}
+  \end{tablaAPA}
 \end{table}

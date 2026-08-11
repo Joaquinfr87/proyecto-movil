@@ -4,9 +4,10 @@
 %  Aquí SOLO se integran los módulos. No se escribe contenido ni formato aquí.
 %
 %  Regla de oro del proyecto:
-%    - formato/preambulo.sty  -> toda la configuración y paquetes (estilo APA)
+%    - formato/preambulo.sty  -> toda la configuración y paquetes (APA + Arial)
 %    - formato/portada.tex    -> portada (datos institucionales)
 %    - contenido/*.tex        -> el contenido real del informe
+%    - anexos/*.tex           -> material complementario
 %
 %  Para compilar (desde docs/latex/):
 %    pdflatex main && bibtex main && pdflatex main && pdflatex main
@@ -15,20 +16,24 @@
 
 \documentclass[12pt,letterpaper]{article}
 
-% --- Carga de la configuración de formato (estilo APA) ----------------------
+% --- Carga de la configuración de formato (APA + Arial) ---------------------
 \usepackage{formato/preambulo}
 
 % ============================================================================
-%  DATOS DEL DOCUMENTO  (editar aquí cuando se redacte el informe)
+%  DATOS DEL DOCUMENTO  (editar aquí)
+%  Los valores entre corchetes [ ] son marcadores que debes reemplazar.
 % ============================================================================
 \newcommand{\tituloDocumento}{Desarrollo de un Sistema Web y M\'ovil para la
-  Visualizaci\'on Interactiva de Escenarios y Teatros a Nivel Nacional}
-\newcommand{\autor}{Nombre del Autor}
-\newcommand{\universidad}{Nombre de la Universidad}
-\newcommand{\facultad}{Facultad de ...}
-\newcommand{\carrera}{Ingenier\'ia de Sistemas / Inform\'atica}
-\newcommand{\asignatura}{Nombre de la Asignatura}
-\newcommand{\docente}{Nombre del Docente}
+  Visualizaci\'on Interactiva de Escenarios Deportivos a Nivel Nacional}
+\newcommand{\nombreApp}{DeporteYa}              % nombre provisional de la aplicación
+\newcommand{\autor}{[Nombre del autor]}
+\newcommand{\equipo}{[Nombre del equipo]}
+\newcommand{\integrantes}{[Integrantes del equipo]}
+\newcommand{\universidad}{[Nombre de la universidad]}   % p. ej. Universidad Privada Domingo Savio
+\newcommand{\facultad}{[Nombre de la facultad]}
+\newcommand{\carrera}{[Ingenier\'ia de Sistemas]}
+\newcommand{\asignatura}{[Aplicaciones M\'oviles]}
+\newcommand{\docente}{[Nombre del docente]}
 \newcommand{\fechaEntrega}{\today}
 
 \begin{document}
@@ -36,9 +41,16 @@
 % --- Portada ----------------------------------------------------------------
 \input{formato/portada}
 
-% --- Índice -----------------------------------------------------------------
+% --- Resumen y palabras clave ----------------------------------------------
+\input{contenido/00-resumen}
+
+% --- Índices ----------------------------------------------------------------
+\newpage
 \tableofcontents
 \newpage
+\listoftables
+\newpage
+\listoffigures
 
 % ============================================================================
 %  CONTENIDO  (una sección por archivo, ordenados por prefijo numérico)

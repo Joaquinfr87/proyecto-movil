@@ -1,35 +1,40 @@
 % ============================================================================
-%  PORTADA  (formato APA, página de título)
+%  PORTADA  (formato APA 7.ª edición)
 %  ----------------------------------------------------------------------------
-%  Los datos provienen de las macros definidas en main.tex. No editar aquí.
+%  Los datos provienen de las macros definidas en main.tex. Editar ahí.
 % ============================================================================
 
 \begin{titlepage}
   \thispagestyle{empty}
+  \setstretch{1}
+
   \begin{center}
-    {\LARGE\bfseries \universidad \\[4pt]}
+    \vspace*{2.2cm}
 
-    \vspace{0.4cm}
-    {\large \facultad \\[4pt]}
-    {\large \carrera}
+    {\bfseries\Large \tituloDocumento \par}
 
-    \vspace{3.5cm}
-    \rule{\linewidth}{1.2pt}
-    \vspace{1cm}
+    \vspace{1.6cm}
 
-    {\Large\bfseries \tituloDocumento}
+    {\large \autor \par}
 
-    \vspace{1cm}
-    \rule{\linewidth}{1.2pt}
+    \vspace{1.6cm}
 
-    \vspace{3.5cm}
-    {\large\bfseries Autor: \autor}
+    {\normalsize \universidad \par}
+    {\normalsize \facultad \par}
+    {\normalsize \carrera \par}
 
-    \vspace{1.5cm}
-    {\large Asignatura: \asignatura \\[4pt]}
-    {\large Docente: \docente}
+    \vspace{1.4cm}
 
-    \vspace{2.5cm}
-    {\large \fechaEntrega}
+    {\normalsize Asignatura: \asignatura \par}
+    {\normalsize Docente: \docente \par}
+    {\normalsize Fecha de entrega: \fechaEntrega \par}
+
+    \vspace{1.8cm}
+
+    % Datos generales del equipo (según la guía del avance de la asignatura)
+    {\normalsize\bfseries Datos generales del equipo \par}
+    {\normalsize Equipo: \equipo \par}
+    {\normalsize Integrantes: \integrantes \par}
+    {\normalsize Aplicaci\'on propuesta: \nombreApp \par}
   \end{center}
 \end{titlepage}

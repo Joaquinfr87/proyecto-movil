@@ -1,16 +1,62 @@
+% ============================================================================
+%  SECCIÓN 9: DEFINICIÓN DEL MVP
+% ============================================================================
+
 \section{Definici\'on del MVP (Producto M\'inimo Viable)}
-% TODO: Definir el alcance del MVP: qu\'e funcionalidades se incluyen en la
-% primera versi\'on y cu\'ales quedan fuera (fuera de alcance).
+
+El producto m\'inimo viable (MVP) es la versi\'on m\'as peque\~na de un producto que
+puede ser entregada y que aporta valor real a los usuarios, permitiendo
+validar la propuesta con retroalimentaci\'on temprana antes de invertir en
+funcionalidades adicionales \citep{larman2004}. Una buena aplicaci\'on no
+necesita tener muchas funcionalidades; necesita resolver correctamente un
+problema. Por ello, el MVP del presente proyecto incluye \'unicamente las
+funcionalidades indispensables para que la soluci\'on funcione y pueda ser
+probada por los usuarios.
 
 \subsection{Incluido en el MVP}
+
 \begin{itemize}
-  \item % Funcionalidad central 1
-  \item % Funcionalidad central 2
-  \item % Funcionalidad central 3
+  \item Registro e inicio de sesi\'on de usuarios.
+  \item Cat\'alogo de escenarios deportivos con b\'usqueda y filtros.
+  \item Mapa interactivo con la ubicaci\'on georreferenciada de los escenarios.
+  \item Detalle de cada escenario: caracter\'isticas, disciplinas, horarios y
+    eventos.
+  \item Gesti\'on de favoritos.
 \end{itemize}
 
 \subsection{Fuera de alcance del MVP}
+
 \begin{itemize}
-  \item % Funcionalidad futura 1
-  \item % Funcionalidad futura 2
+  \item Reservas y alquiler de espacios en l\'inea.
+  \item Pagos electr\'onicos.
+  \item Valoraciones, comentarios y comunidad.
+  \item Integraci\'on con inteligencia artificial o recomendaciones
+    personalizadas.
+  \item Soporte multilenguaje.
 \end{itemize}
+
+\subsection{Priorizaci\'on de funcionalidades}
+
+\begin{table}[H]
+  \centering
+  \caption{Priorizaci\'on de funcionalidades del sistema}
+  \begin{tablaAPA}
+    \begin{tabular}{@{}p{10.5cm}p{4.5cm}@{}}
+      \toprule
+      \textbf{Funcionalidad} & \textbf{Prioridad} \\
+      \midrule
+      Registro de usuarios & MVP \\
+      Inicio de sesi\'on & MVP \\
+      Cat\'alogo de escenarios & MVP \\
+      B\'usqueda y filtros & MVP \\
+      Mapa interactivo georreferenciado & MVP \\
+      Detalle del escenario & MVP \\
+      Gesti\'on de favoritos & Mejora \\
+      Publicaci\'on de informaci\'on por gestores & Mejora \\
+      Notificaciones & Mejora \\
+      Reservas y alquiler en l\'inea & Mejora \\
+      Valoraciones y comentarios & Mejora \\
+      \bottomrule
+    \end{tabular}
+  \end{tablaAPA}
+\end{table}

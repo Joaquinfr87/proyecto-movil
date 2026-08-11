@@ -1,20 +1,48 @@
+% ============================================================================
+%  SECCIÓN 11: FLUJO INICIAL DE NAVEGACIÓN
+% ============================================================================
+
 \section{Flujo inicial de navegaci\'on}
-% TODO: Describir el recorrido principal del usuario por las pantallas.
+
+El flujo de navegaci\'on describe el recorrido que realiza el usuario a trav\'es
+de las pantallas de la aplicaci\'on para cumplir sus tareas principales
+\citep{pressman2010}. A continuaci\'on se describe el recorrido principal y el
+diagrama de navegaci\'on propuesto.
+
+\subsection{Recorrido principal}
+
+Al abrir la aplicaci\'on, el usuario visualiza la pantalla de bienvenida
+(splash) y puede registrarse o iniciar sesi\'on. Una vez autenticado, accede a
+la pantalla principal, que combina el mapa interactivo con el cat\'alogo de
+escenarios deportivos. Desde esta pantalla puede seleccionar un escenario y
+consultar su detalle, as\'i como guardarlo en sus favoritos para acceder a \'el
+de forma r\'apida en visitas posteriores.
 
 \subsection{Diagrama de navegaci\'on}
-% TODO: Reemplazar el diagrama de ejemplo por el flujo real del sistema.
+
 \begin{figure}[H]
   \centering
   \begin{tikzpicture}[
-      nodo/.style={rectangle, draw=black, rounded corners, minimum width=3cm,
-                   minimum height=1cm, align=center, fill=gray!12},
-      flecha/.style={-{Stealth[length=3mm]}, thick}
+      nodo/.style={rectangle, draw=black!70, rounded corners=2pt, minimum width=3.4cm,
+                   minimum height=0.95cm, align=center, fill=gray!10, font=\small},
+      flecha/.style={-{Stealth[length=2.5mm]}, thick}
     ]
-    \node[nodo] (inicio) {Inicio};
-    \node[nodo, right=1.5cm of inicio] (mapa) {Mapa interactivo};
-    \node[nodo, below=1.5cm of mapa] (detalle) {Detalle del recinto};
-    \draw[flecha] (inicio) -- (mapa);
-    \draw[flecha] (mapa) -- (detalle);
+    \node[nodo] (splash) at (0,0) {Splash / Bienvenida};
+    \node[nodo] (registro) at (-3.4,-2.0) {Registro de usuario};
+    \node[nodo] (login) at (3.4,-2.0) {Inicio de sesi\'on};
+    \node[nodo] (principal) at (0,-4.0) {Pantalla principal\\ (Mapa + Cat\'alogo)};
+    \node[nodo] (detalle) at (-3.4,-6.0) {Detalle del escenario};
+    \node[nodo] (favoritos) at (3.4,-6.0) {Favoritos};
+
+    \draw[flecha] (splash) -- (registro);
+    \draw[flecha] (splash) -- (login);
+    \draw[flecha] (registro) -- (login);
+    \draw[flecha] (login) -- (principal);
+    \draw[flecha] (registro) -- (principal);
+    \draw[flecha] (principal) -- (detalle);
+    \draw[flecha] (principal) -- (favoritos);
+    \draw[flecha] (detalle) -- (favoritos);
+    \draw[flecha] (favoritos) -- (detalle);
   \end{tikzpicture}
-  \caption{Flujo de navegaci\'on propuesto (ejemplo)}
+  \caption{Flujo de navegaci\'on propuesto para el sistema web y m\'ovil}
 \end{figure}

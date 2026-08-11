@@ -1,2 +1,49 @@
+% ============================================================================
+%  ANEXO C: MODELO DE DATOS
+% ============================================================================
+
 \section{Anexo C: Modelo de datos}
-% TODO: Diagrama entidad-relaci\'on o esquema de base de datos.
+
+El modelo de datos propuesto para el sistema est\'a conformado por las
+siguientes entidades principales, dise\~nadas para almacenar la informaci\'on de
+los escenarios deportivos y las interacciones de los usuarios. La base de
+datos utilizar\'a PostgreSQL con la extensi\'on espacial PostGIS para gestionar
+las coordenadas de ubicaci\'on de cada escenario \citep{postgresql}.
+
+\begin{table}[H]
+  \centering
+  \caption{Entidades del modelo de datos}
+  \begin{tablaAPA}
+    \begin{tabular}{@{}p{2.8cm}p{5.6cm}p{7.2cm}@{}}
+      \toprule
+      \textbf{Entidad} & \textbf{Descripci\'on} & \textbf{Atributos principales} \\
+      \midrule
+      Usuario & Persona que utiliza el sistema & id, nombre, correo,
+      contrase\~na, rol, fecha\_registro \\
+      \addlinespace
+      Escenario & Escenario deportivo registrado & id, nombre, tipo,
+      descripci\'on, capacidad, direcci\'on, latitud, longitud, estado \\
+      \addlinespace
+      Deporte & Disciplina deportiva & id, nombre, descripci\'on \\
+      \addlinespace
+      Evento & Evento programado en un escenario & id, escenario\_id, nombre,
+      fecha, hora, descripci\'on \\
+      \addlinespace
+      Imagen & Fotograf\'ia de un escenario & id, escenario\_id, url, orden \\
+      \addlinespace
+      Favorito & Relaci\'on entre usuario y escenario & id, usuario\_id,
+      escenario\_id, fecha \\
+      \addlinespace
+      Valoraci\'on & Opini\'on de un usuario sobre un escenario & id,
+      usuario\_id, escenario\_id, puntuaci\'on, comentario, fecha \\
+      \bottomrule
+    \end{tabular}
+  \end{tablaAPA}
+\end{table}
+
+Las relaciones principales entre las entidades son las siguientes: un usuario
+puede registrar varios favoritos y valoraciones, y un escenario puede recibir
+favoritos y valoraciones de distintos usuarios (relaciones uno a muchos); un
+escenario puede albergar varios deportes y un deporte puede practicarse en
+varios escenarios (relaci\'on muchos a muchos); y un escenario puede tener
+varios eventos e im\'agenes asociadas (relaciones uno a muchos).
