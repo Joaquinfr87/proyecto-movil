@@ -1,0 +1,20 @@
+\section{Flujo inicial de navegaci\'on}
+% TODO: Describir el recorrido principal del usuario por las pantallas.
+
+\subsection{Diagrama de navegaci\'on}
+% TODO: Reemplazar el diagrama de ejemplo por el flujo real del sistema.
+\begin{figure}[H]
+  \centering
+  \begin{tikzpicture}[
+      nodo/.style={rectangle, draw=black, rounded corners, minimum width=3cm,
+                   minimum height=1cm, align=center, fill=gray!12},
+      flecha/.style={-{Stealth[length=3mm]}, thick}
+    ]
+    \node[nodo] (inicio) {Inicio};
+    \node[nodo, right=1.5cm of inicio] (mapa) {Mapa interactivo};
+    \node[nodo, below=1.5cm of mapa] (detalle) {Detalle del recinto};
+    \draw[flecha] (inicio) -- (mapa);
+    \draw[flecha] (mapa) -- (detalle);
+  \end{tikzpicture}
+  \caption{Flujo de navegaci\'on propuesto (ejemplo)}
+\end{figure}

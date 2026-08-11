@@ -39,3 +39,26 @@ yarn-error.*
 # generated native folders
 /ios
 /android
+
+# LaTeX
+*.aux
+*.log
+*.out
+*.toc
+*.lof
+*.lot
+*.bbl
+*.blg
+*.synctex.gz
+*.fls
+*.fdb_latexmk
+*.run.xml
+*.nav
+*.snm
+*.vrb
+*.xdv
+_minted-*/
+main.pdf
+
+# IDE
+.idea/

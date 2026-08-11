@@ -1,0 +1,74 @@
+% ============================================================================
+%  DOCUMENTO PRINCIPAL
+%  ----------------------------------------------------------------------------
+%  Aquí SOLO se integran los módulos. No se escribe contenido ni formato aquí.
+%
+%  Regla de oro del proyecto:
+%    - formato/preambulo.sty  -> toda la configuración y paquetes (estilo APA)
+%    - formato/portada.tex    -> portada (datos institucionales)
+%    - contenido/*.tex        -> el contenido real del informe
+%
+%  Para compilar (desde docs/latex/):
+%    pdflatex main && bibtex main && pdflatex main && pdflatex main
+%  o directamente: latexmk -pdf main.tex
+% ============================================================================
+
+\documentclass[12pt,letterpaper]{article}
+
+% --- Carga de la configuración de formato (estilo APA) ----------------------
+\usepackage{formato/preambulo}
+
+% ============================================================================
+%  DATOS DEL DOCUMENTO  (editar aquí cuando se redacte el informe)
+% ============================================================================
+\newcommand{\tituloDocumento}{Desarrollo de un Sistema Web y M\'ovil para la
+  Visualizaci\'on Interactiva de Escenarios y Teatros a Nivel Nacional}
+\newcommand{\autor}{Nombre del Autor}
+\newcommand{\universidad}{Nombre de la Universidad}
+\newcommand{\facultad}{Facultad de ...}
+\newcommand{\carrera}{Ingenier\'ia de Sistemas / Inform\'atica}
+\newcommand{\asignatura}{Nombre de la Asignatura}
+\newcommand{\docente}{Nombre del Docente}
+\newcommand{\fechaEntrega}{\today}
+
+\begin{document}
+
+% --- Portada ----------------------------------------------------------------
+\input{formato/portada}
+
+% --- Índice -----------------------------------------------------------------
+\tableofcontents
+\newpage
+
+% ============================================================================
+%  CONTENIDO  (una sección por archivo, ordenados por prefijo numérico)
+% ============================================================================
+\input{contenido/01-introduccion}
+\input{contenido/02-contextualizacion-problematica}
+\input{contenido/03-problema-identificado}
+\input{contenido/04-justificacion}
+\input{contenido/05-objetivo-general}
+\input{contenido/06-objetivos-especificos}
+\input{contenido/07-identificacion-usuarios}
+\input{contenido/08-funcionalidades-preliminares}
+\input{contenido/09-definicion-mvp}
+\input{contenido/10-requerimientos}
+\input{contenido/11-flujo-navegacion}
+\input{contenido/12-wireframes}
+\input{contenido/13-tecnologias}
+
+% --- Referencias (APA) ------------------------------------------------------
+\newpage
+\bibliographystyle{apacite}
+\nocite{*}
+\bibliography{formato/referencias}
+
+% --- Anexos (material complementario, tras las referencias) ------------------
+\newpage
+\appendix
+\input{anexos/anexo-a-cronograma}
+\input{anexos/anexo-b-casos-de-uso}
+\input{anexos/anexo-c-modelo-de-datos}
+\input{anexos/anexo-d-presupuesto}
+
+\end{document}
