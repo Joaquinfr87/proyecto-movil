@@ -85,45 +85,77 @@ causas que lo originan \citep{arias2012}.
 \begin{figure}[H]
   \centering
   \begin{tikzpicture}[
-      node distance=1.2cm and 0.5cm,
+      node distance=1.2cm and 0.3cm,
       base/.style={
         rectangle, draw, thick, rounded corners=1.5mm, 
-        minimum height=1.3cm, align=center, 
-        font=\small, text width=4.5cm, inner sep=2mm
+        align=center, font=\footnotesize, 
+        text width=4.7cm, inner sep=2mm
       },
-      efecto/.style={base, fill=red!10, draw=red!70!black},
-      problema/.style={base, fill=orange!15, draw=orange!80!black, text width=5.5cm, font=\small\bfseries},
-      causa/.style={base, fill=blue!10, draw=blue!70!black},
+      % Estilos diferenciados por nivel
+      efectoind/.style={base, fill=red!5, draw=red!40!black, minimum height=1cm},
+      efecto/.style={base, fill=red!15, draw=red!70!black, minimum height=1.3cm},
+      problema/.style={base, fill=orange!15, draw=orange!80!black, text width=6cm, font=\small\bfseries, minimum height=1.5cm},
+      causa/.style={base, fill=blue!15, draw=blue!70!black, minimum height=1.3cm},
+      causaind/.style={base, fill=blue!5, draw=blue!40!black, minimum height=1.2cm},
       flecha/.style={-Stealth, thick, draw=black!60, line width=1.2pt}
     ]
 
-    % 1. Tronco: problema central (Centro)
+    % ==========================================
+    % TRONCO: Problema central
+    % ==========================================
     \node[problema] (p) {INFORMACI\'ON SOBRE ESCENARIOS DEPORTIVOS DISPERSA Y SIN VISUALIZACI\'ON INTERACTIVA};
 
-    % 2. Efectos del problema (Parte superior, ramificados)
-    \node[efecto, above=1.5cm of p] (e2) {Subutilizaci\'on de la infraestructura deportiva existente};
-    \node[efecto, left=0.5cm of e2] (e1) {Baja asistencia del p\'ublico a los eventos deportivos};
-    \node[efecto, right=0.5cm of e2] (e3) {Dificultad para la promoci\'on del deporte y la actividad f\'isica};
+    % ==========================================
+    % RAMAS: Efectos
+    % ==========================================
+    % Nivel 1: Efectos directos
+    \node[efecto, above=1cm of p] (e2) {Subutilizaci\'on de la infraestructura deportiva por desconocimiento de disponibilidad};
+    \node[efecto, left=0.3cm of e2] (e1) {Frustraci\'on y p\'erdida de tiempo del ciudadano al buscar recintos adecuados};
+    \node[efecto, right=0.3cm of e2] (e3) {Dificultad para organizar y promocionar eventos deportivos locales};
 
-    % 3. Causas del problema (Parte inferior, ramificadas)
-    \node[causa, below=1.5cm of p] (c2) {Escasa digitalizaci\'on del sector deportivo};
-    \node[causa, left=0.5cm of c2] (c1) {Ausencia de un registro centralizado de escenarios deportivos};
-    \node[causa, right=0.5cm of c2] (c3) {Falta de herramientas de visualizaci\'on interactiva};
+    % Nivel 2: Efectos indirectos
+    \node[efectoind, above=0.8cm of e2] (ei2) {Deterioro progresivo de los escenarios por falta de ingresos y uso};
+    \node[efectoind, above=0.8cm of e1] (ei1) {Desmotivaci\'on en la pr\'actica deportiva y fomento del sedentarismo};
+    \node[efectoind, above=0.8cm of e3] (ei3) {Estancamiento del desarrollo deportivo recreativo y competitivo};
 
-    % 4. Flechas (Causas -> Problema -> Efectos)
-    
-    % De las causas al problema
-    \draw[flecha] (c1.north) -- (p.south);
+    % ==========================================
+    % RAÍCES: Causas
+    % ==========================================
+    % Nivel 1: Causas directas
+    \node[causa, below=1cm of p] (c2) {Escasa digitalizaci\'on en la administraci\'on de escenarios deportivos};
+    \node[causa, left=0.3cm of c2] (c1) {Ausencia de un sistema de registro \'unico y centralizado a nivel nacional};
+    \node[causa, right=0.3cm of c2] (c3) {Carencia de plataformas con mapas interactivos y geolocalizaci\'on};
+
+    % Nivel 2: Causas indirectas
+    \node[causaind, below=0.8cm of c2] (ci2) {Resistencia al cambio tecnológico en la gestión del sector deportivo};
+    \node[causaind, below=0.8cm of c1] (ci1) {Gestión administrativa fragmentada entre municipios y privados};
+    \node[causaind, below=0.8cm of c3] (ci3) {Falta de iniciativas de software enfocadas en las necesidades del deporte local};
+
+    % ==========================================
+    % FLECHAS DE CONEXIÓN
+    % ==========================================
+    % Causas indirectas -> Causas directas
+    \draw[flecha] (ci1.north) -- (c1.south);
+    \draw[flecha] (ci2.north) -- (c2.south);
+    \draw[flecha] (ci3.north) -- (c3.south);
+
+    % Causas directas -> Problema (con ligeros desvíos para que no se amontonen en un punto)
+    \draw[flecha] (c1.north) -- ([xshift=-1.5cm]p.south);
     \draw[flecha] (c2.north) -- (p.south);
-    \draw[flecha] (c3.north) -- (p.south);
+    \draw[flecha] (c3.north) -- ([xshift=1.5cm]p.south);
 
-    % Del problema a los efectos
-    \draw[flecha] (p.north) -- (e1.south);
+    % Problema -> Efectos directos
+    \draw[flecha] ([xshift=-1.5cm]p.north) -- (e1.south);
     \draw[flecha] (p.north) -- (e2.south);
-    \draw[flecha] (p.north) -- (e3.south);
+    \draw[flecha] ([xshift=1.5cm]p.north) -- (e3.south);
+
+    % Efectos directos -> Efectos indirectos
+    \draw[flecha] (e1.north) -- (ei1.south);
+    \draw[flecha] (e2.north) -- (ei2.south);
+    \draw[flecha] (e3.north) -- (ei3.south);
 
   \end{tikzpicture}
-  \caption{\'Arbol de causas y efectos del problema identificado}
+  \caption{\'Arbol de causas y efectos expandido del problema identificado}
   \label{fig:arbol-causas-efectos}
 \end{figure}
 
