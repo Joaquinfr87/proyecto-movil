@@ -1,0 +1,134 @@
+% ============================================================================
+%  SECCIÓN 1.3: PLANTEAMIENTO DEL PROBLEMA
+% ============================================================================
+
+\section{Planteamiento del problema}
+
+\subsection{Situaci\'on problem\'atica}
+
+A partir de lo expuesto en los antecedentes, la \textbf{situaci\'on
+problem\'atica} se puede establecer de la siguiente manera: la informaci\'on
+sobre los escenarios deportivos a nivel nacional se encuentra dispersa,
+desactualizada y sin un medio unificado de consulta, lo que impide que la
+poblaci\'on conozca, localice y acceda a la oferta deportiva y limita la
+visibilidad de los propios recintos.
+
+Las causas de esta situaci\'on son la ausencia de un registro centralizado de
+escenarios deportivos, la escasa digitalizaci\'on del sector y la falta de
+herramientas de visualizaci\'on interactiva adaptadas al contexto nacional.
+Como efecto, se observa una baja asistencia a los eventos deportivos, la
+subutilizaci\'on de la infraestructura existente y el desaprovechamiento de
+las oportunidades econ\'omicas y sociales que el deporte genera. Como se\~nala
+\citet{arias2012}, el problema constituye el punto de partida de toda
+investigaci\'on y surge cuando se identifica una situaci\'on de carencia o una
+necesidad no satisfecha, tal como ocurre en este caso.
+
+\subsection{Objeto de estudio}
+
+El objeto de estudio del presente proyecto es el \textbf{proceso de difusi\'on
+y acceso a la informaci\'on sobre los escenarios deportivos a nivel
+nacional}, incluyendo los mecanismos de registro, actualizaci\'on y consulta
+de los datos de cada recinto. Se justifica su estudio porque la mejora de
+este proceso, mediante una soluci\'on tecnol\'ogica, permite incrementar la
+pr\'actica deportiva de la poblaci\'on, optimizar la gesti\'on de los espacios
+deportivos y favorecer la toma de decisiones de las entidades
+administradoras.
+
+\subsection{Estudio de soluciones}
+
+Se analizaron soluciones contempor\'aneas aplicadas en contextos similares,
+tanto nacionales como internacionales, con el fin de identificar las
+pr\'acticas m\'as efectivas. La siguiente tabla presenta la valoraci\'on de los
+casos de estudio analizados:
+
+\begin{table}[H]
+  \centering
+  \caption{Valoraci\'on de soluciones existentes}
+  \label{tab:estudio-soluciones}
+  \begin{tablaAPA}
+    \begin{tabular}{@{}p{4.2cm}p{3.0cm}p{4.2cm}p{3.6cm}@{}}
+      \toprule
+      \textbf{Casos de estudio} & \textbf{Problema} &
+      \textbf{Soluci\'on aplicada} & \textbf{Valoraci\'on} \\
+      \midrule
+      Aplicaciones internacionales de mapas deportivos &
+      Informaci\'on deportiva dispersa &
+      Sistema web y m\'ovil con mapa de instalaciones y reservas &
+      Soluci\'on fiable y escalable; potencial referencia para el medio
+      nacional \\
+      \addlinespace
+      Directorios municipales de espacios de recreaci\'on &
+      Falta de visibilidad de los recintos &
+      Plataforma centralizada con fichas de recintos y programaci\'on &
+      Soluci\'on efectiva; validada por el p\'ublico y los gestores \\
+      \addlinespace
+      Redes sociales de escenarios locales, Bolivia &
+      Difusi\'on fragmentada por recinto &
+      Publicaci\'on individual en redes sociales &
+      Soluci\'on parcial: no integra la oferta a nivel nacional \\
+      \bottomrule
+    \end{tabular}
+  \end{tablaAPA}
+\end{table}
+
+\textbf{FUENTE:} Elaboraci\'on propia en base a la revisi\'on documental de
+plataformas deportivas.
+
+\subsection{\'Arbol de causas y efectos}
+
+Para profundizar el an\'alisis de la situaci\'on problem\'atica se emplea la
+t\'ecnica del \'arbol de problemas o \'arbol de causas y efectos. En este
+diagrama, la parte central (tronco) representa el problema central; la parte
+superior agrupa los efectos del problema y la parte inferior re\'une las
+causas que lo originan \citep{arias2012}.
+
+\begin{figure}[H]
+  \centering
+  \begin{tikzpicture}[
+      node distance=1.2cm and 0.5cm,
+      base/.style={
+        rectangle, draw, thick, rounded corners=1.5mm, 
+        minimum height=1.3cm, align=center, 
+        font=\small, text width=4.5cm, inner sep=2mm
+      },
+      efecto/.style={base, fill=red!10, draw=red!70!black},
+      problema/.style={base, fill=orange!15, draw=orange!80!black, text width=5.5cm, font=\small\bfseries},
+      causa/.style={base, fill=blue!10, draw=blue!70!black},
+      flecha/.style={-Stealth, thick, draw=black!60, line width=1.2pt}
+    ]
+
+    % 1. Tronco: problema central (Centro)
+    \node[problema] (p) {INFORMACI\'ON SOBRE ESCENARIOS DEPORTIVOS DISPERSA Y SIN VISUALIZACI\'ON INTERACTIVA};
+
+    % 2. Efectos del problema (Parte superior, ramificados)
+    \node[efecto, above=1.5cm of p] (e2) {Subutilizaci\'on de la infraestructura deportiva existente};
+    \node[efecto, left=0.5cm of e2] (e1) {Baja asistencia del p\'ublico a los eventos deportivos};
+    \node[efecto, right=0.5cm of e2] (e3) {Dificultad para la promoci\'on del deporte y la actividad f\'isica};
+
+    % 3. Causas del problema (Parte inferior, ramificadas)
+    \node[causa, below=1.5cm of p] (c2) {Escasa digitalizaci\'on del sector deportivo};
+    \node[causa, left=0.5cm of c2] (c1) {Ausencia de un registro centralizado de escenarios deportivos};
+    \node[causa, right=0.5cm of c2] (c3) {Falta de herramientas de visualizaci\'on interactiva};
+
+    % 4. Flechas (Causas -> Problema -> Efectos)
+    
+    % De las causas al problema
+    \draw[flecha] (c1.north) -- (p.south);
+    \draw[flecha] (c2.north) -- (p.south);
+    \draw[flecha] (c3.north) -- (p.south);
+
+    % Del problema a los efectos
+    \draw[flecha] (p.north) -- (e1.south);
+    \draw[flecha] (p.north) -- (e2.south);
+    \draw[flecha] (p.north) -- (e3.south);
+
+  \end{tikzpicture}
+  \caption{\'Arbol de causas y efectos del problema identificado}
+  \label{fig:arbol-causas-efectos}
+\end{figure}
+
+Las causas detectadas se han depurado agrupando aquellas que se encuentran
+relacionadas entre s\'i y descartando las que se repet\'ian o que no afectaban
+directamente a la poblaci\'on en la que se llevar\'a a cabo la investigaci\'on.
+El an\'alisis causa--efecto expuesto permite pasar de la identificaci\'on del
+problema a su formulaci\'on, que se presenta en la siguiente secci\'on.

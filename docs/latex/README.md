@@ -5,31 +5,46 @@ Visualizaci\'on Interactiva de Escenarios Deportivos a Nivel Nacional*.
 
 ```
 docs/latex/
-├── main.tex                  # Integra todo: formato + portada + contenido. Datos de portada aquí.
+├── main.tex                  # Integra todo: formato + portada + capítulos + anexos. Datos de portada aquí.
+├── Makefile                  # Compila el informe con un solo comando (make).
 ├── formato/                  # FORMATO: todo lo que define la apariencia.
-│   ├── preambulo.sty         # Paquetes y configuración APA (Arial, márgenes 1", doble espacio...).
+│   ├── preambulo.sty         # Paquetes, configuración APA y carátulas de capítulo.
 │   ├── portada.tex           # Portada estilo APA (los datos se definen en main.tex).
 │   └── referencias.bib       # Fuentes bibliográficas en BibTeX (todas citadas en el texto).
-├── contenido/                # CONTENIDO: un archivo por sección, ordenados por prefijo numérico.
+├── contenido/                # CONTENIDO: un archivo por sección.
+│   │                         # Capítulo I (1.1–1.13) y Capítulo II (2.1–2.7).
 │   ├── 00-resumen.tex        # Resumen y palabras clave.
-│   ├── 01-introduccion.tex   ... 13-tecnologias.tex
+│   ├── 01-antecedentes.tex   ... 13-poblacion-y-muestra.tex   (Capítulo I)
+│   └── 14-identificacion-usuarios.tex ... 20-tecnologias.tex  (Capítulo II)
 ├── anexos/                   # Material complementario (tras las referencias).
-│   ├── anexo-a-cronograma.tex
-│   ├── anexo-b-casos-de-uso.tex
-│   ├── anexo-c-modelo-de-datos.tex
-│   └── anexo-d-presupuesto.tex
-├── figuras/                  # Imágenes externas (wireframes finales, diagramas, logos).
+│   ├── anexo-a-cronograma.tex ... anexo-d-presupuesto.tex
+│   └── anexo-e-encuesta.tex / anexo-f-entrevista.tex
+├── figuras/                  # Imágenes externas (logo, wireframes finales, diagramas).
 └── guias/                    # Guías de la asignatura (MD y PDF), no compilan con el informe.
 ```
+
+## Estructura del documento
+- **CAPÍTULO I: INTRODUCCIÓN** (carátula propia) — sigue la guía de la universidad:
+  antecedentes, contextualización, planteamiento del problema (con árbol de
+  causas y efectos), formulación del problema, objetivos de la investigación,
+  definición de variables, delimitación, justificación, tipología de proyectos,
+  tipo y estudio de la investigación, métodos, técnicas e instrumentos, y
+  población y muestra.
+- **CAPÍTULO II: PROPUESTA DEL SISTEMA** (carátula propia) — requisitos del
+  avance: identificación de usuarios, funcionalidades preliminares, definición
+  del MVP, requerimientos preliminares (RF y RNF), flujo inicial de navegación,
+  wireframes iniciales y tecnologías preliminares.
+- Cada capítulo comienza con una carátula que ocupa una hoja completa; el
+  contenido inicia en la página siguiente.
 
 ## ¿Dónde va cada cosa?
 | Tipo de material | Carpeta |
 |---|---|
-| Secciones del cuerpo del informe | `contenido/` (archivos numerados) |
-| Documentos complementarios (cronograma, casos de uso, modelo de datos, presupuesto) | `anexos/` (Anexo A, B, C...) |
+| Secciones del cuerpo del informe | `contenido/` (archivos numerados por capítulo) |
+| Documentos complementarios (cronograma, casos de uso, modelo de datos, presupuesto, encuesta, entrevista) | `anexos/` (Anexo A, B, C...) |
 | Imágenes y diagramas externos | `figuras/` (referenciar con `\includegraphics{nombre.png}`) |
-| Datos de portada (autor, universidad, docente, equipo...) | `main.tex` (marcadores `[ ]` editables) |
-| Paquetes y estilo (márgenes, fuentes, espaciado) | `formato/preambulo.sty` |
+| Datos de portada (equipo, universidad, docente, integrantes...) | `main.tex` |
+| Paquetes y estilo (márgenes, fuentes, espaciado, carátulas de capítulo) | `formato/preambulo.sty` |
 
 ## Formato del documento
 - **Tipografía:** Arial (se usa Helvetica del paquete `helvet`, el sustituto
@@ -42,6 +57,17 @@ docs/latex/
 
 ## Cómo compilar
 Desde `docs/latex/`:
+
+```bash
+make            # compila el PDF completo (pdflatex + bibtex + 2 pasadas finales)
+make view       # compila y abre el PDF
+make clean      # borra solo los archivos auxiliares (conserva el PDF)
+```
+
+El paso `bibtex` es imprescindible: sin él las citas aparecen como `[?]` y
+la sección de referencias queda vacía. Por eso el Makefile lo ejecuta siempre.
+
+Si prefieres los comandos a mano:
 
 ```bash
 pdflatex main && bibtex main && pdflatex main && pdflatex main
@@ -63,20 +89,35 @@ referenciales.
 - `guias/guia-informe.pdf` — guía del Avance N.º 1 (estructura del entregable).
 
 ## Checklist por sección
-- [x] Portada (datos en main.tex)
-- [x] Resumen y palabras clave
-- [x] Introducción
+**Portada (carátula)** — universidad, facultad, carrera, logo, título, integrantes,
+asignatura, docente, equipo, ciudad y año.
+
+**Capítulo I: Introducción**
+- [x] Antecedentes
 - [x] Contextualización de la problemática
-- [x] Problema identificado (con formulación y delimitación)
-- [x] Justificación (social, económica, técnica y metodológica)
+- [x] Planteamiento del problema (con árbol de causas y efectos)
+- [x] Formulación del problema
 - [x] Objetivo general
 - [x] Objetivos específicos (6)
+- [x] Definición de variables
+- [x] Delimitación (temporal y geográfica)
+- [x] Justificación (social, económica, técnica, científica y metodológica)
+- [x] Tipología de proyectos
+- [x] Tipo y estudio de la investigación
+- [x] Métodos de investigación
+- [x] Técnicas e instrumentos de investigación
+- [x] Población y muestra
+
+**Capítulo II: Propuesta del sistema**
 - [x] Identificación de usuarios
 - [x] Funcionalidades preliminares
-- [x] Definición del MVP (incluido/excluido + priorización)
+- [x] Definición del MVP
 - [x] Requerimientos preliminares (RF y RNF)
 - [x] Flujo inicial de navegación (diagrama)
-- [x] Wireframes iniciales (5 pantallas)
+- [x] Wireframes iniciales
 - [x] Tecnologías preliminares
 - [x] Referencias (APA)
-- [x] Anexos A–D (cronograma, casos de uso, modelo de datos, presupuesto)
+
+**Anexos**
+- [x] Anexo A: Cronograma | Anexo B: Casos de uso | Anexo C: Modelo de datos
+- [x] Anexo D: Presupuesto | Anexo E: Encuesta | Anexo F: Entrevista
