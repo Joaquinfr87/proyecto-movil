@@ -1,0 +1,168 @@
+% ============================================================================
+%  SECCIÓN 3.13: ESTRUCTURA INICIAL DEL PROYECTO
+% ============================================================================
+
+\section{Estructura del proyecto}
+
+La estructura del proyecto define la organizaci\'on de los archivos y
+directorios que componen la aplicaci\'on, facilitando su mantenimiento,
+escalabilidad y la incorporaci\'on de nuevas funcionalidades. Para el sistema
+propuesto se adopt\'o una organizaci\'on profesional por capas, en la que el
+c\'odigo fuente se agrupa en el directorio \texttt{src/} y cada responsabilidad
+(caracter\'isticas, servicios, n\'ucleo) se separa de forma clara.
+
+La estructura inicial del proyecto es la siguiente:
+
+\begin{lstlisting}
+lugares-interactivos/
+|-- assets/
+|   |-- icon.png
+|   |-- favicon.png
+|   |-- android-icon-background.png
+|   |-- android-icon-foreground.png
+|   `-- android-icon-monochrome.png
+|-- src/
+|   |-- app/
+|   |   |-- navigation/
+|   |   |   |-- AppNavigator.tsx
+|   |   |   |-- RootNavigator.tsx
+|   |   |   `-- types.ts
+|   |   |-- screens/
+|   |   |   |-- auth/
+|   |   |   |   |-- LoginScreen.tsx
+|   |   |   |   `-- RegisterScreen.tsx
+|   |   |   |-- home/
+|   |   |   |   |-- HomeScreen.tsx
+|   |   |   |   `-- components/
+|   |   |   |       `-- ScenarioCard.tsx
+|   |   |   |-- map/
+|   |   |   |   |-- MapScreen.tsx
+|   |   |   |   `-- components/
+|   |   |   |       `-- ScenarioMap.tsx
+|   |   |   |-- catalog/
+|   |   |   |   |-- CatalogScreen.tsx
+|   |   |   |   `-- components/
+|   |   |   |       `-- FilterBar.tsx
+|   |   |   `-- details/
+|   |   |       |-- ScenarioDetailScreen.tsx
+|   |   |       `-- components/
+|   |   |           `-- InfoSection.tsx
+|   |   |-- context/
+|   |   |   |-- AuthContext.tsx
+|   |   |   |-- FavoritesContext.tsx
+|   |   |   `-- ThemeContext.tsx
+|   |   |-- components/
+|   |   |   |-- common/
+|   |   |   |   |-- Button.tsx
+|   |   |   |   |-- Input.tsx
+|   |   |   |   `-- LoadingIndicator.tsx
+|   |   |   `-- layout/
+|   |   |       `-- Header.tsx
+|   |   |-- services/
+|   |   |   |-- api/
+|   |   |   |   |-- client.ts
+|   |   |   |   |-- scenarios.ts
+|   |   |   |   `-- auth.ts
+|   |   |   |-- storage/
+|   |   |   |   `-- tokenStorage.ts
+|   |   |   `-- location/
+|   |   |       `-- locationService.ts
+|   |   |-- hooks/
+|   |   |   |-- useScenarios.ts
+|   |   |   |-- useFavorites.ts
+|   |   |   `-- useLocation.ts
+|   |   |-- types/
+|   |   |   |-- scenario.ts
+|   |   |   |-- user.ts
+|   |   |   `-- navigation.ts
+|   |   `-- theme/
+|   |       |-- colors.ts
+|   |       |-- spacing.ts
+|   |       `-- index.ts
+|   |-- App.tsx
+|   |-- index.ts
+|-- .env.example
+|-- .gitignore
+|-- app.json
+|-- package.json
+|-- pnpm-lock.yaml
+|-- tsconfig.json
+`-- README.md
+\end{lstlisting}
+
+Esta organizaci\'on sigue el principio de separaci\'on de responsabilidades, de
+modo que cada directorio cumple una funci\'on espec\'ifica y los componentes se
+reutilizan entre las distintas pantallas \citep{sommerville2011}. En la tabla
+se describen los directorios principales de la estructura del proyecto.
+
+\begin{table}[H]
+  \centering
+  \caption{Directorios principales de la estructura del proyecto}
+  \begin{tablaAPA}
+    \begin{tabular}{@{}p{3.2cm}p{12.6cm}@{}}
+      \toprule
+      \textbf{Directorio} & \textbf{Funci\'on} \\
+      \midrule
+      \texttt{assets/} &
+      Recursos est\'aticos de la aplicaci\'on: iconos, im\'agenes y logotipos. \\
+      \addlinespace
+      \texttt{src/app/navigation/} &
+      Configuraci\'on de la navegaci\'on de la aplicaci\'on: pilas y pesta\~nas,
+      definiendo las rutas entre las pantallas. \\
+      \addlinespace
+      \texttt{src/app/screens/} &
+      Pantallas de la aplicaci\'on, agrupadas por m\'odulo funcional: autenticaci\'on,
+      inicio, mapa, cat\'alogo y detalle. \\
+      \addlinespace
+      \texttt{src/app/context/} &
+      Contextos globales de React para el estado compartido: autenticaci\'on,
+      favoritos y tema. \\
+      \addlinespace
+      \texttt{src/app/components/} &
+      Componentes reutilizables de interfaz, separados en elementos comunes y de
+      dise\~no (botones, campos, encabezados). \\
+      \addlinespace
+      \texttt{src/app/services/} &
+      Servicios de comunicaci\'on con el backend: cliente de API, autenticaci\'on,
+      almacenamiento local y servicios de ubicaci\'on. \\
+      \addlinespace
+      \texttt{src/app/hooks/} &
+      Hooks personalizados de React que encapsulan la l\'ogica reutilizable de
+      datos y ubicaci\'on. \\
+      \addlinespace
+      \texttt{src/app/types/} &
+      Definici\'on de los tipos y modelos de datos de la aplicaci\'on
+      (escenarios, usuarios, navegaci\'on). \\
+      \addlinespace
+      \texttt{src/app/theme/} &
+      Tema visual de la aplicaci\'on: colores, espacios y estilos comunes. \\
+      \addlinespace
+      \texttt{App.tsx} &
+      Componente ra\'iz de la aplicaci\'on que integra los proveedores de contexto
+      y la navegaci\'on. \\
+      \addlinespace
+      \texttt{index.ts} &
+      Punto de entrada de la aplicaci\'on que registra el componente ra\'iz en
+      React Native. \\
+      \addlinespace
+      \texttt{app.json} &
+      Archivo de configuraci\'on de Expo: nombre, identificador, orientaci\'on,
+      iconos y ajustes de la plataforma \citep{expo}. \\
+      \addlinespace
+      \texttt{package.json} &
+      Declara las dependencias del proyecto y los scripts de ejecuci\'on. \\
+      \addlinespace
+      \texttt{.env.example} &
+      Plantilla de las variables de entorno necesarias para la configuraci\'on
+      de los servicios externos. \\
+      \bottomrule
+    \end{tabular}
+  \end{tablaAPA}
+\end{table}
+
+\textbf{FUENTE:} Elaboraci\'on propia en base al repositorio del proyecto.
+
+La organizaci\'on modular por capas permite que cada m\'odulo del sistema (mapa
+interactivo, cat\'alogo, autenticaci\'on, favoritos) se desarrolle, pruebe y
+mantenga de forma independiente, tal como lo exigen los requerimientos no
+funcionales de portabilidad y mantenibilidad del sistema \citep{iso25010}.

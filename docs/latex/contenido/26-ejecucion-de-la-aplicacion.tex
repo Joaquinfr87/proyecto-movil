@@ -1,0 +1,64 @@
+% ============================================================================
+%  SECCIÓN 3.11: EJECUCIÓN DE LA APLICACIÓN
+% ============================================================================
+
+\section{Ejecuci\'on de la aplicaci\'on}
+
+La ejecuci\'on de la aplicaci\'on se realiza sobre un tel\'efono f\'isico con
+sistema operativo Android, siguiendo el flujo de desarrollo de Expo. Para ello
+se utiliza el servidor de desarrollo de Expo CLI, que compila la aplicaci\'on y
+la entrega al dispositivo conectado en la misma red local \citep{expo}.
+
+El proceso de ejecuci\'on consiste en iniciar el servidor de desarrollo con el
+siguiente comando, ejecutado desde el directorio del proyecto:
+
+\begin{lstlisting}
+pnpm start
+\end{lstlisting}
+
+Una vez iniciado, Expo CLI genera un c\'odigo QR que se escanea desde la
+aplicaci\'on Expo Go instalada en el tel\'efono f\'isico. La aplicaci\'on se
+compila y se muestra en el dispositivo, permitiendo probar las pantallas
+desarrolladas en tiempo real. En la figura se presenta el servidor de
+desarrollo en la terminal.
+
+\begin{figure}[H]
+  \centering
+  \begin{lstlisting}[style=terminal]
+$ pnpm start
+
+> lugares-interactivos@1.0.0 start
+> expo start
+
+Metro waiting on exp://192.168.1.10:8081
+Logs for your project will appear below.
+
+> Scan the QR code above with Expo Go to open the app.
+> Press a | open Android
+> Press w | open web
+
+Android: opened lugares-interactivos on R58M75TGGVA
+  \end{lstlisting}
+  \caption{Servidor de desarrollo de Expo en la terminal}
+  \label{fig:servidor-expo}
+\end{figure}
+
+La l\'inea \texttt{Android: opened lugares-interactivos on R58M75TGGVA}
+confirma que la aplicaci\'on fue abierta en el dispositivo f\'isico conectado.
+El dispositivo f\'isico es fundamental para validar el rendimiento, la
+interacci\'on y el comportamiento de la interfaz en condiciones reales de uso.
+
+En la figura se presenta la aplicaci\'on ejecutada en el dispositivo f\'isico
+utilizado para el desarrollo.
+
+\begin{figure}[H]
+  \centering
+  \fbox{\begin{minipage}{0.45\linewidth}\centering
+    \vspace{3.5cm}
+    \textit{Espacio reservado para la fotograf\'ia del dispositivo f\'isico
+    ejecutando la aplicaci\'on \nombreApp{}}
+    \vspace{3.5cm}
+  \end{minipage}}
+  \caption{Aplicaci\'on \nombreApp{} ejecutada en el dispositivo f\'isico}
+  \label{fig:dispositivo-fisico}
+\end{figure}

@@ -1,0 +1,483 @@
+% ============================================================================
+%  SECCIÓN 2.2: DESARROLLO DE LOS MARCOS DEL PROYECTO
+% ============================================================================
+
+\section{Desarrollo de los marcos del proyecto}
+
+Los marcos del proyecto se desarrollan a continuaci\'on siguiendo una l\'ogica
+deductiva, es decir, partiendo de los fundamentos generales de la ingenier\'ia
+de software y de los sistemas de informaci\'on geogr\'afica hasta llegar a los
+aspectos particulares del sistema de visualizaci\'on interactiva de escenarios
+deportivos. Cada marco aporta el sustento te\'orico, conceptual, hist\'orico y
+legal de los elementos que se presentan en el cap\'itulo I y en el cap\'itulo
+III, de modo que las decisiones de dise\~no y desarrollo se apoyen en
+conocimiento cient\'ificamente validado \citep{arias2012, hernandez2014}.
+
+\subsection{Marco te\'orico}
+
+El marco te\'orico integra las teor\'ias, los estudios y los enfoques
+te\'oricos de validez que permiten el correcto encuadre del tema de
+investigaci\'on. Se organiza en antecedentes de la investigaci\'on, rese\~na de
+la instituci\'on, bases te\'oricas y sistema de variables.
+
+\subsubsection{Antecedentes de la investigaci\'on}
+
+Los antecedentes de la investigaci\'on consisten en la presentaci\'on de la
+informaci\'on m\'as relevante y directamente relacionada con el tema del
+proyecto, cuyo estudio garantiza que el trabajo parta del punto m\'as actual de
+la tem\'atica en cuesti\'on \citep{arias2012}. Su revisi\'on, desarrollada en la
+secci\'on de antecedentes del cap\'itulo I, evidencia que la informaci\'on sobre
+la infraestructura deportiva del pa\'is se encuentra fragmentada y que no
+existe un registro unificado, georreferenciado y de acceso p\'ublico que
+permita conocer la oferta deportiva nacional.
+
+Los antecedentes hist\'oricos muestran que la infraestructura deportiva del
+pa\'is es considerable y de larga tradici\'on, pero su difusi\'on ha dependido
+hist\'oricamente de los medios de cada recinto. Los antecedentes tem\'aticos
+demuestran, mediante plataformas internacionales, que la centralizaci\'on de la
+informaci\'acion georreferenciada incrementa la visibilidad de los recintos y
+favorece el uso de la infraestructura existente \citep{longley2015,
+pressman2010}. Por su parte, las investigaciones previas en el \'ambito de los
+sistemas de informaci\'on geogr\'afica (SIG) aplicados a servicios urbanos han
+confirmado que la visualizaci\'on cartogr\'afica de la infraestructura mejora la
+accesibilidad a la informaci\'on y apoya la planificaci\'on de pol\'iticas
+p\'ublicas \citep{longley2015}.
+
+Estos antecedentes fundamentan directamente el problema planteado en la
+secci\'on de planteamiento del problema del cap\'itulo I y la necesidad de
+desarrollar el sistema que se propone en el cap\'itulo III, confirmando que la
+soluci\'on no parte de cero, sino que se apoya en experiencias nacionales e
+internacionales documentadas.
+
+\subsubsection{Rese\~na de la instituci\'on}
+
+El proyecto se desarrolla en el marco de la asignatura Aplicaciones M\'oviles
+I de la carrera de Ingenier\'ia en Sistemas, Facultad de Ingenier\'ia, de la
+Universidad Privada Domingo Savio (UPDS), sede Cochabamba. La UPDS es una
+instituci\'on de educaci\'on superior privada que forma profesionales
+competentes en las \'areas de la ingenier\'ia y las tecnolog\'ias de la
+informaci\'on, vinculando el proceso formativo con el desarrollo de soluciones
+reales para la sociedad.
+
+En este contexto, el proyecto constituye un trabajo de investigaci\'on
+aplicada que integra los contenidos de la asignatura \textemdash{} desarrollo
+m\'ovil multiplataforma, interfaces de usuario y despliegue de
+aplicaciones\textemdash{} con las necesidades del \'ambito deportivo nacional.
+La instituci\'on brinda el marco acad\'emico, el acompa\~namiento docente y el
+entorno de evaluaci\'on en el que se valida el desarrollo del sistema,
+conforme a la estructura establecida en la gu\'ia de proyectos de grado.
+
+\subsubsection{Bases te\'oricas}
+
+Las bases te\'oricas constituyen el cuerpo de conocimiento cient\'ifico que
+sustenta el proyecto. A continuaci\'on se desarrollan los conceptos te\'oricos
+m\'as relevantes, organizados de lo general a lo particular y citando las
+fuentes especializadas en las que se apoyan.
+
+\paragraph{Sistemas de informaci\'on.} Un sistema de informaci\'on es un
+conjunto de componentes interrelacionados que recolectan, procesan, almacenan
+y distribuyen informaci\'on para apoyar la toma de decisiones y el control de
+una organizaci\'on \citep{kendall2011}. Los sistemas de informaci\'on pueden
+ser manuales o computarizados, y sus componentes b\'asicos son las personas,
+los datos, los procedimientos, el hardware y el software \citep{kendall2011}.
+
+La ingenier\'ia de software, disciplina que se ocupa del desarrollo de estos
+sistemas de forma sistem\'atica, define el proceso de an\'alisis, dise\~no,
+codificaci\'on y prueba de productos de software con calidad y dentro de
+costos y plazos razonables \citep{pressman2010, sommerville2011}. La
+importancia de estos fundamentos radica en que la plataforma propuesta es un
+sistema de informaci\'on orientado a la difusi\'on de la infraestructura
+deportiva: recibe, procesa y entrega informaci\'on sobre escenarios a
+los usuarios, por lo que su construcci\'on debe seguir las buenas pr\'acticas
+de la ingenier\'ia de software y del an\'alisis de sistemas \citep{kendall2011,
+pressman2010}. Estas bases sustentan las secciones de metodolog\'ia y de
+identificaci\'on de usuarios del cap\'itulo I y III respectivamente.
+
+\paragraph{Ingenier\'ia de requerimientos.} La ingenier\'ia de requerimientos
+es el proceso de establecer los servicios que el sistema debe proporcionar y
+las restricciones bajo las cuales debe operar \citep{sommerville2011}. Los
+requerimientos se clasifican en funcionales, que describen lo que el sistema
+debe hacer, y no funcionales, que describen las propiedades del sistema como
+el rendimiento, la seguridad y la usabilidad \citep{sommerville2011,
+kendall2011}. Un proceso correcto de identificaci\'on de requerimientos reduce
+los errores de desarrollo y asegura que el producto satisfaga las necesidades
+reales de los usuarios \citep{sommerville2011}.
+
+En el presente proyecto, la ingenier\'ia de requerimientos se aplic\'o para
+definir los requerimientos funcionales y no funcionales preliminares que se
+presentan en el cap\'itulo III, y se fundamenta en las t\'ecnicas de
+recolecci\'on de datos declaradas en el cap\'itulo I (encuesta, entrevista y
+revisi\'on documental), tal como lo establece el objetivo espec\'ifico de
+identificaci\'on de requerimientos.
+
+\paragraph{Arquitectura de software cliente--servidor.} La arquitectura
+cliente--servidor es un modelo de computaci\'on distribuida en el que los
+clientes (aplicaciones m\'oviles o navegadores web) solicitan recursos y
+servicios a un servidor central, que procesa las peticiones y devuelve los
+resultados \citep{sommerville2011, kendall2011}. Este modelo permite separar
+la interfaz de usuario de la l\'ogica de negocio y del almacenamiento de
+datos, favoreciendo la escalabilidad, la seguridad y el mantenimiento del
+sistema \citep{sommerville2011}.
+
+La arquitectura del sistema propuesto sigue este modelo: la aplicaci\'on
+m\'ovil y el sistema web constituyen los clientes, el backend (Node.js con
+Express) act\'ua como servidor de la l\'ogica de negocio y el motor de base de
+datos (PostgreSQL con la extensi\'on espacial PostGIS) gestiona la
+persistencia de la informaci\'on de los escenarios deportivos. Esta base
+te\'orica sustenta la selecci\'on de tecnolog\'ias preliminares presentada en el
+cap\'itulo III.
+
+\paragraph{Desarrollo \'agil e iterativo.} El desarrollo \'agil es un enfoque
+que prioriza la entrega temprana y continua de funcionalidades de valor,
+adapt\'andose a los cambios de manera iterativa e incremental \citep{larman2004,
+sommerville2011}. Entre sus principios se encuentran la colaboraci\'on con el
+cliente, la entrega frecuente de software funcional y la mejora continua del
+proceso \citep{sommerville2011}. El desarrollo iterativo permite reducir el
+riesgo y obtener retroalimentaci\'on temprana de los usuarios \citep{larman2004}.
+
+En el marco del proyecto, el enfoque \'agil se materializa en la definici\'on
+del producto m\'inimo viable (MVP), presentada en el cap\'itulo III, que
+contempla \'unicamente las funcionalidades indispensables para que la soluci\'on
+funcione y pueda ser probada por los usuarios. Este enfoque sustenta adem\'as
+la justificaci\'on metodol\'ogica del cap\'itulo I, que propone validar la
+propuesta con usuarios reales en etapas tempranas \citep{larman2004}.
+
+\paragraph{Usabilidad y experiencia de usuario.} La usabilidad es el atributo
+de calidad que mide la facilidad con la que los usuarios utilizan una
+interfaz \citep{nielsen1994}. Seg\'un Nielsen, la usabilidad se compone de
+cinco atributos: facilidad de aprendizaje, eficiencia de uso, facilidad de
+recordaci\'on, tolerancia a errores y satisfacci\'on subjetiva
+\citep{nielsen1994}. Una interfaz usable debe dise\~narse centrada en el
+usuario, es decir, considerando las necesidades, capacidades y limitaciones de
+quienes la utilizar\'an \citep{nielsen1994}.
+
+La usabilidad es un elemento central del presente proyecto: la interfaz del
+sistema web y m\'ovil debe ser intuitiva para asistentes, gestores y
+administradores sin experiencia previa, tal como se establece en el
+requerimiento no funcional de usabilidad del cap\'itulo III y en la variable
+de visualizaci\'on interactiva definida en el cap\'itulo I. Las pruebas de
+usabilidad previstas en las t\'ecnicas de investigaci\'on se basan en los
+principios de esta base te\'orica.
+
+\paragraph{Calidad de software.} La calidad del software se define a trav\'es
+de modelos est\'andar que caracterizan los atributos que debe reunir un
+producto de software. El modelo ISO/IEC 25010 establece caracter\'isticas de
+calidad como la funcionalidad, la eficiencia, la compatibilidad, la
+usabilidad, la fiabilidad, la seguridad, la mantenibilidad y la portabilidad
+\citep{iso25010}. La aplicaci\'on de estos modelos permite evaluar de manera
+objetiva el grado en que el sistema cumple con los requerimientos
+\citep{iso25010}.
+
+En el proyecto, el modelo ISO/IEC 25010 sirve de referencia para los
+requerimientos no funcionales del cap\'itulo III (rendimiento, seguridad,
+compatibilidad, portabilidad y calidad de software) y para la evaluaci\'on del
+sistema propuesta en el objetivo espec\'ifico de evaluaci\'on de usabilidad,
+rendimiento y satisfacci\'on del cap\'itulo I.
+
+\paragraph{Sistemas de informaci\'on geogr\'afica.} Un sistema de informaci\'on
+geogr\'afica (SIG) es un conjunto de herramientas dise\~nadas para capturar,
+almacenar, manipular, analizar, gestionar y presentar informaci\'on
+geogr\'aficamente referenciada \citep{longley2015}. Los SIG integran la base de
+datos con capacidades de an\'alisis espacial y representaci\'on cartogr\'afica,
+permitiendo relacionar datos de distinta naturaleza a trav\'es de su posici\'on
+geogr\'afica \citep{longley2015}. Su aplicaci\'on en servicios urbanos,
+turismo y planificaci\'on ha demostrado mejoras significativas en la
+accesibilidad a la informaci\'on y en la toma de decisiones \citep{longley2015}.
+
+Esta base te\'orica es fundamental para el proyecto: el sistema debe ubicar
+geogr\'aficamente los escenarios deportivos y representarlos en un mapa, tal
+como se define en la variable de visualizaci\'on interactiva del cap\'itulo I y
+en los requerimientos funcionales de mapa interactivo y cat\'alogo del
+cap\'itulo III. Los conceptos de georreferenciaci\'on y de datos espaciales se
+desarrollan a continuaci\'on.
+
+\paragraph{Georreferenciaci\'on y datos espaciales.} La georreferenciaci\'on
+consiste en asociar a un elemento una posici\'on \'unica en la superficie
+terrestre, expresada normalmente mediante coordenadas de latitud y longitud
+\citep{longley2015}. Los datos geogr\'aficos se representan en un SIG mediante
+modelos vectoriales, que codifican los elementos como puntos, l\'ineas y
+pol\'igonos con sus atributos asociados \citep{longley2015}. Para almacenar y
+consultar eficientemente estos datos se utilizan bases de datos espaciales,
+que incorporan tipos de datos y funciones geogr\'aficas especializadas, como la
+extensi\'on PostGIS de PostgreSQL, que permite calcular distancias y \'areas y
+determinar la cercan\'ia de un punto a otros elementos \citep{postgresql}.
+
+En el proyecto, cada escenario deportivo se georreferencia mediante sus
+coordenadas, lo que permite al usuario consultar los escenarios m\'as cercanos
+a su ubicaci\'on, tal como se requiere en la funcionalidad de mapa interactivo
+del cap\'itulo III y en el indicador de cobertura del sistema definido en el
+cap\'itulo I.
+
+\paragraph{Visualizaci\'on interactiva de datos geoespaciales.} La
+visualizaci\'on de datos es el proceso de representar informaci\'on de forma
+gr\'afica para facilitar su comprensi\'on y an\'alisis \citep{longley2015}. En el
+\'ambito geoespacial, la visualizaci\'on interactiva permite al usuario
+explorar un mapa, aplicar zoom, desplazarse y consultar la informaci\'on
+asociada a cada elemento representado \citep{longley2015}. Las librer\'ias de
+mapas interactivos, como Leaflet, proporcionan los componentes necesarios
+(marcadores, capas, popups y controles de navegaci\'on) para construir este
+tipo de visualizaciones de forma ligera y compatible con m\'ultiples
+plataformas \citep{leaflet}.
+
+La visualizaci\'on interactiva constituye el n\'ucleo de la propuesta: permite
+representar los escenarios deportivos sobre un mapa, de modo que el usuario
+identifique r\'apidamente los recintos de su inter\'es y acceda a su informaci\'on
+detallada. Esta base sustenta la variable de visualizaci\'on interactiva del
+cap\'itulo I, el objetivo general del proyecto y las funcionalidades de mapa
+interactivo y detalle del escenario del cap\'itulo III.
+
+\paragraph{Desarrollo m\'ovil multiplataforma.} El desarrollo de aplicaciones
+m\'oviles ha evolucionado desde las aplicaciones nativas, desarrolladas con el
+lenguaje y las herramientas propias de cada plataforma, hasta los enfoques
+multiplataforma, que permiten construir una \'unica base de c\'odigo ejecutable
+en m\'ultiples sistemas operativos, reduciendo costos y tiempos de desarrollo
+\citep{pressman2010}. React Native es un framework de c\'odigo abierto que
+permite desarrollar aplicaciones nativas para iOS y Android utilizando
+JavaScript y el modelo de componentes de React \citep{reactnative}. Expo es
+una plataforma construida sobre React Native que simplifica la configuraci\'on,
+la compilaci\'on y la publicaci\'on de la aplicaci\'on, adem\'as de facilitar su
+ejecuci\'on en dispositivos f\'isicos mediante la aplicaci\'on Expo Go
+\citep{expo}.
+
+Esta base te\'orica sustenta la selecci\'on de React Native y Expo como
+tecnolog\'ias del frontend m\'ovil en el cap\'itulo III y el requerimiento no
+funcional de compatibilidad (funcionamiento en iOS y Android) definido en el
+mismo cap\'itulo.
+
+\paragraph{Backend y servicios en la nube.} El backend de una aplicaci\'on
+web o m\'ovil concentra la l\'ogica de negocio y la comunicaci\'on con la base de
+datos. Node.js es un entorno de ejecuci\'on de JavaScript orientado a
+aplicaciones de red con alto rendimiento y escalabilidad \citep{nodejs}. Los
+servicios en la nube ofrecen infraestructura y plataformas gestionadas que
+permiten desplegar aplicaciones sin administrar servidores propios; Supabase,
+por ejemplo, proporciona autenticaci\'on, base de datos y almacenamiento
+integrados con un modelo de servicio gratuito adecuado para proyectos de
+investigaci\'on \citep{supabase}.
+
+En el proyecto, estas tecnolog\'ias sustentan la arquitectura cliente--servidor
+definida en el cap\'itulo III, garantizando la disponibilidad del sistema y el
+manejo seguro de los datos de los usuarios, tal como lo exigen los
+requerimientos no funcionales de seguridad y disponibilidad.
+
+\paragraph{Control de versiones.} El control de versiones es una pr\'actica de
+la ingenier\'ia de software que permite registrar, organizar y rastrear los
+cambios realizados sobre el c\'odigo fuente de un proyecto \citep{gitdocs}. Git
+es el sistema de control de versiones distribuido m\'as utilizado, y GitHub es
+la plataforma de alojamiento remoto que facilita la colaboraci\'on entre los
+integrantes del equipo y la trazabilidad de los cambios \citep{githubdocs}.
+
+Esta base te\'orica sustenta la configuraci\'on de Git y GitHub del cap\'itulo
+III, que garantiza la colaboraci\'on ordenada del equipo, el respaldo del
+c\'odigo y el seguimiento del desarrollo del sistema a lo largo de las etapas
+del proyecto.
+
+\subsubsection{Sistema de variables}
+
+El sistema de variables relaciona los conceptos te\'oricos con los aspectos
+medibles de la realidad. Una variable es un aspecto de la realidad que cambia
+en distintas situaciones y para diferentes objetivos y sujetos; las variables
+permiten agrupar, diferenciar, ordenar, distribuir y relacionar los elementos
+de la realidad \citep{hernandez2014}.
+
+Para el presente proyecto se identificaron tres variables, cuya
+operacionalizaci\'on completa se presenta en la secci\'on de definici\'on de
+variables del cap\'itulo I: acceso a la informaci\'on deportiva, visualizaci\'on
+interactiva y cobertura del sistema. La variable de acceso a la informaci\'on
+deportiva se sustenta en las bases te\'oricas de sistemas de informaci\'on y de
+difusi\'on; la variable de visualizaci\'on interactiva se sustenta en las bases
+te\'oricas de SIG, georreferenciaci\'on y visualizaci\'on interactiva; y la
+variable de cobertura del sistema se sustenta en las bases te\'oricas de bases
+de datos espaciales y arquitectura de software \citep{hernandez2014}.
+
+\subsection{Marco conceptual}
+
+El marco conceptual asigna un significado preciso y contextualizado a los
+conceptos, t\'erminos y variables principales del tema de investigaci\'on
+\citep{arias2012}. Su prop\'osito es uniformizar el lenguaje utilizado en el
+documento y delimitar el alcance de cada t\'ermino. En la tabla se presentan
+los conceptos principales utilizados en el proyecto, con su definici\'on y la
+fuente que los sustenta.
+
+\begin{table}[H]
+  \centering
+  \caption{Marco conceptual del proyecto}
+  \begin{tablaAPA}
+    \begin{tabular}{@{}p{4.0cm}p{9.0cm}p{2.8cm}@{}}
+      \toprule
+      \textbf{Concepto} & \textbf{Definici\'on} & \textbf{Fuente} \\
+      \midrule
+      Sistema de informaci\'on &
+      Conjunto de componentes interrelacionados que recolectan, procesan,
+      almacenan y distribuyen informaci\'on para apoyar la toma de decisiones &
+      \citet{kendall2011} \\
+      \addlinespace
+      Ingenier\'ia de software &
+      Disciplina que aplica principios de ingenier\'ia al desarrollo
+      sistem\'atico de software con calidad &
+      \citet{pressman2010} \\
+      \addlinespace
+      Sistema de informaci\'on geogr\'afica &
+      Herramientas para capturar, almacenar, analizar y presentar informaci\'on
+      geogr\'aficamente referenciada &
+      \citet{longley2015} \\
+      \addlinespace
+      Georreferenciaci\'on &
+      Asociaci\'on de un elemento a una posici\'on \'unica en la superficie
+      terrestre mediante coordenadas &
+      \citet{longley2015} \\
+      \addlinespace
+      Visualizaci\'on interactiva &
+      Representaci\'on gr\'afica de datos que permite al usuario explorarlos y
+      modificarlos de forma din\'amica &
+      \citet{longley2015} \\
+      \addlinespace
+      Mapa interactivo &
+      Mapa digital que permite al usuario navegar, hacer zoom y consultar la
+      informaci\'on asociada a cada elemento &
+      \citet{leaflet} \\
+      \addlinespace
+      Escenario deportivo &
+      Recinto o infraestructura destinada a la pr\'actica de una o m\'as
+      disciplinas deportivas &
+      Elaboraci\'on propia \\
+      \addlinespace
+      Aplicaci\'on multiplataforma &
+      Aplicaci\'on que se ejecuta en m\'ultiples sistemas operativos a partir de
+      un \'unico c\'odigo base &
+      \citet{pressman2010} \\
+      \addlinespace
+      Producto m\'inimo viable (MVP) &
+      Versi\'on m\'as peque\~na de un producto que aporta valor real y permite
+      validar la soluci\'on con retroalimentaci\'on temprana &
+      \citet{larman2004} \\
+      \addlinespace
+      Requerimiento funcional &
+      Servicio que el sistema debe proporcionar a sus usuarios &
+      \citet{sommerville2011} \\
+      \addlinespace
+      Requerimiento no funcional &
+      Restricci\'on o propiedad que el sistema debe cumplir, como rendimiento,
+      seguridad o usabilidad &
+      \citet{sommerville2011} \\
+      \addlinespace
+      Usabilidad &
+      Facilidad con la que los usuarios aprenden y utilizan una interfaz &
+      \citet{nielsen1994} \\
+      \addlinespace
+      Calidad de software &
+      Grado en que un producto satisface los atributos de calidad establecidos
+      en modelos est\'andar &
+      \citet{iso25010} \\
+      \addlinespace
+      Wireframe &
+      Esquema de baja fidelidad que representa la estructura y los elementos de
+      una interfaz &
+      \citet{pressman2010} \\
+      \addlinespace
+      Cliente--servidor &
+      Modelo de computaci\'on distribuida en el que los clientes solicitan
+      servicios a un servidor central &
+      \citet{sommerville2011} \\
+      \bottomrule
+    \end{tabular}
+  \end{tablaAPA}
+\end{table}
+
+\textbf{FUENTE:} Elaboraci\'on propia en base a la revisi\'on documental.
+
+Los conceptos presentados se utilizan de manera consistente en el cap\'itulo I
+y en el cap\'itulo III del presente informe, garantizando la coherencia
+terminol\'ogica del documento.
+
+\subsection{Marco hist\'orico}
+
+El marco hist\'orico recopila los antecedentes hist\'oricos referentes al tema
+de estudio, cit\'andolos en orden cronol\'ogico \citep{arias2012}. Su
+construcci\'on permite comprender la evoluci\'on de la infraestructura deportiva
+y de las tecnolog\'ias de informaci\'on que sustentan la propuesta.
+
+\paragraph{La infraestructura deportiva del pa\'is.} La pr\'actica deportiva
+organizada en el pa\'is se consolid\'o durante la primera mitad del siglo XX,
+con la construcci\'on de los primeros estadios y coliseos en las principales
+ciudades, impulsada por el desarrollo del f\'utbol y de otras disciplinas. Con
+el paso de las d\'ecadas, la oferta de recintos se diversific\'o hasta incluir
+estadios, coliseos cerrados, canchas de baloncesto y voleibol, frontones,
+piscinas, pistas de atletismo y complejos polideportivos, distribuidos en los
+nueve departamentos del pa\'is, como se detalla en los antecedentes hist\'oricos
+del cap\'itulo I.
+
+\paragraph{La evoluci\'on de los sistemas de informaci\'on.} La segunda mitad
+del siglo XX estuvo marcada por la aparici\'on de las computadoras y por el
+desarrollo de la ingenier\'ia de software como disciplina, que evolucion\'o
+desde enfoques artesanales hacia procesos sistem\'aticos y orientados a la
+calidad \citep{pressman2010}. En la d\'ecada de 1980 surgieron los sistemas de
+informaci\'on geogr\'afica, que integraron la informaci\'on tabular con la
+representaci\'on cartogr\'afica, abriendo nuevas posibilidades para el an\'alisis
+espacial \citep{longley2015}.
+
+\paragraph{La era de internet y los sistemas distribuidos.} La masificaci\'on
+de internet en la d\'ecada de 1990 impuls\'o el desarrollo de sistemas web y de
+la arquitectura cliente--servidor, permitiendo que la informaci\'on se
+distribuyera a escala global \citep{sommerville2011}. En el \'ambito deportivo,
+esta etapa correspondi\'o a la difusi\'on de la informaci\'on mediante sitios web
+y, posteriormente, mediante redes sociales, aunque de forma fragmentada y sin
+una visi\'on integral de la infraestructura existente.
+
+\paragraph{La era m\'ovil y los mapas interactivos.} A partir de la d\'ecada de
+2010, la masificaci\'on de los tel\'efonos inteligentes y de los mapas digitales
+interactivos transform\'o la manera en que las personas acceden a la
+informaci\'on geogr\'afica \citep{longley2015}. El desarrollo multiplataforma,
+representado por frameworks como React Native y plataformas como Expo,
+permiti\'o construir aplicaciones para iOS y Android con un \'unico c\'odigo base
+\citep{reactnative, expo}. En el \'ambito nacional, sin embargo, la
+informaci\'on sobre la infraestructura deportiva sigui\'o dispersa y
+desactualizada, sin aprovechar estas tecnolog\'ias.
+
+Este recorrido hist\'orico muestra que las condiciones tecnol\'ogicas y
+sociales actuales hacen viable y pertinente la propuesta de un sistema web y
+m\'ovil de visualizaci\'on interactiva de escenarios deportivos, tal como se
+plantea en los objetivos del cap\'itulo I y en la propuesta del cap\'itulo III.
+
+\subsection{Marco referencial}
+
+El marco referencial recopila las normas legales relacionadas con el tema de
+investigaci\'on \citep{arias2012}. El proyecto se enmarca en el ordenamiento
+jur\'idico del Estado Plurinacional de Bolivia, que reconoce el deporte como un
+derecho y regula el uso de las tecnolog\'ias de la informaci\'on y la
+comunicaci\'on. Las principales disposiciones aplicables son las siguientes:
+
+\paragraph{Constituci\'on Pol\'itica del Estado Plurinacional de Bolivia.} La
+Constituci\'on, en su art\'iculo sobre los derechos de la salud y el deporte,
+reconoce el derecho de toda persona al deporte y a la pr\'actica de la
+actividad f\'isica, y establece la obligaci\'on del Estado de promover y
+fomentar la cultura deportiva y el acceso de la poblaci\'on a la infraestructura
+deportiva \citep{cpe2009}. Este mandato constitucional fundamenta la
+finalidad social del proyecto: facilitar el acceso de la ciudadan\'ia a la
+informaci\'on sobre los escenarios deportivos para promover la pr\'actica
+deportiva, en l\'inea con la justificaci\'on social del cap\'itulo I.
+
+\paragraph{Ley N.\textordmasculine{} 277 de 2012, Ley del Deporte.} La Ley
+del Deporte establece las pol\'iticas, los principios y las normas para la
+organizaci\'on y la promoci\'on del deporte en el pa\'is, as\'i como las
+obligaciones de los \'organos competentes en materia de construcci\'on,
+mantenimiento y administraci\'on de escenarios deportivos \citep{ley277}. La
+ley reconoce la importancia de la infraestructura deportiva para el desarrollo
+del deporte y promueve la participaci\'on de las entidades p\'ublicas y privadas
+en su gesti\'on. Esta norma respalda la pertinencia de visibilizar y difundir
+la oferta de escenarios deportivos del pa\'is, tal como lo hace el sistema
+propuesto.
+
+\paragraph{Ley N.\textordmasculine{} 164 de 2011, Ley General de
+Telecomunicaciones, Tecnolog\'ias de Informaci\'on y Comunicaci\'on.} La Ley
+N.\textordmasculine{} 164 regula el uso de las tecnolog\'ias de informaci\'on y
+comunicaci\'on (TIC) en el pa\'is y reconoce su importancia para el desarrollo
+econ\'omico y social \citep{ley164}. La ley promueve el acceso a las TIC y el
+desarrollo de servicios y aplicaciones digitales que beneficien a la
+poblaci\'on. Esta norma sustenta la base legal del desarrollo del sistema web y
+m\'ovil propuesto, as\'i como las decisiones tecnol\'ogicas presentadas en el
+cap\'itulo III.
+
+En conjunto, el marco referencial proporciona el sustento normativo del
+sistema, que debe respetar la normativa vigente en materia de deporte y de uso
+de tecnolog\'ias de la informaci\'on, garantizando que la soluci\'on propuesta se
+encuentre alineada con el ordenamiento jur\'idico del pa\'is.

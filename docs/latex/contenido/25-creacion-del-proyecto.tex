@@ -1,0 +1,56 @@
+% ============================================================================
+%  SECCIÓN 3.10: CREACIÓN DEL PROYECTO
+% ============================================================================
+
+\section{Creaci\'on del proyecto}
+
+La aplicaci\'on m\'ovil se desarroll\'o con el marco de trabajo Expo, basado en
+React Native, que permite crear proyectos multiplataforma de forma r\'apida y
+con una configuraci\'on m\'inima \citep{expo}. La creaci\'on del proyecto se
+realiz\'o mediante la herramienta de l\'inea de comandos \texttt{create-expo-app},
+empleando la plantilla \texttt{blank-typescript}, que incluye TypeScript
+configurado por defecto.
+
+La creaci\'on del proyecto se realiz\'o con el gestor de paquetes
+\texttt{pnpm}, mediante la ejecuci\'on del siguiente comando:
+
+\begin{lstlisting}
+pnpm create expo-app lugares-interactivos --template blank-typescript
+\end{lstlisting}
+
+El comando descarga la plantilla, crea la estructura del proyecto en el
+directorio \texttt{lugares-interactivos} e instala autom\'aticamente las
+dependencias b\'asicas, entre las que destacan \texttt{expo},
+\texttt{react}, \texttt{react-native} y \texttt{expo-status-bar}. El archivo
+\texttt{pnpm-lock.yaml} generado garantiza que las dependencias se instalen de
+manera determinista en todos los equipos del equipo de trabajo
+\citep{nodejs}.
+
+En la figura se presenta la evidencia de la creaci\'on del proyecto en la
+terminal.
+
+\begin{figure}[H]
+  \centering
+  \begin{lstlisting}[style=terminal]
+$ pnpm create expo-app lugares-interactivos --template blank-typescript
+Creating a new Expo project...
+Downloading the selected template: blank-typescript
+Scaffolding project in lugares-interactivos/
+Installing dependencies using pnpm...
+Packages: +1168
+Progress: resolved 1168, reused 1168, downloaded 0, added 1168
+Prepared expo in 6.2s
+
+[OK] Your project is ready!
+
+To run your project, navigate to the directory and run one of:
+  - pnpm start    # start the development server
+  - pnpm android  # open the app on an Android device
+  \end{lstlisting}
+  \caption{Evidencia de la creaci\'on del proyecto con Expo}
+  \label{fig:creacion-proyecto}
+\end{figure}
+
+Una vez creado el proyecto, la ejecuci\'on de los comandos de pnpm se realiza
+desde el directorio del proyecto, tal como se describe en la secci\'on de
+ejecuci\'on de la aplicaci\'on.

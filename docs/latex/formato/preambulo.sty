@@ -97,6 +97,20 @@
   breaklines=true
 }
 
+% --- Terminal (simulación de consola para figuras) ----------------------------
+\definecolor{termbg}{RGB}{40,44,52}
+\definecolor{termfg}{RGB}{220,220,220}
+\definecolor{termcmd}{RGB}{97,175,239}
+\definecolor{termout}{RGB}{171,178,191}
+\definecolor{termok}{RGB}{152,195,121}
+\lstdefinestyle{terminal}{
+  basicstyle=\ttfamily\footnotesize\color{termfg},
+  backgroundcolor=\color{termbg},
+  rulecolor=\color{termbg},
+  frame=single,
+  breaklines=true
+}
+
 % --- Listas, matemáticas y microtipografía -----------------------------------
 \RequirePackage{enumitem}
 \setlist{itemsep=2pt, parsep=0pt, topsep=6pt, partopsep=0pt}

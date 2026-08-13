@@ -1,0 +1,68 @@
+% ============================================================================
+%  SECCIÓN 3.14: CONFIGURACIÓN DEL TEMA INICIAL
+% ============================================================================
+
+\section{Configuraci\'on del tema inicial}
+
+La configuraci\'on del tema inicial define la identidad visual de la
+aplicaci\'on, incluyendo el nombre visible, los iconos, el color de fondo y el
+estilo de interfaz. En los proyectos de Expo, estos ajustes se declaran en el
+archivo \texttt{app.json}, que centraliza la configuraci\'on de la aplicaci\'on
+\citep{expo}.
+
+El archivo \texttt{app.json} del proyecto se configur\'o con los siguientes
+valores iniciales:
+
+\begin{lstlisting}
+{
+  "expo": {
+    "name": "lugares-interactivos",
+    "slug": "lugares-interactivos",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#E6F4FE"
+      }
+    }
+  }
+}
+\end{lstlisting}
+
+Los principales elementos del tema inicial se resumen en la tabla.
+
+\begin{table}[H]
+  \centering
+  \caption{Elementos del tema inicial de la aplicaci\'on}
+  \begin{tablaAPA}
+    \begin{tabular}{@{}p{4.2cm}p{11.6cm}@{}}
+      \toprule
+      \textbf{Elemento} & \textbf{Descripci\'on} \\
+      \midrule
+      Nombre visible & \texttt{lugares-interactivos}, nombre provisional de la
+      aplicaci\'on mostrado en el dispositivo. \\
+      \addlinespace
+      Orientaci\'on & Retrato (\texttt{portrait}), adecuada para el uso
+      principal de la aplicaci\'on. \\
+      \addlinespace
+      Estilo de interfaz & Claro (\texttt{light}), como tema inicial del
+      sistema \citep{expo}. \\
+      \addlinespace
+      Icono & \texttt{assets/icon.png}, imagen representativa de la
+      aplicaci\'on. \\
+      \addlinespace
+      Color de fondo & \texttt{\#E6F4FE}, color claro que acompa\~na al icono
+      adaptable en Android. \\
+      \bottomrule
+    \end{tabular}
+  \end{tablaAPA}
+\end{table}
+
+\textbf{FUENTE:} Elaboraci\'on propia en base al repositorio del proyecto.
+
+El tema inicial podr\'a evolucionar en avances posteriores, definiendo una
+paleta de colores institucional, tipograf\'ias propias y un modo oscuro, en
+funci\'on de los resultados de las pruebas de usabilidad previstas en el
+proyecto.
