@@ -42,7 +42,10 @@
 
 \begin{document}
 
-% --- Portada ----------------------------------------------------------------
+% --- Numeración romana para la parte preliminar ------------------------------
+\pagenumbering{roman}
+
+% --- Portada (no muestra número y no cuenta: el entorno titlepage parte de 1)
 \input{formato/portada}
 
 % --- Resumen y palabras clave ----------------------------------------------
@@ -55,10 +58,14 @@
 \listoftables
 \newpage
 \listoffigures
+\clearpage
 
 % ============================================================================
 %  CONTENIDO  (un capítulo con su carátula y un archivo por sección)
 % ============================================================================
+
+% A partir de aquí la numeración es arábiga e inicia en 1
+\pagenumbering{arabic}
 
 % --- CAPÍTULO I: INTRODUCCIÓN ------------------------------------------------
 \caratulaCapitulo{CAP\'ITULO I}{INTRODUCCI\'ON}

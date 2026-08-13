@@ -33,38 +33,38 @@
 % --- Interlineado doble (APA 7) ---------------------------------------------
 \RequirePackage[doublespacing]{setspace}
 
-% --- Encabezado: número de página arriba a la derecha (APA 7) ---------------
+% --- Pie de página: número de página centrado al pie ------------------------
 \RequirePackage{fancyhdr}
 \setlength{\headheight}{14.5pt}   % altura suficiente para la fuente sans
 \pagestyle{fancy}
 \fancyhf{}
-\fancyhead[R]{\thepage}
+\fancyfoot[C]{\thepage}
 \renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
 \fancypagestyle{plain}{%
   \fancyhf{}%
-  \fancyhead[R]{\thepage}%
+  \fancyfoot[C]{\thepage}%
   \renewcommand{\headrulewidth}{0pt}%
+  \renewcommand{\footrulewidth}{0pt}%
 }
 
 % --- Jerarquía de títulos estilo APA ----------------------------------------
-%  Nivel 1 (sección): centrado y en negrita  |  Nivel 2 (subsección):
-%  alineado a la izquierda y en negrita      |  Nivel 3: izquierda, negrita
-%  y cursiva.
+%  Nivel 1 (sección): alineado a la izquierda y en negrita  |  Nivel 2
+%  (subsección): alineado a la izquierda y en negrita      |  Nivel 3:
+%  izquierda, negrita y cursiva.
 \RequirePackage{titlesec}
-\titleformat{\section}{\bfseries\Large\filcenter}{\thesection}{0.6em}{}
-\titlespacing*{\section}{0pt}{6pt}{12pt}
+\titleformat{\section}{\bfseries\Large}{\thesection}{0.6em}{}
+\titlespacing*{\section}{0pt}{12pt}{6pt}
 \titleformat{\subsection}{\bfseries\large}{\thesubsection}{0.6em}{}
 \titlespacing*{\subsection}{0pt}{12pt}{6pt}
 \titleformat{\subsubsection}{\bfseries\normalsize\itshape}{\thesubsubsection}{0.6em}{}
 \titlespacing*{\subsubsection}{0pt}{6pt}{6pt}
 
-% Cada sección principal comienza en una página nueva (estilo capítulo)
-\let\apaSeccionFormateada\section
-\renewcommand{\section}{\clearpage\apaSeccionFormateada}
-
-% --- Párrafos: sangría de 0.5 pulgada y sin espacio entre párrafos (APA 7) --
-\setlength{\parindent}{1.27cm}
-\setlength{\parskip}{0pt}
+% --- Párrafos: sin sangría, justificados y con un pequeño espaciado entre
+% párrafos para mantenerlos diferenciados (APA 7 usa sangría, pero el
+% formato del informe exige alineación justificada sin sangría) --------------
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt}
 \setlength{\emergencystretch}{3em}
 
 % --- Tablas y figuras --------------------------------------------------------
@@ -123,7 +123,8 @@
 % --- Carátula de capítulo (1 hoja completa) -----------------------------------
 % Uso: \caratulaCapitulo{CAP\'ITULO I}{INTRODUCCI\'ON}
 % Cada capítulo comienza con una página de presentación que ocupa una hoja
-% completa y, a continuación, el contenido inicia en una página nueva.
+% completa. La carátula no muestra número de página ni se cuenta dentro de la
+% enumeración (el contador se decrementa tras su salida).
 % Las secciones se numeran por capítulo (1.1, 1.2 ... y 2.1, 2.2 ...).
 \newcounter{capitulo}
 \renewcommand{\thesection}{\arabic{capitulo}.\arabic{section}}
@@ -131,15 +132,15 @@
   \clearpage
   \refstepcounter{capitulo}%
   \setcounter{section}{0}%
-  \thispagestyle{empty}
+  \thispagestyle{empty}%
   \begin{center}
     \vspace*{6.2cm}
     {\bfseries\Huge #1 \par}
     \vspace{1.7cm}
     {\bfseries\LARGE #2 \par}
-    \vspace{2.4cm}
-    \includegraphics[width=0.20\textwidth]{logo-upds.png}
   \end{center}
+  \clearpage
+  \addtocounter{page}{-1}%
 }
 
 \endinput
