@@ -4,11 +4,6 @@
 
 \section{Comparaci\'on del PDF 1 con el PDF 2}
 
-Esta secci\'on es fundamental para evidenciar y contrastar el avance
-metodol\'ogico y t\'ecnico del proyecto entre la primera entrega (PDF 1) y la
-segunda entrega (PDF 2). A continuaci\'on, se presenta la tabla comparativa que
-sintetiza la evoluci\'on de los elementos clave de la propuesta y su estado
-actual de implementaci\'on.
 
 \begin{table}[H]
   \centering
@@ -39,9 +34,117 @@ actual de implementaci\'on.
   }{Elaboraci\'on propia en base a la matriz de comparaci\'on de entregas.}
 \end{table}
 
-Como se evidencia en la tabla comparativa, el proyecto ha transitado desde una
-fase inicial de definici\'on conceptual hacia una etapa de estructuraci\'on
-formal y preparaci\'on t\'ecnica, consolidando la identidad del sistema bajo el
-nombre provisional \nombreApp{}, estableciendo el repositorio colaborativo en
-GitHub y sentando las bases t\'ecnicas y de dise\~no para el desarrollo integral
-de los m\'odulos funcionales.
+
+
+\subsection{Evidencias del avance}
+
+
+
+% --- EVIDENCIA 1 ---
+\subsubsection*{Evidencia 1: Repositorio en GitHub creado y configurado}
+
+Se cre\'o y configur\'o el repositorio p\'ublico oficial en GitHub
+(\url{https://github.com/Joaquinfr87/proyecto-movil}), organizando el trabajo
+mediante una estrategia de tres ramas (\texttt{main}, \texttt{docs} y
+\texttt{develop}) que independiza el desarrollo m\'ovil de la documentaci\'on.
+
+\begin{figure}[H]
+  \centering
+  \caption{Evidencia 1: Repositorio del proyecto en GitHub}
+  \label{fig:evidencia-github}
+  \contenidoConFuente{%
+    \includegraphics[width=0.62\linewidth]{repositorio.jpeg}%
+  }{Elaboraci\'on propia (captura del repositorio en GitHub).}
+\end{figure}
+
+% --- EVIDENCIA 2 ---
+\subsubsection*{Evidencia 2: Estructura del proyecto organizada}
+
+Se defini\'o la arquitectura por capas y la organizaci\'on modular del proyecto,
+estructurando el c\'odigo fuente dentro del directorio \texttt{src/app/} para
+garantizar la separaci\'on de responsabilidades y facilitar la escalabilidad del
+sistema:
+
+\begin{lstlisting}
+lugares-interactivos/
+|-- assets/                    Recursos estaticos: iconos e imagenes
+|-- src/
+|   `-- app/
+|       |-- navigation/        Configuracion de la navegacion
+|       |-- screens/           Pantallas por modulo funcional
+|       |   |-- auth/          Autenticacion
+|       |   |-- home/          Inicio
+|       |   |-- map/           Mapa interactivo
+|       |   |-- catalog/       Catalogo
+|       |   `-- details/       Detalle del escenario
+|       |-- context/           Estado global (autenticacion, favoritos, tema)
+|       |-- components/        Componentes reutilizables
+|       |-- services/          Cliente de API, almacenamiento y ubicacion
+|       |-- hooks/             Logica reutilizable
+|       |-- types/             Modelos de datos
+|       `-- theme/             Tema visual de la aplicacion
+|-- App.tsx                    Componente raiz
+|-- index.ts                   Punto de entrada
+|-- app.json                   Configuracion de Expo
+|-- package.json               Dependencias y scripts
+|-- pnpm-lock.yaml             Lockfile de dependencias
+`-- tsconfig.json              Configuracion de TypeScript
+\end{lstlisting}
+
+% --- EVIDENCIA 3 ---
+\subsubsection*{Evidencia 3: C\'odigo fuente principal y configuraci\'on (\texttt{package.json}, \texttt{index.ts} y \texttt{App.tsx})}
+
+La aplicaci\'on est\'a construida con \textbf{React Native} y el ecosistema
+\textbf{Expo} utilizando \textbf{TypeScript}. En el archivo \texttt{package.json}
+se definen las dependencias n\'ucleo del sistema, integrando React 19 y Expo SDK
+57, con punto de entrada en \texttt{index.ts} y \texttt{App.tsx}:
+
+\begin{lstlisting}
+{
+  "name": "lugares-interactivos",
+  "version": "1.0.0",
+  "main": "index.ts",
+  "dependencies": {
+    "expo": "~57.0.12",
+    "expo-status-bar": "~57.0.1",
+    "react": "19.2.3",
+    "react-native": "0.86.2"
+  },
+  "devDependencies": {
+    "@types/react": "~19.2.2",
+    "typescript": "~6.0.3"
+  },
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web"
+  },
+  "private": true
+}
+\end{lstlisting}
+
+\begin{figure}[H]
+  \centering
+  \caption{Evidencia 3: Archivo de configuraci\'on y dependencias de la aplicaci\'on}
+  \label{fig:evidencia-codigo-principal}
+  \contenidoConFuente{%
+    \includegraphics[width=0.62\linewidth]{readme.jpeg}%
+  }{Elaboraci\'on propia (captura del c\'odigo base y configuraci\'on).}
+\end{figure}
+
+% --- EVIDENCIA 4 ---
+\subsubsection*{Evidencia 4: Primera pantalla desarrollada y en ejecuci\'on}
+
+Se desarroll\'o la pantalla inicial y de portada para la aplicaci\'on
+\nombreApp{}, validando su renderizado y componentes visuales en ejecuci\'on
+f\'isica sobre dispositivo m\'ovil mediante la plataforma Expo Go.
+
+\begin{figure}[H]
+  \centering
+  \caption{Evidencia 4: Primera pantalla desarrollada y ejecutada en dispositivo m\'ovil}
+  \label{fig:evidencia-primera-pantalla}
+  \contenidoConFuente{%
+    \includegraphics[width=0.48\linewidth]{appmovil-portada.jpeg}%
+  }{Elaboraci\'on propia (captura de la aplicaci\'on en dispositivo m\'ovil).}
+\end{figure}
