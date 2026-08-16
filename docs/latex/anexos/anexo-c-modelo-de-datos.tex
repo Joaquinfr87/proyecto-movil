@@ -13,32 +13,34 @@ las coordenadas de ubicaci\'on de cada escenario \citep{postgresql}.
 \begin{table}[H]
   \centering
   \caption{Entidades del modelo de datos}
-  \begin{tablaAPA}
-    \begin{tabular}{@{}p{2.8cm}p{5.6cm}p{7.2cm}@{}}
-      \toprule
-      \textbf{Entidad} & \textbf{Descripci\'on} & \textbf{Atributos principales} \\
-      \midrule
-      Usuario & Persona que utiliza el sistema & id, nombre, correo,
-      contrase\~na, rol, fecha\_registro \\
-      \addlinespace
-      Escenario & Escenario deportivo registrado & id, nombre, tipo,
-      descripci\'on, capacidad, direcci\'on, latitud, longitud, estado \\
-      \addlinespace
-      Deporte & Disciplina deportiva & id, nombre, descripci\'on \\
-      \addlinespace
-      Evento & Evento programado en un escenario & id, escenario\_id, nombre,
-      fecha, hora, descripci\'on \\
-      \addlinespace
-      Imagen & Fotograf\'ia de un escenario & id, escenario\_id, url, orden \\
-      \addlinespace
-      Favorito & Relaci\'on entre usuario y escenario & id, usuario\_id,
-      escenario\_id, fecha \\
-      \addlinespace
-      Valoraci\'on & Opini\'on de un usuario sobre un escenario & id,
-      usuario\_id, escenario\_id, puntuaci\'on, comentario, fecha \\
-      \bottomrule
-    \end{tabular}
-  \end{tablaAPA}
+  \contenidoConFuente{%
+    \begin{tablaAPA}
+      \begin{tabular}{@{}p{2.8cm}p{5.6cm}p{7.2cm}@{}}
+        \toprule
+        \textbf{Entidad} & \textbf{Descripci\'on} & \textbf{Atributos principales} \\
+        \midrule
+        Usuario & Persona que utiliza el sistema & id, nombre, correo,
+        contrase\~na, rol, fecha\_registro \\
+        \addlinespace
+        Escenario & Escenario deportivo registrado & id, nombre, tipo,
+        descripci\'on, capacidad, direcci\'on, latitud, longitud, estado \\
+        \addlinespace
+        Deporte & Disciplina deportiva & id, nombre, descripci\'on \\
+        \addlinespace
+        Evento & Evento programado en un escenario & id, escenario\_id, nombre,
+        fecha, hora, descripci\'on \\
+        \addlinespace
+        Imagen & Fotograf\'ia de un escenario & id, escenario\_id, url, orden \\
+        \addlinespace
+        Favorito & Relaci\'on entre usuario y escenario & id, usuario\_id,
+        escenario\_id, fecha \\
+        \addlinespace
+        Valoraci\'on & Opini\'on de un usuario sobre un escenario & id,
+        usuario\_id, escenario\_id, puntuaci\'on, comentario, fecha \\
+        \bottomrule
+      \end{tabular}
+    \end{tablaAPA}%
+  }{Elaboraci\'on propia en base a la revisi\'on documental.}
 \end{table}
 
 Las relaciones principales entre las entidades son las siguientes: un usuario

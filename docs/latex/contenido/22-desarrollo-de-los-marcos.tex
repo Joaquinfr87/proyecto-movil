@@ -120,7 +120,7 @@ datos, favoreciendo la escalabilidad, la seguridad y el mantenimiento del
 sistema \citep{sommerville2011}.
 
 La arquitectura del sistema propuesto sigue este modelo: la aplicaci\'on
-m\'ovil y el sistema web constituyen los clientes, el backend (Node.js con
+m\'ovil constituye el cliente, el backend (Node.js con
 Express) act\'ua como servidor de la l\'ogica de negocio y el motor de base de
 datos (PostgreSQL con la extensi\'on espacial PostGIS) gestiona la
 persistencia de la informaci\'on de los escenarios deportivos. Esta base
@@ -151,8 +151,8 @@ recordaci\'on, tolerancia a errores y satisfacci\'on subjetiva
 usuario, es decir, considerando las necesidades, capacidades y limitaciones de
 quienes la utilizar\'an \citep{nielsen1994}.
 
-La usabilidad es un elemento central del presente proyecto: la interfaz del
-sistema web y m\'ovil debe ser intuitiva para asistentes, gestores y
+La usabilidad es un elemento central del presente proyecto: la interfaz de
+la aplicaci\'on m\'ovil debe ser intuitiva para asistentes, gestores y
 administradores sin experiencia previa, tal como se establece en el
 requerimiento no funcional de usabilidad del cap\'itulo III y en la variable
 de visualizaci\'on interactiva definida en el cap\'itulo I. Las pruebas de
@@ -245,7 +245,7 @@ funcional de compatibilidad (funcionamiento en iOS y Android) definido en el
 mismo cap\'itulo.
 
 \paragraph{Backend y servicios en la nube.} El backend de una aplicaci\'on
-web o m\'ovil concentra la l\'ogica de negocio y la comunicaci\'on con la base de
+m\'ovil concentra la l\'ogica de negocio y la comunicaci\'on con la base de
 datos. Node.js es un entorno de ejecuci\'on de JavaScript orientado a
 aplicaciones de red con alto rendimiento y escalabilidad \citep{nodejs}. Los
 servicios en la nube ofrecen infraestructura y plataformas gestionadas que
@@ -301,7 +301,8 @@ fuente que los sustenta.
 \begin{table}[H]
   \centering
   \caption{Marco conceptual del proyecto}
-  \begin{tablaAPA}
+  \contenidoConFuente{%
+    \begin{tablaAPA}
     \begin{tabular}{@{}p{4.0cm}p{9.0cm}p{2.8cm}@{}}
       \toprule
       \textbf{Concepto} & \textbf{Definici\'on} & \textbf{Fuente} \\
@@ -380,10 +381,9 @@ fuente que los sustenta.
       \citet{sommerville2011} \\
       \bottomrule
     \end{tabular}
-  \end{tablaAPA}
+    \end{tablaAPA}%
+  }{Elaboraci\'on propia en base a la revisi\'on documental.}
 \end{table}
-
-\textbf{FUENTE:} Elaboraci\'on propia en base a la revisi\'on documental.
 
 Los conceptos presentados se utilizan de manera consistente en el cap\'itulo I
 y en el cap\'itulo III del presente informe, garantizando la coherencia
@@ -434,7 +434,7 @@ informaci\'on sobre la infraestructura deportiva sigui\'o dispersa y
 desactualizada, sin aprovechar estas tecnolog\'ias.
 
 Este recorrido hist\'orico muestra que las condiciones tecnol\'ogicas y
-sociales actuales hacen viable y pertinente la propuesta de un sistema web y
+sociales actuales hacen viable y pertinente la propuesta de una aplicaci\'on
 m\'ovil de visualizaci\'on interactiva de escenarios deportivos, tal como se
 plantea en los objetivos del cap\'itulo I y en la propuesta del cap\'itulo III.
 
@@ -473,8 +473,8 @@ N.\textordmasculine{} 164 regula el uso de las tecnolog\'ias de informaci\'on y
 comunicaci\'on (TIC) en el pa\'is y reconoce su importancia para el desarrollo
 econ\'omico y social \citep{ley164}. La ley promueve el acceso a las TIC y el
 desarrollo de servicios y aplicaciones digitales que beneficien a la
-poblaci\'on. Esta norma sustenta la base legal del desarrollo del sistema web y
-m\'ovil propuesto, as\'i como las decisiones tecnol\'ogicas presentadas en el
+poblaci\'on. Esta norma sustenta la base legal del desarrollo de la aplicaci\'on
+m\'ovil propuesta, as\'i como las decisiones tecnol\'ogicas presentadas en el
 cap\'itulo III.
 
 En conjunto, el marco referencial proporciona el sustento normativo del

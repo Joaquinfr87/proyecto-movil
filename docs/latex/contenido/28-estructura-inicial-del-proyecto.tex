@@ -1,5 +1,5 @@
 % ============================================================================
-%  SECCIÓN 3.13: ESTRUCTURA INICIAL DEL PROYECTO
+%  SECCIÓN 3.14: ESTRUCTURA INICIAL DEL PROYECTO
 % ============================================================================
 
 \section{Estructura del proyecto}
@@ -98,69 +98,69 @@ se describen los directorios principales de la estructura del proyecto.
 \begin{table}[H]
   \centering
   \caption{Directorios principales de la estructura del proyecto}
-  \begin{tablaAPA}
-    \begin{tabular}{@{}p{3.2cm}p{12.6cm}@{}}
-      \toprule
-      \textbf{Directorio} & \textbf{Funci\'on} \\
-      \midrule
-      \texttt{assets/} &
-      Recursos est\'aticos de la aplicaci\'on: iconos, im\'agenes y logotipos. \\
-      \addlinespace
-      \texttt{src/app/navigation/} &
-      Configuraci\'on de la navegaci\'on de la aplicaci\'on: pilas y pesta\~nas,
-      definiendo las rutas entre las pantallas. \\
-      \addlinespace
-      \texttt{src/app/screens/} &
-      Pantallas de la aplicaci\'on, agrupadas por m\'odulo funcional: autenticaci\'on,
-      inicio, mapa, cat\'alogo y detalle. \\
-      \addlinespace
-      \texttt{src/app/context/} &
-      Contextos globales de React para el estado compartido: autenticaci\'on,
-      favoritos y tema. \\
-      \addlinespace
-      \texttt{src/app/components/} &
-      Componentes reutilizables de interfaz, separados en elementos comunes y de
-      dise\~no (botones, campos, encabezados). \\
-      \addlinespace
-      \texttt{src/app/services/} &
-      Servicios de comunicaci\'on con el backend: cliente de API, autenticaci\'on,
-      almacenamiento local y servicios de ubicaci\'on. \\
-      \addlinespace
-      \texttt{src/app/hooks/} &
-      Hooks personalizados de React que encapsulan la l\'ogica reutilizable de
-      datos y ubicaci\'on. \\
-      \addlinespace
-      \texttt{src/app/types/} &
-      Definici\'on de los tipos y modelos de datos de la aplicaci\'on
-      (escenarios, usuarios, navegaci\'on). \\
-      \addlinespace
-      \texttt{src/app/theme/} &
-      Tema visual de la aplicaci\'on: colores, espacios y estilos comunes. \\
-      \addlinespace
-      \texttt{App.tsx} &
-      Componente ra\'iz de la aplicaci\'on que integra los proveedores de contexto
-      y la navegaci\'on. \\
-      \addlinespace
-      \texttt{index.ts} &
-      Punto de entrada de la aplicaci\'on que registra el componente ra\'iz en
-      React Native. \\
-      \addlinespace
-      \texttt{app.json} &
-      Archivo de configuraci\'on de Expo: nombre, identificador, orientaci\'on,
-      iconos y ajustes de la plataforma \citep{expo}. \\
-      \addlinespace
-      \texttt{package.json} &
-      Declara las dependencias del proyecto y los scripts de ejecuci\'on. \\
-      \addlinespace
-      \texttt{.env.example} &
-      Plantilla de las variables de entorno necesarias para la configuraci\'on
-      de los servicios externos. \\
-      \bottomrule
-    \end{tabular}
-  \end{tablaAPA}
+  \contenidoConFuente{%
+    \begin{tablaAPA}
+      \begin{tabular}{@{}p{3.2cm}p{12.6cm}@{}}
+        \toprule
+        \textbf{Directorio} & \textbf{Funci\'on} \\
+        \midrule
+        \texttt{assets/} &
+        Recursos est\'aticos de la aplicaci\'on: iconos, im\'agenes y logotipos. \\
+        \addlinespace
+        \texttt{src/app/navigation/} &
+        Configuraci\'on de la navegaci\'on de la aplicaci\'on: pilas y pesta\~nas,
+        definiendo las rutas entre las pantallas. \\
+        \addlinespace
+        \texttt{src/app/screens/} &
+        Pantallas de la aplicaci\'on, agrupadas por m\'odulo funcional: autenticaci\'on,
+        inicio, mapa, cat\'alogo y detalle. \\
+        \addlinespace
+        \texttt{src/app/context/} &
+        Contextos globales de React para el estado compartido: autenticaci\'on,
+        favoritos y tema. \\
+        \addlinespace
+        \texttt{src/app/components/} &
+        Componentes reutilizables de interfaz, separados en elementos comunes y de
+        dise\~no (botones, campos, encabezados). \\
+        \addlinespace
+        \texttt{src/app/services/} &
+        Servicios de comunicaci\'on con el backend: cliente de API, autenticaci\'on,
+        almacenamiento local y servicios de ubicaci\'on. \\
+        \addlinespace
+        \texttt{src/app/hooks/} &
+        Hooks personalizados de React que encapsulan la l\'ogica reutilizable de
+        datos y ubicaci\'on. \\
+        \addlinespace
+        \texttt{src/app/types/} &
+        Definici\'on de los tipos y modelos de datos de la aplicaci\'on
+        (escenarios, usuarios, navegaci\'on). \\
+        \addlinespace
+        \texttt{src/app/theme/} &
+        Tema visual de la aplicaci\'on: colores, espacios y estilos comunes. \\
+        \addlinespace
+        \texttt{App.tsx} &
+        Componente ra\'iz de la aplicaci\'on que integra los proveedores de contexto
+        y la navegaci\'on. \\
+        \addlinespace
+        \texttt{index.ts} &
+        Punto de entrada de la aplicaci\'on que registra el componente ra\'iz en
+        React Native. \\
+        \addlinespace
+        \texttt{app.json} &
+        Archivo de configuraci\'on de Expo: nombre, identificador, orientaci\'on,
+        iconos y ajustes de la plataforma \citep{expo}. \\
+        \addlinespace
+        \texttt{package.json} &
+        Declara las dependencias del proyecto y los scripts de ejecuci\'on. \\
+        \addlinespace
+        \texttt{.env.example} &
+        Plantilla de las variables de entorno necesarias para la configuraci\'on
+        de los servicios externos. \\
+        \bottomrule
+      \end{tabular}
+    \end{tablaAPA}%
+  }{Elaboraci\'on propia en base al repositorio del proyecto.}
 \end{table}
-
-\textbf{FUENTE:} Elaboraci\'on propia en base al repositorio del proyecto.
 
 La organizaci\'on modular por capas permite que cada m\'odulo del sistema (mapa
 interactivo, cat\'alogo, autenticaci\'on, favoritos) se desarrolle, pruebe y

@@ -72,13 +72,39 @@
 \RequirePackage{float}           % posicionamiento de flotantes
 \setlength{\tabcolsep}{4pt}      % evita desbordes por el ancho de las columnas
 \RequirePackage{caption}
-\captionsetup{font=small, labelfont=bf, textfont=it, singlelinecheck=false, skip=6pt}
-\captionsetup[table]{labelsep=newline, position=above}
-\captionsetup[figure]{labelsep=period, position=below}
+% babel (español) reasigna \figurename/\tablename al iniciar el documento;
+% por eso la renombración a MAYÚSCULAS debe hacerse después (AtBeginDocument).
+\AtBeginDocument{%
+  \renewcommand{\figurename}{FIGURA}%
+  \renewcommand{\tablename}{TABLA}%
+}
+\captionsetup{font=small, labelfont=bf, textfont=it, singlelinecheck=true, skip=6pt}
+\captionsetup[table]{labelsep=colon, position=above, justification=centering}
+\captionsetup[figure]{labelsep=colon, position=above, justification=centering}
 
 % Entorno para tablas APA: espaciado sencillo y cuerpo en tamaño pequeño.
 % El desborde de líneas se evita con \tabcolsep y el ancho de las columnas.
 \newenvironment{tablaAPA}{\setstretch{1}\small}{}
+
+% --- Fuente de figuras y tablas ----------------------------------------------
+% \contenidoConFuente{<contenido>}{<texto de la fuente>} mide el ancho real del
+% contenido (imagen, diagrama TikZ o tabla) y lo coloca en un \parbox centrado,
+% con la línea FUENTE debajo, alineada a la izquierda del contenido (a la par,
+% no a ras del margen).
+\newsavebox{\cajaContenido}
+\newcommand{\contenidoConFuente}[2]{%
+  \begin{lrbox}{\cajaContenido}#1\end{lrbox}%
+  \parbox{\wd\cajaContenido}{%
+    \usebox{\cajaContenido}\par
+    \vspace{6pt}%
+    {\setstretch{1}\footnotesize\textbf{FUENTE:} #2}%
+  }%
+}
+% \fuenteAPA{<texto>} para contenido a ancho completo (p. ej. terminal).
+\newcommand{\fuenteAPA}[1]{%
+  \vspace{4pt}%
+  {\setstretch{1}\footnotesize\textbf{FUENTE:} #1}%
+}
 
 % --- Gráficos y diagramas ----------------------------------------------------
 \RequirePackage{graphicx}

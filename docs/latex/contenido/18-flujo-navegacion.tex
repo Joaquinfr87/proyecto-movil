@@ -1,5 +1,5 @@
 % ============================================================================
-%  SECCIÓN 2.5: FLUJO INICIAL DE NAVEGACIÓN
+%  SECCIÓN 3.6: FLUJO INICIAL DE NAVEGACIÓN
 % ============================================================================
 
 \section{Flujo inicial de navegaci\'on}
@@ -22,6 +22,8 @@ de forma r\'apida en visitas posteriores.
 
 \begin{figure}[H]
   \centering
+  \caption{Flujo de navegaci\'on propuesto para la aplicaci\'on m\'ovil}
+  \contenidoConFuente{%
   \begin{tikzpicture}[
       nodo/.style={rectangle, draw=black!70, rounded corners=2pt, minimum width=3.4cm,
                    minimum height=0.95cm, align=center, fill=gray!10, font=\small},
@@ -43,6 +45,6 @@ de forma r\'apida en visitas posteriores.
     \draw[flecha] (principal) -- (favoritos);
     \draw[flecha] (detalle) -- (favoritos);
     \draw[flecha] (favoritos) -- (detalle);
-  \end{tikzpicture}
-  \caption{Flujo de navegaci\'on propuesto para el sistema web y m\'ovil}
+  \end{tikzpicture}%
+  }{Elaboraci\'on propia.}
 \end{figure}

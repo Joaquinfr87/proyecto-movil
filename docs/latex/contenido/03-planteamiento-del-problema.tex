@@ -45,34 +45,33 @@ casos de estudio analizados:
   \centering
   \caption{Valoraci\'on de soluciones existentes}
   \label{tab:estudio-soluciones}
-  \begin{tablaAPA}
-    \begin{tabular}{@{}p{4.2cm}p{3.0cm}p{4.2cm}p{3.6cm}@{}}
-      \toprule
-      \textbf{Casos de estudio} & \textbf{Problema} &
-      \textbf{Soluci\'on aplicada} & \textbf{Valoraci\'on} \\
-      \midrule
-      Aplicaciones internacionales de mapas deportivos &
-      Informaci\'on deportiva dispersa &
-      Sistema web y m\'ovil con mapa de instalaciones y reservas &
-      Soluci\'on fiable y escalable; potencial referencia para el medio
-      nacional \\
-      \addlinespace
-      Directorios municipales de espacios de recreaci\'on &
-      Falta de visibilidad de los recintos &
-      Plataforma centralizada con fichas de recintos y programaci\'on &
-      Soluci\'on efectiva; validada por el p\'ublico y los gestores \\
-      \addlinespace
-      Redes sociales de escenarios locales, Bolivia &
-      Difusi\'on fragmentada por recinto &
-      Publicaci\'on individual en redes sociales &
-      Soluci\'on parcial: no integra la oferta a nivel nacional \\
-      \bottomrule
-    \end{tabular}
-  \end{tablaAPA}
+  \contenidoConFuente{%
+    \begin{tablaAPA}
+      \begin{tabular}{@{}p{4.2cm}p{3.0cm}p{4.2cm}p{3.6cm}@{}}
+        \toprule
+        \textbf{Casos de estudio} & \textbf{Problema} &
+        \textbf{Soluci\'on aplicada} & \textbf{Valoraci\'on} \\
+        \midrule
+        Aplicaciones internacionales de mapas deportivos &
+        Informaci\'on deportiva dispersa &
+        Sistema m\'ovil con mapa de instalaciones y reservas &
+        Soluci\'on fiable y escalable; potencial referencia para el medio
+        nacional \\
+        \addlinespace
+        Directorios municipales de espacios de recreaci\'on &
+        Falta de visibilidad de los recintos &
+        Plataforma centralizada con fichas de recintos y programaci\'on &
+        Soluci\'on efectiva; validada por el p\'ublico y los gestores \\
+        \addlinespace
+        Redes sociales de escenarios locales, Bolivia &
+        Difusi\'on fragmentada por recinto &
+        Publicaci\'on individual en redes sociales &
+        Soluci\'on parcial: no integra la oferta a nivel nacional \\
+        \bottomrule
+      \end{tabular}
+    \end{tablaAPA}%
+  }{Elaboraci\'on propia en base a la revisi\'on documental de plataformas deportivas.}
 \end{table}
-
-\textbf{FUENTE:} Elaboraci\'on propia en base a la revisi\'on documental de
-plataformas deportivas.
 
 \subsection{\'Arbol de causas y efectos}
 
@@ -84,6 +83,9 @@ causas que lo originan \citep{arias2012}.
 
 \begin{figure}[H]
   \centering
+  \caption{\'Arbol de causas y efectos expandido del problema identificado}
+  \label{fig:arbol-causas-efectos}
+  \contenidoConFuente{%
   \begin{tikzpicture}[
       node distance=1.2cm and 0.3cm,
       base/.style={
@@ -154,9 +156,8 @@ causas que lo originan \citep{arias2012}.
     \draw[flecha] (e2.north) -- (ei2.south);
     \draw[flecha] (e3.north) -- (ei3.south);
 
-  \end{tikzpicture}
-  \caption{\'Arbol de causas y efectos expandido del problema identificado}
-  \label{fig:arbol-causas-efectos}
+  \end{tikzpicture}%
+  }{Elaboraci\'on propia en base a la revisi\'on documental.}
 \end{figure}
 
 Las causas detectadas se han depurado agrupando aquellas que se encuentran

@@ -1,10 +1,10 @@
 % ============================================================================
-%  SECCIÓN 2.7: TECNOLOGÍAS PRELIMINARES
+%  SECCIÓN 3.8: TECNOLOGÍAS PRELIMINARES
 % ============================================================================
 
 \section{Tecnolog\'ias preliminares}
 
-Para el desarrollo del sistema web y m\'ovil se propone un conjunto de
+Para el desarrollo de la aplicaci\'on m\'ovil se propone un conjunto de
 tecnolog\'ias de c\'odigo abierto y de amplia adopci\'on, que permiten construir
 una soluci\'on multiplataforma con un \'unico c\'odigo base y reducir los costos y
 tiempos de desarrollo \citep{pressman2010}. En la tabla se presentan las
@@ -15,44 +15,44 @@ proyecto.
 \begin{table}[H]
   \centering
   \caption{Tecnolog\'ias preliminares del proyecto}
-  \begin{tablaAPA}
-    \begin{tabular}{@{}p{2.8cm}p{4.6cm}p{8.2cm}@{}}
-      \toprule
-      \textbf{Capa} & \textbf{Tecnolog\'ia} & \textbf{Justificaci\'on} \\
-      \midrule
-      Frontend web & React (Next.js) &
-      Ecosistema maduro, componentes reutilizables y rendimiento eficiente
-      para construir interfaces interactivas. \\
-      \addlinespace
-      Frontend m\'ovil & React Native + Expo &
-      Desarrollo multiplataforma (iOS y Android) con un \'unico c\'odigo base;
-      Expo simplifica la compilaci\'on y la publicaci\'on \citep{reactnative,
-      expo}. \\
-      \addlinespace
-      Mapas y georreferenciaci\'on & Leaflet &
-      Librer\'ia de c\'odigo abierto para mapas interactivos, ligera y
-      compatible con web y m\'ovil \citep{leaflet, longley2015}. \\
-      \addlinespace
-      Backend & Node.js + Express &
-      Mismo lenguaje que el frontend, alto rendimiento y amplia comunidad de
-      desarrollo \citep{nodejs}. \\
-      \addlinespace
-      Base de datos & PostgreSQL + PostGIS &
-      Base de datos relacional confiable con extensi\'on espacial para
-      consultas geogr\'aficas sobre la ubicaci\'on de los escenarios
-      \citep{postgresql}. \\
-      \addlinespace
-      Backend como servicio & Supabase &
-      Autenticaci\'on, base de datos y almacenamiento integrados, con plan
-      gratuito adecuado para el proyecto \citep{supabase}. \\
-      \addlinespace
-      Control de versiones & Git + GitHub &
-      Colaboraci\'on del equipo y trazabilidad de los cambios en el c\'odigo. \\
-      \addlinespace
-      Dise\~no de interfaz & Figma &
-      Herramienta colaborativa para el prototipado y el dise\~no de los
-      wireframes e interfaces. \\
-      \bottomrule
-    \end{tabular}
-  \end{tablaAPA}
+  \contenidoConFuente{%
+    \begin{tablaAPA}
+      \begin{tabular}{@{}p{2.8cm}p{4.6cm}p{8.2cm}@{}}
+        \toprule
+        \textbf{Capa} & \textbf{Tecnolog\'ia} & \textbf{Justificaci\'on} \\
+        \midrule
+        Frontend m\'ovil & React Native + Expo &
+        Desarrollo multiplataforma (iOS y Android) con un \'unico c\'odigo base;
+        Expo simplifica la compilaci\'on y la publicaci\'on \citep{reactnative,
+        expo}. \\
+        \addlinespace
+        Mapas y georreferenciaci\'on & Leaflet &
+        Librer\'ia de c\'odigo abierto para mapas interactivos, ligera y
+        compatible con dispositivos m\'oviles \citep{leaflet, longley2015}. \\
+        \addlinespace
+        Backend & Node.js + Express &
+        Mismo lenguaje que el frontend m\'ovil, alto rendimiento y amplia
+        comunidad de desarrollo \citep{nodejs}. \\
+        \addlinespace
+        Base de datos & PostgreSQL + PostGIS &
+        Base de datos relacional confiable con extensi\'on espacial para
+        consultas geogr\'aficas sobre la ubicaci\'on de los escenarios
+        \citep{postgresql}. \\
+        \addlinespace
+        Backend como servicio & Supabase &
+        Autenticaci\'on, base de datos y almacenamiento integrados, con plan
+        gratuito adecuado para el proyecto \citep{supabase}. \\
+        \addlinespace
+        Control de versiones & Git + GitHub &
+        Colaboraci\'on del equipo y trazabilidad de los cambios en el c\'odigo. \\
+        \bottomrule
+      \end{tabular}
+    \end{tablaAPA}%
+  }{Elaboraci\'on propia en base a la revisi\'on documental.}
 \end{table}
+
+En cuanto al dise\~no de la interfaz, los wireframes de baja fidelidad se
+realizaron directamente como diagramas esquem\'aticos (secci\'on de wireframes
+iniciales) y la interfaz de la aplicaci\'on se construye y valida directamente
+sobre el c\'odigo con React Native, verificando el resultado mediante capturas
+de la aplicaci\'on ejecutada en el dispositivo f\'isico.

@@ -1,5 +1,5 @@
 % ============================================================================
-%  SECCIÓN 3.9: CONFIGURACIÓN DEL ENTORNO DE DESARROLLO
+%  SECCIÓN 3.10: CONFIGURACIÓN DEL ENTORNO DE DESARROLLO
 % ============================================================================
 
 \section{Configuraci\'on del entorno de desarrollo}
@@ -25,35 +25,35 @@ configurado en el equipo de trabajo.
 \begin{table}[H]
   \centering
   \caption{Elementos del entorno de desarrollo}
-  \begin{tablaAPA}
-    \begin{tabular}{@{}p{4.2cm}p{4.6cm}p{7.0cm}@{}}
-      \toprule
-      \textbf{Componente} & \textbf{Herramienta} & \textbf{Prop\'osito} \\
-      \midrule
-      Sistema operativo & Linux & Plataforma base del entorno de desarrollo \\
-      \addlinespace
-      IDE & Android Studio & Edici\'on, gesti\'on y depuraci\'on del proyecto \\
-      \addlinespace
-      Gestor de paquetes & pnpm & Instalaci\'on y gesti\'on de las
-      dependencias del proyecto \\
-      \addlinespace
-      Runtime de ejecuci\'on & Node.js & Ejecuci\'on de Expo CLI y del
-      c\'odigo JavaScript \\
-      \addlinespace
-      Marco de desarrollo & Expo (React Native) & Creaci\'on y ejecuci\'on de la
-      aplicaci\'on multiplataforma \citep{expo} \\
-      \addlinespace
-      Control de versiones & Git & Registro y trazabilidad de los cambios del
-      c\'odigo \citep{gitdocs} \\
-      \addlinespace
-      Dispositivo de pruebas & Tel\'efono f\'isico (Android) & Ejecuci\'on de la
-      aplicaci\'on en un dispositivo real \\
-      \bottomrule
-    \end{tabular}
-  \end{tablaAPA}
+  \contenidoConFuente{%
+    \begin{tablaAPA}
+      \begin{tabular}{@{}p{4.2cm}p{4.6cm}p{7.0cm}@{}}
+        \toprule
+        \textbf{Componente} & \textbf{Herramienta} & \textbf{Prop\'osito} \\
+        \midrule
+        Sistema operativo & Linux & Plataforma base del entorno de desarrollo \\
+        \addlinespace
+        IDE & Android Studio & Edici\'on, gesti\'on y depuraci\'on del proyecto \\
+        \addlinespace
+        Gestor de paquetes & pnpm & Instalaci\'on y gesti\'on de las
+        dependencias del proyecto \\
+        \addlinespace
+        Runtime de ejecuci\'on & Node.js & Ejecuci\'on de Expo CLI y del
+        c\'odigo JavaScript \\
+        \addlinespace
+        Marco de desarrollo & Expo (React Native) & Creaci\'on y ejecuci\'on de la
+        aplicaci\'on multiplataforma \citep{expo} \\
+        \addlinespace
+        Control de versiones & Git & Registro y trazabilidad de los cambios del
+        c\'odigo \citep{gitdocs} \\
+        \addlinespace
+        Dispositivo de pruebas & Tel\'efono f\'isico (Android) & Ejecuci\'on de la
+        aplicaci\'on en un dispositivo real \\
+        \bottomrule
+      \end{tabular}
+    \end{tablaAPA}%
+  }{Elaboraci\'on propia en base a la revisi\'on documental.}
 \end{table}
-
-\textbf{FUENTE:} Elaboraci\'on propia en base a la revisi\'on documental.
 
 Dado que todas las herramientas ya se encuentran instaladas y configuradas en
 el equipo de desarrollo, se verific\'o el correcto funcionamiento del entorno
@@ -62,6 +62,9 @@ presenta la evidencia de la verificaci\'on del entorno de desarrollo.
 
 \begin{figure}[H]
   \centering
+  \caption{Verificaci\'on del entorno de desarrollo en la terminal}
+  \label{fig:entorno-desarrollo}
+  \vspace{6pt}
   \begin{lstlisting}[style=terminal]
 $ node --version
 v24.16.0
@@ -73,8 +76,7 @@ $ adb devices
 List of devices attached
 R58M75TGGVA    device
   \end{lstlisting}
-  \caption{Verificaci\'on del entorno de desarrollo en la terminal}
-  \label{fig:entorno-desarrollo}
+  \par\raggedright\fuenteAPA{Elaboraci\'on propia en base a la revisi\'on documental.}
 \end{figure}
 
 La salida del comando \texttt{adb devices} confirma que el tel\'efono f\'isico
