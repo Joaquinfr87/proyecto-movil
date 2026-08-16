@@ -14,12 +14,41 @@ El proyecto se encuentra alojado en un repositorio p\'ublico de GitHub, en la
 direcci\'on:
 
 \begin{center}
-  \url{https://github.com/Joaquinfr87/proyecto-movil/tree/docs}
+  \url{https://github.com/Joaquinfr87/proyecto-movil}
 \end{center}
 
-La configuraci\'on del repositorio se realiz\'o inicializando el control de
+\subsection{Estrategia y estructura de ramas}
+
+Para mantener un flujo de trabajo ordenado y desacoplar el c\'odigo de la
+aplicaci\'on respecto a los documentos acad\'emicos, el repositorio est\'a
+organizado en tres ramas principales:
+
+\begin{table}[H]
+  \centering
+  \caption{Estructura de ramas del repositorio en GitHub}
+  \label{tab:ramas-repositorio}
+  \contenidoConFuente{%
+    \begin{tablaAPA}
+      \begin{tabular}{@{}p{3.2cm}p{12.4cm}@{}}
+        \toprule
+        \textbf{Rama} & \textbf{Prop\'osito y descripci\'on} \\
+        \midrule
+        \texttt{main} & Rama principal y estable del proyecto, reservada para versiones consolidadas y liberaciones. \\
+        \addlinespace
+        \texttt{docs} & Documentaci\'on formal del proyecto, incluyendo el informe acad\'emico en \LaTeX{} y los recursos documentales asociados. \\
+        \addlinespace
+        \texttt{develop} & C\'odigo fuente de la aplicaci\'on m\'ovil (sin documentaci\'on). Act\'ua como rama de integraci\'on continua donde se fusionan (\emph{merge}) las distintas ramas de caracter\'isticas y trabajo del equipo. \\
+        \bottomrule
+      \end{tabular}
+    \end{tablaAPA}%
+  }{Elaboraci\'on propia en base a la estrategia de versionado del equipo.}
+\end{table}
+
+\subsection{Configuraci\'on inicial del repositorio}
+
+La configuraci\'on del repositorio local se realiz\'o inicializando el control de
 versiones en el directorio del proyecto, agregando los archivos al \'area de
-preparaci\'on y registrando el primer commit con los siguientes comandos:
+preparaci\'on y registrando el commit inicial con los siguientes comandos:
 
 \begin{lstlisting}
 git init
@@ -28,18 +57,17 @@ git commit -m "Primer commit: proyecto base"
 \end{lstlisting}
 
 Posteriormente se vincul\'o el repositorio local con el repositorio remoto de
-GitHub y se subieron los cambios mediante los comandos:
+GitHub y se sincronizaron los cambios con el origen remoto mediante los comandos:
 
 \begin{lstlisting}
 git remote add origin https://github.com/Joaquinfr87/proyecto-movil.git
-git branch -M docs
-git push -u origin docs
+git push -u origin main
 \end{lstlisting}
 
 El repositorio incluye adem\'as el archivo \texttt{.gitignore} generado por
 Expo, que excluye del control de versiones los directorios \texttt{node\_modules}
-y otros artefactos temporales. En la figura se presenta la evidencia de la
-configuraci\'on del repositorio en la terminal.
+y otros artefactos temporales de compilaci\'on. En la figura se presenta la
+evidencia de la configuraci\'on del repositorio en la terminal.
 
 \begin{figure}[H]
   \centering
@@ -58,18 +86,18 @@ $ git commit -m "Primer commit: proyecto base"
  create mode 100644 package.json
  create mode 100644 pnpm-lock.yaml
  create mode 100644 tsconfig.json
-$ git branch -M docs
 $ git remote add origin https://github.com/Joaquinfr87/proyecto-movil.git
-$ git push -u origin docs
+$ git push -u origin main
 Enumerating objects: 20, done.
 Writing objects: 100% (20/20), 1.30 MiB | 4.20 MiB/s
 To https://github.com/Joaquinfr87/proyecto-movil.git
- * [new branch]      docs -> docs
+ * [new branch]      main -> main
   \end{lstlisting}
   \par\raggedright\fuenteAPA{Elaboraci\'on propia en base a la ejecuci\'on del proyecto.}
 \end{figure}
 
-En la figura se presenta el repositorio del proyecto alojado en GitHub.
+En la figura se presenta la visualizaci\'on del repositorio del proyecto alojado
+en GitHub.
 
 \begin{figure}[H]
   \centering
