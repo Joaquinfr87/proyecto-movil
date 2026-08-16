@@ -154,6 +154,11 @@
 \setlength{\cftsecnumwidth}{2.8em}
 \setlength{\cftsubsecnumwidth}{3.8em}
 \setlength{\cftsubsubsecnumwidth}{4.6em}
+% Capítulos en el índice: entrada de nivel "part" en negrita, dos líneas,
+% con separación entre capítulos y número de página a la derecha sin puntos.
+\renewcommand{\cftpartfont}{\bfseries}
+\renewcommand{\cftpartpagefont}{\bfseries}
+\setlength{\cftbeforepartskip}{1.5em}
 
 % --- Hipervínculos -----------------------------------------------------------
 \RequirePackage[colorlinks=true, linkcolor=black, urlcolor=blue, citecolor=black]{hyperref}
@@ -199,6 +204,10 @@
   \clearpage
   \refstepcounter{capitulo}%
   \setcounter{section}{0}%
+  \pdfbookmark[0]{#1:\ #2}{capitulo.\arabic{capitulo}}%
+  \addtocontents{toc}{%
+    \protect\contentsline{part}{#1\protect\\#2}{\thepage}{\@currentHref}%
+  }%
   \encabezadoCapitulo{#2}{}%
   \fancypagestyle{primeraCap}{%
     \fancyhf{}%
