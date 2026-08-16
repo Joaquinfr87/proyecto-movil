@@ -188,6 +188,13 @@
 % de capítulo únicamente en la primera hoja posterior a la carátula.
 \newcounter{capitulo}
 \renewcommand{\thesection}{\arabic{capitulo}.\arabic{section}}
+% Los anclajes (destinos) de hyperref para los marcadores del PDF deben incluir
+% el capítulo igual que los títulos impresos; si no, los capítulos II y III
+% reutilizan los mismos identificadores del capítulo I y el esquema del PDF
+% se corta (avisos "destination ... duplicate ignored").
+\renewcommand{\theHsection}{\arabic{capitulo}.\arabic{section}}
+\renewcommand{\theHsubsection}{\theHsection.\arabic{subsection}}
+\renewcommand{\theHsubsubsection}{\theHsubsection.\arabic{subsubsection}}
 \newcommand{\caratulaCapitulo}[2]{%
   \clearpage
   \refstepcounter{capitulo}%
