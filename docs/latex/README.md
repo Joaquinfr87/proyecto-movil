@@ -1,6 +1,6 @@
 # Informe LaTeX (normas APA · tipografía Arial)
 
-Informe del proyecto: *Desarrollo de un Sistema Web y M\'ovil para la
+Informe del proyecto: *Desarrollo de un Sistema M\'ovil para la
 Visualizaci\'on Interactiva de Escenarios Deportivos a Nivel Nacional*.
 
 ```
@@ -12,10 +12,12 @@ docs/latex/
 │   ├── portada.tex           # Portada estilo APA (los datos se definen en main.tex).
 │   └── referencias.bib       # Fuentes bibliográficas en BibTeX (todas citadas en el texto).
 ├── contenido/                # CONTENIDO: un archivo por sección.
-│   │                         # Capítulo I (1.1–1.13) y Capítulo II (2.1–2.7).
+│   │                         # Capítulo I (1.1–1.13), Capítulo II (2.1–2.2) y
+│   │                         # Capítulo III (3.1–3.16).
 │   ├── 00-resumen.tex        # Resumen y palabras clave.
 │   ├── 01-antecedentes.tex   ... 13-poblacion-y-muestra.tex   (Capítulo I)
-│   └── 14-identificacion-usuarios.tex ... 20-tecnologias.tex  (Capítulo II)
+│   └── 31-propuesta-de-la-solucion.tex,
+│       14-identificacion-usuarios.tex ... 30-readme-del-proyecto.tex (Capítulo III)
 ├── anexos/                   # Material complementario (tras las referencias).
 │   ├── anexo-a-cronograma.tex ... anexo-d-presupuesto.tex
 │   └── anexo-e-encuesta.tex / anexo-f-entrevista.tex
@@ -30,10 +32,15 @@ docs/latex/
   definición de variables, delimitación, justificación, tipología de proyectos,
   tipo y estudio de la investigación, métodos, técnicas e instrumentos, y
   población y muestra.
-- **CAPÍTULO II: PROPUESTA DEL SISTEMA** (carátula propia) — requisitos del
-  avance: identificación de usuarios, funcionalidades preliminares, definición
-  del MVP, requerimientos preliminares (RF y RNF), flujo inicial de navegación,
-  wireframes iniciales y tecnologías preliminares.
+- **CAPÍTULO II: MARCOS DEL PROYECTO** (carátula propia) — estructura y
+  desarrollo de los marcos del proyecto: marco teórico (con bases teóricas y
+  sistema de variables), marco conceptual, marco histórico y marco referencial.
+- **CAPÍTULO III: PROPUESTA DEL SISTEMA** (carátula propia) — requisitos del
+  avance: propuesta de la solución (datos del equipo, nombre provisional,
+  descripción de la solución y mapa de funcionalidades), identificación de
+  usuarios, funcionalidades preliminares, definición del MVP, requerimientos
+  preliminares (RF y RNF), flujo inicial de navegación, wireframes iniciales,
+  tecnologías preliminares y desarrollo de la aplicación.
 - Cada capítulo comienza con una carátula que ocupa una hoja completa; el
   contenido inicia en la página siguiente.
 
@@ -81,8 +88,9 @@ Si usas TeX Live estándar (Debian/Ubuntu), instala:
 
 ## Datos pendientes de editar (marcadores `[ ]`)
 En `main.tex`: autor, equipo, integrantes, universidad, facultad, carrera,
-asignatura y docente. Los montos del presupuesto (anexo D) también son
-referenciales.
+asignatura y docente. En `contenido/31-propuesta-de-la-solucion.tex`: apartado
+de datos del equipo (integrantes, roles y responsable). Los montos del
+presupuesto (anexo D) también son referenciales.
 
 ## Guías de referencia
 - `guias/Guía Proyecto de Grado (Actualizado).md` — guía general de la universidad.
@@ -108,7 +116,13 @@ asignatura, docente, equipo, ciudad y año.
 - [x] Técnicas e instrumentos de investigación
 - [x] Población y muestra
 
-**Capítulo II: Propuesta del sistema**
+**Capítulo II: Marcos del proyecto**
+- [x] Estructura de los marcos
+- [x] Desarrollo de los marcos (teórico, conceptual, histórico y referencial)
+
+**Capítulo III: Propuesta del sistema**
+- [ ] Propuesta de la solución (datos del equipo por completar)
+- [x] Mapa de funcionalidades
 - [x] Identificación de usuarios
 - [x] Funcionalidades preliminares
 - [x] Definición del MVP

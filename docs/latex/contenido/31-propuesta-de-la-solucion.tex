@@ -1,0 +1,123 @@
+% ============================================================================
+%  SECCIÓN 3.1: PROPUESTA DE LA SOLUCIÓN
+% ============================================================================
+
+\section{Propuesta de la soluci\'on}
+
+De acuerdo con la gu\'ia del avance, en esta secci\'on se define la propuesta de
+soluci\'on del proyecto: la identificaci\'on de los datos generales del equipo,
+el nombre provisional y el tipo de aplicaci\'on, la descripci\'on de la soluci\'on
+y el mapa de funcionalidades que permite visualizar de manera general los
+m\'odulos que integrar\'an la aplicaci\'on m\'ovil.
+
+\subsection{Datos del equipo}
+
+% [Este apartado será completado por el equipo de desarrolladores: integrantes,
+%  roles de cada uno y responsable o representante del equipo.]
+
+\emph{[Apartado por completar por el equipo de desarrolladores: integrantes,
+roles de cada uno y responsable o representante del equipo.]}
+
+\subsection{Nombre provisional y tipo de aplicaci\'on}
+
+La aplicaci\'on se denominar\'a provisionalmente \nombreApp{}, nombre con el que
+se identifica el producto durante el desarrollo y que podr\'a ajustarse en
+avances posteriores. En cuanto al tipo de soluci\'on, se propone el desarrollo
+de una aplicaci\'on m\'ovil multiplataforma orientada a la
+visualizaci\'on interactiva de escenarios deportivos a nivel nacional. La
+aplicaci\'on m\'ovil podr\'a ejecutarse en los sistemas operativos iOS y Android
+a partir de un \'unico c\'odigo base desarrollado con React Native y Expo, lo
+que reduce los costos y los tiempos de desarrollo \citep{pressman2010}.
+
+\subsection{Descripci\'on de la soluci\'on}
+
+Se propone desarrollar una aplicaci\'on m\'ovil que permita a
+la ciudadan\'ia consultar, localizar y acceder de forma centralizada a la
+informaci\'on sobre los escenarios deportivos del pa\'is, incluyendo su
+ubicaci\'on georreferenciada, sus caracter\'isticas, sus disciplinas, sus
+horarios y sus eventos. La descripci\'on de la soluci\'on se organiza a
+continuaci\'on respondiendo a las preguntas fundamentales de la propuesta:
+
+\begin{enumerate}
+  \item \textbf{\textquestiondown Qu\'e har\'a la aplicaci\'on?} La aplicaci\'on
+    permitir\'a consultar un cat\'alogo de escenarios deportivos, visualizarlos
+    en un mapa interactivo, revisar el detalle de cada recinto (disciplinas,
+    horarios, servicios y eventos) y gestionar escenarios favoritos. Adem\'as,
+    permitir\'a a los gestores publicar y actualizar la informaci\'on de sus
+    escenarios y al administrador gestionar los usuarios y el cat\'alogo.
+
+  \item \textbf{\textquestiondown Qu\'e problema ayudar\'a a resolver?}
+    Contribuir\'a a resolver la dispersi\'on, la desactualizaci\'on y la falta
+    de informaci\'on geoespacial sobre la infraestructura deportiva del pa\'is,
+    que actualmente impide a la poblaci\'on conocer, localizar y acceder a la
+    oferta deportiva nacional.
+
+  \item \textbf{\textquestiondown Qui\'enes la utilizar\'an?} Ser\'a utilizada
+    por los asistentes o aficionados deportivos, que consultan la oferta de
+    escenarios; por los gestores de escenarios, que publican y actualizan la
+    informaci\'on de sus recintos; y por los administradores del sistema, que
+    gestionan los usuarios y validan la informaci\'on publicada, tal como se
+    detalla en la secci\'on de identificaci\'on de usuarios.
+
+  \item \textbf{\textquestiondown Qu\'e beneficios generar\'a?} Incrementar\'a
+    la visibilidad de los escenarios y su aprovechamiento, promover\'a la
+    pr\'actica deportiva y la actividad f\'isica, reducir\'a el tiempo y el
+    esfuerzo que invierten los usuarios en la b\'usqueda de informaci\'on y
+    apoyar\'a la planificaci\'on de las entidades administradoras.
+
+  \item \textbf{\textquestiondown Por qu\'e una aplicaci\'on m\'ovil es adecuada
+    para este problema?} Porque los tel\'efonos inteligentes constituyen el medio
+    de acceso a la informaci\'on m\'as extendido entre la poblaci\'on, permiten
+    aprovechar la geolocalizaci\'on para encontrar los escenarios m\'as cercanos
+    al usuario y facilitan la consulta de la informaci\'on en el lugar y en el
+    momento en que se necesita \citep{pressman2010, longley2015}.
+\end{enumerate}
+
+\subsection{Mapa de funcionalidades}
+
+El mapa de funcionalidades presenta la visi\'on general del sistema, agrupando
+los m\'odulos funcionales que componen la aplicaci\'on \nombreApp{} y que se
+desarrollan con mayor detalle en las secciones de funcionalidades preliminares
+y de definici\'on del MVP. En la figura se muestra la estructura general de
+m\'odulos de la aplicaci\'on m\'ovil.
+
+\begin{figure}[H]
+  \centering
+  \caption{Mapa de funcionalidades de la aplicaci\'on \nombreApp{}}
+  \label{fig:mapa-funcionalidades}
+  \contenidoConFuente{%
+  \begin{tikzpicture}[
+      nucleo/.style={rectangle, draw=black!80, thick, rounded corners=3pt,
+                     align=center, fill=orange!15, text width=3.6cm,
+                     minimum height=1.3cm, font=\small\bfseries},
+      modulo/.style={rectangle, draw=black!60, rounded corners=2pt,
+                     align=center, fill=blue!8, font=\scriptsize,
+                     text width=2.9cm, minimum height=0.85cm},
+      flecha/.style={-{Stealth[length=2mm]}, thick, draw=black!50}
+    ]
+    \node[nucleo] (nucleo) at (0,0) {APLICACI\'ON \nombreApp{}\\ (m\'ovil)};
+    \node[modulo] (auth) at (0,2.2) {Registro e inicio de sesi\'on};
+    \node[modulo] (cat) at (-4.2,0.9) {Cat\'alogo de escenarios};
+    \node[modulo] (bus) at (4.2,0.9) {B\'usqueda y filtros};
+    \node[modulo] (mapa) at (-4.2,-1.1) {Mapa interactivo};
+    \node[modulo] (det) at (4.2,-1.1) {Detalle del escenario};
+    \node[modulo] (fav) at (-4.2,-2.9) {Favoritos};
+    \node[modulo] (gest) at (0,-2.9) {Gesti\'on de contenido};
+    \node[modulo] (notif) at (4.2,-2.9) {Notificaciones};
+
+    \draw[flecha] (auth) -- (nucleo);
+    \draw[flecha] (cat) -- (nucleo);
+    \draw[flecha] (bus) -- (nucleo);
+    \draw[flecha] (mapa) -- (nucleo);
+    \draw[flecha] (det) -- (nucleo);
+    \draw[flecha] (fav) -- (nucleo);
+    \draw[flecha] (gest) -- (nucleo);
+    \draw[flecha] (notif) -- (nucleo);
+  \end{tikzpicture}%
+  }{Elaboraci\'on propia en base a las funcionalidades preliminares del sistema.}
+\end{figure}
+
+Los m\'odulos presentados se desarrollan con mayor detalle en las secciones de
+funcionalidades preliminares y de definici\'on del MVP, donde se establece
+cu\'ales de ellos forman parte del producto m\'inimo viable y cu\'ales se
+incorporar\'an como mejoras en avances posteriores.
