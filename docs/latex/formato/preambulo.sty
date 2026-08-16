@@ -33,19 +33,20 @@
 % --- Interlineado doble (APA 7) ---------------------------------------------
 \RequirePackage[doublespacing]{setspace}
 
-% --- Pie de página: número de página centrado al pie ------------------------
+% --- Pie de página: línea horizontal y número de página a la derecha ---------
 \RequirePackage{fancyhdr}
-\setlength{\headheight}{14.5pt}   % altura suficiente para la fuente sans
+\setlength{\headheight}{17pt}     % altura para el encabezado (1 línea + regla)
+\setlength{\headsep}{40pt}
 \pagestyle{fancy}
 \fancyhf{}
-\fancyfoot[C]{\thepage}
+\fancyfoot[R]{\thepage}
 \renewcommand{\headrulewidth}{0pt}
-\renewcommand{\footrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0.4pt}
 \fancypagestyle{plain}{%
   \fancyhf{}%
-  \fancyfoot[C]{\thepage}%
+  \fancyfoot[R]{\thepage}%
   \renewcommand{\headrulewidth}{0pt}%
-  \renewcommand{\footrulewidth}{0pt}%
+  \renewcommand{\footrulewidth}{0.4pt}%
 }
 
 % --- Jerarquía de títulos estilo APA ----------------------------------------
@@ -160,18 +161,45 @@
 % --- Referencias en formato APA (paquete apacite) ----------------------------
 \RequirePackage[natbibapa]{apacite}
 
+% --- Encabezado de capítulo ---------------------------------------------------
+% Uso interno de \caratulaCapitulo y de main.tex (Referencias/Anexos).
+% Muestra el nombre del capítulo en mayúsculas y, opcionalmente, el número de
+% capítulo (solo en la primera hoja del capítulo). Si el segundo argumento
+% viene vacío, se omite el número.
+\newcommand{\textoEncabezado}[2]{%
+  \parbox{\headwidth}{\raggedleft
+    \setstretch{1}%
+    \textbf{#1}%
+    \\[-6pt]{\rule{\headwidth}{0.4pt}}%
+    \if\relax\detokenize{#2}\relax\else\\[2pt]\textbf{#2}\fi
+  }%
+}
+\newcommand{\encabezadoCapitulo}[2]{%
+  \fancyhead[C]{\textoEncabezado{#1}{#2}}%
+}
+
 % --- Carátula de capítulo (1 hoja completa) -----------------------------------
 % Uso: \caratulaCapitulo{CAP\'ITULO I}{INTRODUCCI\'ON}
 % Cada capítulo comienza con una página de presentación que ocupa una hoja
 % completa. La carátula no muestra número de página ni se cuenta dentro de la
 % enumeración (el contador se decrementa tras su salida).
 % Las secciones se numeran por capítulo (1.1, 1.2 ... y 2.1, 2.2 ...).
+% El encabezado muestra el nombre del capítulo en todas las hojas y el número
+% de capítulo únicamente en la primera hoja posterior a la carátula.
 \newcounter{capitulo}
 \renewcommand{\thesection}{\arabic{capitulo}.\arabic{section}}
 \newcommand{\caratulaCapitulo}[2]{%
   \clearpage
   \refstepcounter{capitulo}%
   \setcounter{section}{0}%
+  \encabezadoCapitulo{#2}{}%
+  \fancypagestyle{primeraCap}{%
+    \fancyhf{}%
+    \fancyfoot[R]{\thepage}%
+    \fancyhead[C]{\textoEncabezado{#2}{#1}}%
+    \renewcommand{\headrulewidth}{0pt}%
+    \renewcommand{\footrulewidth}{0.4pt}%
+  }%
   \thispagestyle{empty}%
   \begin{center}
     \vspace*{6.2cm}
@@ -181,6 +209,7 @@
   \end{center}
   \clearpage
   \addtocounter{page}{-1}%
+  \thispagestyle{primeraCap}%
 }
 
 \endinput
