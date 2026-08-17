@@ -172,6 +172,9 @@ pnpm supabase db push
 # Empujar migraciones + seed al cloud
 pnpm supabase db push --seed
 
+# Empujar config.toml al cloud (auth, storage, realtime, etc.)
+pnpm supabase config push
+
 # Ver diff entre local y cloud
 pnpm supabase db diff
 ```
@@ -179,8 +182,14 @@ pnpm supabase db diff
 ### Sync: cloud -> local
 
 ```bash
-# Traer el esquema actual del cloud a un archivo local
-pnpm supabase db dump > supabase/migrations/$(date +%Y%m%d%H%M%S)_remote_schema.sql
+# Traer el esquema actual del cloud como migracion local
+pnpm supabase db pull
+
+# Traer config.toml del proyecto cloud al local
+pnpm supabase config pull
+
+# Exportar esquema completo del cloud
+pnpm supabase db dump > supabase/remote_dump.sql
 ```
 
 ### Generar tipos de TypeScript desde la DB
@@ -198,8 +207,11 @@ pnpm supabase gen types typescript --local > src/types/database.ts
 | `supabase link --project-ref <ref>` | Linkar proyecto local al cloud |
 | `supabase db push` | Push migraciones local -> cloud |
 | `supabase db push --seed` | Push migraciones + seed al cloud |
+| `supabase db pull` | Traer esquema cloud -> migracion local |
 | `supabase db diff` | Ver diferencia entre local y cloud |
 | `supabase db dump` | Exportar esquema del cloud |
+| `supabase config push` | Push config.toml local -> cloud |
+| `supabase config pull` | Traer config cloud -> config.toml local |
 | `supabase gen types typescript` | Generar tipos TypeScript |
 
 ---
