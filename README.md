@@ -1,144 +1,308 @@
 <div align="center">
 
-# ⚽ DeporteYa — Lugares Interactivos 🏟️
+# Lugares Interactivos
 
-### Visualización interactiva de escenarios deportivos a nivel nacional
+### Visualizacion interactiva de escenarios deportivos a nivel nacional
 
 [![Platform](https://img.shields.io/badge/Platform-iOS%20%26%20Android-blue?style=for-the-badge&logo=apple&logoColor=white)](https://expo.dev)
 [![Expo SDK](https://img.shields.io/badge/Expo%20SDK-57-black?style=for-the-badge&logo=expo&logoColor=white)](https://docs.expo.dev)
 [![React Native](https://img.shields.io/badge/React%20Native-0.86-61DAFB?style=for-the-badge&logo=react&logoColor=white)](https://reactnative.dev)
 [![TypeScript](https://img.shields.io/badge/TypeScript-6.0-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org)
+[![Supabase](https://img.shields.io/badge/Supabase-BaaS-3FCF8E?style=for-the-badge&logo=supabase&logoColor=white)](https://supabase.com)
 [![pnpm](https://img.shields.io/badge/pnpm-11-F69220?style=for-the-badge&logo=pnpm&logoColor=white)](https://pnpm.io)
-[![License](https://img.shields.io/badge/Licencia-MIT-green?style=for-the-badge&logo=github)](LICENSE)
 
 ---
 
-Aplicación móvil multiplataforma (iOS y Android) que facilita a la ciudadanía la
-**localización y el acceso a información confiable y actualizada** sobre la
-infraestructura deportiva del país. 📍
-
-[🚀 Empezar](#-instalación) · [📚 Características](#-características) · [🧰 Tecnologías](#-tecnologías) · [📁 Estructura](#-estructura-del-proyecto)
+Aplicacion movil multiplataforma (iOS y Android) que facilita a la ciudadania la
+**localizacion y el acceso a informacion confiable y actualizada** sobre la
+infraestructura deportiva del pais.
 
 </div>
 
 ---
 
-## ✨ Características
+## Requisitos Previos
 
-| | Funcionalidad | Descripción |
-| :-: | --- | --- |
-| 🗺️ | **Mapa interactivo** | Ubicación georreferenciada de los escenarios deportivos y consulta de los más cercanos al usuario. |
-| 🔍 | **Búsqueda y filtros** | Filtros por deporte, ciudad y tipo de recinto (estadio, coliseo, cancha, complejo). |
-| 📋 | **Catálogo** | Listado completo de escenarios con su información básica. |
-| 📄 | **Detalle del escenario** | Disciplinas, capacidad, horarios, servicios y eventos programados. |
-| 👤 | **Perfiles de usuario** | Registro e inicio de sesión para asistente, gestor y administrador. |
-| ⭐ | **Favoritos** | Guarda y consulta rápidamente los escenarios de tu interés. |
+### Software
 
-## 🧰 Tecnologías
+| Requisito | Version Minima | Verificar | Instalar |
+| --- | --- | --- | --- |
+| **Node.js** | v20+ | `node --version` | [nodejs.org](https://nodejs.org/) |
+| **pnpm** | v11+ | `pnpm --version` | `npm install -g pnpm` |
+| **Docker** | 24+ | `docker --version` | [docker.com](https://docs.docker.com/get-docker/) |
+| **Expo Go** | latest | Instalar en el telefono | [expo.dev/go](https://expo.dev/go) |
 
-| Capa | Tecnología | Icono |
-| --- | --- | :-: |
-| Frontend móvil | React Native + Expo | <img src="https://img.shields.io/badge/-React%20Native-61DAFB?logo=react&logoColor=black" /> |
-| Mapas | Leaflet | <img src="https://img.shields.io/badge/-Leaflet-199900?logo=leaflet&logoColor=white" /> |
-| Backend | Node.js + Express | <img src="https://img.shields.io/badge/-Node.js-339933?logo=nodedotjs&logoColor=white" /> |
-| Base de datos | PostgreSQL + PostGIS | <img src="https://img.shields.io/badge/-PostgreSQL-4169E1?logo=postgresql&logoColor=white" /> |
-| Backend como servicio | Supabase | <img src="https://img.shields.io/badge/-Supabase-3FCF8E?logo=supabase&logoColor=white" /> |
-| Paquetería | pnpm | <img src="https://img.shields.io/badge/-pnpm-F69220?logo=pnpm&logoColor=white" /> |
-| Control de versiones | Git + GitHub | <img src="https://img.shields.io/badge/-Git-F05032?logo=git&logoColor=white" /> |
+### Hardware
 
-## 📋 Requisitos previos
+| Recomendacion | Minimo | Ideal |
+| --- | --- | --- |
+| **RAM** | 8 GB | 16 GB |
+| **Disco** | 5 GB libres | 10 GB libres |
+| **CPU** | 2 nucleos | 4+ nucleos |
+| **Red** | Local (para Expo Go) | Local + Internet |
 
-- 🟢 [Node.js](https://nodejs.org/) **v20 o superior**
-- 📦 [pnpm](https://pnpm.io/) como gestor de paquetes
-- 📱 [Expo Go](https://expo.dev/go) instalado en el teléfono físico
-- 🌐 El teléfono y el equipo de desarrollo en la **misma red local**
+> **Docker es obligatorio** para Supabase local. Si usas Windows, instala Docker Desktop.
+> En Linux, asegurate de que tu usuario este en el grupo `docker`.
 
-## 🚀 Instalación
+---
+
+## Instalacion
 
 ```bash
-# 1️⃣ Clonar el repositorio
+# 1. Clonar el repositorio
 git clone https://github.com/Joaquinfr87/proyecto-movil.git
 cd proyecto-movil
 
-# 2️⃣ Cambiar a la rama de desarrollo
+# 2. Cambiar a la rama de desarrollo
 git checkout develop
 
-# 3️⃣ Instalar las dependencias
+# 3. Instalar dependencias
 pnpm install
+
+# 4. Copiar variables de entorno
+cp .env.example .env
 ```
 
-## ▶️ Ejecución
+---
+
+## Configuracion de Supabase (Desarrollo Local)
+
+Supabase corre localmente via Docker. Esto levanta:
+- **PostgreSQL** en puerto `54322`
+- **API (PostgREST)** en puerto `54321`
+- **Studio (dashboard web)** en puerto `54323`
+- **Auth** en puerto `54321`
+- **Storage** integrado
+
+### Levantar Supabase
 
 ```bash
-# Iniciar el servidor de desarrollo de Expo
+# Iniciar Supabase local (descarga las imagenes la primera vez, ~2-3 min)
+pnpm supabase start
+```
+
+> La primera ejecucion descarga ~500MB de imagenes Docker. Paciencia.
+
+### Verificar que funciona
+
+```bash
+# Ver el estado de los servicios
+pnpm supabase status
+```
+
+Deberias ver algo como:
+
+```
+API URL:       http://127.0.0.1:54321
+DB URL:        postgresql://postgres:postgres@127.0.0.1:54322/postgres
+Studio URL:    http://127.0.0.1:54323
+Inbucket URL:  http://127.0.0.1:54324
+```
+
+### Abrir Supabase Studio
+
+Abre `http://127.0.0.1:54323` en tu navegador para ver:
+- Tablas y datos
+- Auth (usuarios registrados)
+- Storage (archivos subidos)
+- SQL Editor (para probar queries)
+
+### Aplicar migraciones y seed
+
+Las migraciones se ejecutan automaticamente al hacer `pnpm supabase start`.
+Si necesitas resetear la base de datos:
+
+```bash
+# Resetear DB (borra todo y reaplica migraciones + seed)
+pnpm supabase db reset
+```
+
+### Usuarios de prueba (seed)
+
+| Email | Password | Rol |
+| --- | --- | --- |
+| `admin@test.com` | `password123` | admin |
+| `gestor@test.com` | `password123` | gestor |
+| `asistente@test.com` | `password123` | asistente |
+
+### Detener Supabase
+
+```bash
+pnpm supabase stop
+```
+
+---
+
+## Supabase Cloud (Produccion)
+
+Para deployment real, usa [Supabase Cloud](https://supabase.com) (free tier incluye 2 proyectos).
+
+### Crear proyecto en la nube
+
+1. Ir a [supabase.com](https://supabase.com) y crear cuenta
+2. Click **New Project** -> elegir nombre, password de DB, region
+3. Copiar los valores de **Project URL** y **anon/public key** desde `Settings > API`
+
+### Configurar `.env` para cloud
+
+```bash
+# .env (produccion)
+EXPO_PUBLIC_SUPABASE_URL=https://TU-PROYECTO.supabase.co
+EXPO_PUBLIC_SUPABASE_ANON_KEY=tu-anon-key-aqui
+```
+
+### Link local al proyecto cloud
+
+```bash
+# Login a Supabase (abre navegador)
+pnpm supabase login
+
+# Linkar el proyecto local al cloud (usar Project Ref del dashboard)
+pnpm supabase link --project-ref TU-PROJECT-REF
+```
+
+> El `project-ref` lo encuentras en `Settings > General > Reference ID`.
+
+### Sync: local -> cloud
+
+```bash
+# Empujar migraciones al cloud (NO borra datos, solo aplica cambios)
+pnpm supabase db push
+
+# Empujar migraciones + seed al cloud
+pnpm supabase db push --seed
+
+# Ver diff entre local y cloud
+pnpm supabase db diff
+```
+
+### Sync: cloud -> local
+
+```bash
+# Traer el esquema actual del cloud a un archivo local
+pnpm supabase db dump > supabase/migrations/$(date +%Y%m%d%H%M%S)_remote_schema.sql
+```
+
+### Generar tipos de TypeScript desde la DB
+
+```bash
+# Genera src/types/database.ts con los tipos de todas las tablas
+pnpm supabase gen types typescript --local > src/types/database.ts
+```
+
+### Resumen de comandos cloud
+
+| Comando | Descripcion |
+| --- | --- |
+| `supabase login` | Login a Supabase (una vez) |
+| `supabase link --project-ref <ref>` | Linkar proyecto local al cloud |
+| `supabase db push` | Push migraciones local -> cloud |
+| `supabase db push --seed` | Push migraciones + seed al cloud |
+| `supabase db diff` | Ver diferencia entre local y cloud |
+| `supabase db dump` | Exportar esquema del cloud |
+| `supabase gen types typescript` | Generar tipos TypeScript |
+
+---
+
+## Ejecutar la App
+
+```bash
+# En otra terminal (mientras Supabase corre)
 pnpm start
 ```
 
-📲 Escanea el código QR con la aplicación **Expo Go** del teléfono físico, o
-presiona `a` para abrir la aplicación directamente en un dispositivo Android conectado.
+Escanea el codigo QR con **Expo Go** o presiona `a` para Android.
 
-## 🧩 Scripts disponibles
+> La app se conecta automaticamente a Supabase local via `http://127.0.0.1:54321`.
+> Asegurate de que tu telefono y tu computadora esten en la **misma red WiFi**.
 
-| Comando | Descripción |
+---
+
+## Scripts Disponibles
+
+| Comando | Descripcion |
 | --- | --- |
-| `pnpm start` | ▶️ Inicia el servidor de desarrollo de Expo |
-| `pnpm android` | 🤖 Abre la aplicación en un dispositivo Android |
-| `pnpm ios` | 🍎 Abre la aplicación en un simulador de iOS |
-| `pnpm web` | 🌐 Abre la aplicación en el navegador |
+| `pnpm start` | Inicia el servidor de desarrollo de Expo |
+| `pnpm android` | Abre la app en Android |
+| `pnpm ios` | Abre la app en iOS |
+| `pnpm web` | Abre la app en el navegador |
+| `pnpm supabase start` | Levanta Supabase local (Docker) |
+| `pnpm supabase stop` | Detiene Supabase local |
+| `pnpm supabase status` | Muestra estado de Supabase |
+| `pnpm supabase db reset` | Resetea la DB (migraciones + seed) |
 
-## 📁 Estructura del proyecto
+---
+
+## Estructura del Proyecto
 
 ```
 lugares-interactivos/
-├── assets/                    🎨 Recursos estáticos: iconos e imágenes
+├── assets/                    Recursos estaticos
 ├── src/
 │   └── app/
-│       ├── navigation/        🧭 Configuración de la navegación
-│       ├── screens/           📱 Pantallas por módulo funcional
-│       │   ├── auth/          🔐 Autenticación
-│       │   ├── home/          🏠 Inicio
-│       │   ├── map/           🗺️ Mapa interactivo
-│       │   ├── catalog/       📋 Catálogo
-│       │   └── details/       📄 Detalle del escenario
-│       ├── context/           🔄 Estado global (autenticación, favoritos, tema)
-│       ├── components/        🧱 Componentes reutilizables
-│       ├── services/          🔌 Cliente de API, almacenamiento y ubicación
-│       ├── hooks/             ⚙️ Lógica reutilizable
-│       ├── types/             📐 Modelos de datos
-│       └── theme/             🎨 Tema visual de la aplicación
-├── App.tsx                    📌 Componente raíz
-├── index.ts                   🚪 Punto de entrada
-├── app.json                   ⚙️ Configuración de Expo
-├── package.json               📦 Dependencias y scripts
-├── pnpm-lock.yaml             🔒 Lockfile de dependencias
-└── tsconfig.json              ⚙️ Configuración de TypeScript
+│       ├── (tabs)/            Pantallas con navegacion inferior
+│       ├── auth/              Pantallas de autenticacion
+│       ├── scenario/          Detalle de escenario
+│       └── _layout.tsx        Layout raiz de Expo Router
+├── supabase/
+│   ├── config.toml            Configuracion de Supabase local
+│   ├── migrations/            Migraciones SQL
+│   │   └── 001_create_profiles.sql
+│   └── seed.sql               Datos de prueba
+├── .env.example               Variables de entorno (ejemplo)
+├── .env                       Variables de entorno (local, no commitear)
+├── app.json                   Configuracion de Expo
+├── package.json               Dependencias y scripts
+└── tsconfig.json              Configuracion de TypeScript
 ```
 
-## 🌿 Ramas del repositorio
+---
+
+## Arquitectura
+
+```
+┌─────────────────────────────────┐
+│      FRONTEND (Expo)            │
+│  React Native + Expo Router     │
+│  react-native-maps              │
+└──────────────┬──────────────────┘
+               │
+               ▼
+┌─────────────────────────────────┐
+│      SUPABASE (local/produccion)│
+│  ┌────────┐ ┌──────┐ ┌───────┐ │
+│  │  Auth  │ │  DB  │ │Storage│ │
+│  │ email  │ │Postgr│ │imgs   │ │
+│  └────────┘ └──────┘ └───────┘ │
+└─────────────────────────────────┘
+```
+
+No hay backend custom. La app habla directo con Supabase via `@supabase/supabase-js`.
+
+---
+
+## Ramas del Repositorio
 
 | Rama | Propósito |
 | --- | --- |
-| 📚 `docs` | Documentación del proyecto (informe de grado) |
-| 💻 `develop` | Código fuente de la aplicación, sin documentación |
+| `main` | Produccion, version estable |
+| `develop` | Integracion, codigo en desarrollo |
+| `docs` | Documentacion del proyecto (informe de grado) |
+| `feature/*` | Funcionalidades individuales |
 
-## 🤝 Contribuciones
+---
 
-¿Tienes ideas para mejorar el proyecto? ¡Las contribuciones son bienvenidas!
+## Contribuciones
 
-1. 🍴 Haz un *fork* del repositorio
-2. 🌿 Crea una rama (`git checkout -b feature/nueva-funcionalidad`)
-3. 💾 Realiza los cambios y haz commit (`git commit -m 'feat: añade nueva funcionalidad'`)
-4. 🚀 Sube la rama (`git push origin feature/nueva-funcionalidad`)
-5. 🔀 Abre un *pull request*
-
-## 📄 Licencia
-
-Este proyecto está bajo la licencia **MIT**. Consulta el archivo [LICENSE](LICENSE) para más detalles.
+1. Crear una rama (`git checkout -b feature/nueva-funcionalidad`)
+2. Hacer cambios y commit (`git commit -m 'feat: descripcion'`)
+3. Push (`git push origin feature/nueva-funcionalidad`)
+4. Abrir Pull Request
 
 ---
 
 <div align="center">
 
-**Hecho con ❤️ por el Equipo Sudoers** — Aplicaciones Móviles I · Universidad Privada Domingo Savio
+**Equipo Sudoers** -- Aplicaciones Moviles I
 
 </div>
