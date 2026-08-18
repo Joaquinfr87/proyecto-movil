@@ -19,7 +19,9 @@ export interface Scenario {
   latitud: number;
   longitud: number;
   estado: string;
+  created_by: string | null;
   created_at: string;
+  updated_at: string;
 }
 
 export interface Sport {
@@ -30,16 +32,27 @@ export interface Sport {
 
 export interface Event {
   id: string;
-  escenario_id: string;
+  scenario_id: string;
   nombre: string;
   fecha: string;
   hora: string;
   descripcion: string;
   created_at: string;
+  updated_at: string;
 }
 
 export interface Favorite {
-  usuario_id: string;
-  escenario_id: string;
-  fecha: string;
+  user_id: string;
+  scenario_id: string;
+  created_at: string;
+}
+
+export interface ScenarioImage {
+  id: string;
+  scenario_id: string;
+  storage_path: string;
+  url: string;
+  is_primary: boolean;
+  display_order: number;
+  created_at: string;
 }
