@@ -13,10 +13,11 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
     if (loading) return;
 
     const inAuthGroup = segments[0] === 'auth';
+    const inSplash = segments[0] === 'splash';
 
-    if (!session && !inAuthGroup) {
-      router.replace('/auth/login');
-    } else if (session && inAuthGroup) {
+    if (!session && !inAuthGroup && !inSplash) {
+      router.replace('/splash');
+    } else if (session && (inAuthGroup || inSplash)) {
       router.replace('/(tabs)');
     }
   }, [session, loading, segments, router]);

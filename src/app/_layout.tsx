@@ -10,6 +10,7 @@ export default function RootLayout() {
       <AuthGuard>
         <StatusBar style="dark" />
         <Stack screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="splash" />
           <Stack.Screen name="(tabs)" />
           <Stack.Screen name="auth/login" />
           <Stack.Screen name="auth/register" />
