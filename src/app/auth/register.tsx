@@ -27,17 +27,12 @@ const registerSchema = z
       .min(1, 'El nombre es obligatorio')
       .min(3, 'El nombre debe tener al menos 3 caracteres')
       .max(100, 'El nombre es demasiado largo'),
-    email: z
-      .string()
-      .min(1, 'El email es obligatorio')
-      .email('Ingresa un email valido'),
+    email: z.string().min(1, 'El email es obligatorio').email('Ingresa un email valido'),
     password: z
       .string()
       .min(1, 'La contraseña es obligatoria')
       .min(6, 'La contraseña debe tener al menos 6 caracteres'),
-    confirmPassword: z
-      .string()
-      .min(1, 'Confirma tu contraseña'),
+    confirmPassword: z.string().min(1, 'Confirma tu contraseña'),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: 'Las contraseñas no coinciden',
@@ -95,10 +90,7 @@ export default function RegisterScreen() {
       style={styles.keyboardView}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
-      <ScrollView
-        contentContainerStyle={styles.scrollContent}
-        keyboardShouldPersistTaps="handled"
-      >
+      <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
         <View style={styles.container}>
           {/* Encabezado */}
           <View style={styles.header}>
@@ -128,9 +120,7 @@ export default function RegisterScreen() {
                   />
                 )}
               />
-              {errors.fullName && (
-                <Text style={styles.errorText}>{errors.fullName.message}</Text>
-              )}
+              {errors.fullName && <Text style={styles.errorText}>{errors.fullName.message}</Text>}
             </View>
 
             {/* Campo email */}
@@ -154,9 +144,7 @@ export default function RegisterScreen() {
                   />
                 )}
               />
-              {errors.email && (
-                <Text style={styles.errorText}>{errors.email.message}</Text>
-              )}
+              {errors.email && <Text style={styles.errorText}>{errors.email.message}</Text>}
             </View>
 
             {/* Campo password */}
@@ -179,9 +167,7 @@ export default function RegisterScreen() {
                   />
                 )}
               />
-              {errors.password && (
-                <Text style={styles.errorText}>{errors.password.message}</Text>
-              )}
+              {errors.password && <Text style={styles.errorText}>{errors.password.message}</Text>}
             </View>
 
             {/* Campo confirmar password */}
@@ -192,10 +178,7 @@ export default function RegisterScreen() {
                 name="confirmPassword"
                 render={({ field: { onChange, onBlur, value } }) => (
                   <TextInput
-                    style={[
-                      styles.input,
-                      errors.confirmPassword && styles.inputError,
-                    ]}
+                    style={[styles.input, errors.confirmPassword && styles.inputError]}
                     placeholder="Repite tu contraseña"
                     placeholderTextColor={colors.textSecondary}
                     value={value}
@@ -208,9 +191,7 @@ export default function RegisterScreen() {
                 )}
               />
               {errors.confirmPassword && (
-                <Text style={styles.errorText}>
-                  {errors.confirmPassword.message}
-                </Text>
+                <Text style={styles.errorText}>{errors.confirmPassword.message}</Text>
               )}
             </View>
 

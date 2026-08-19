@@ -21,10 +21,7 @@ import { colors, spacing, borderRadius, fontSize, fontWeight } from '../../theme
 // ─── Schema de validacion ────────────────────────────────────────────────────
 
 const loginSchema = z.object({
-  email: z
-    .string()
-    .min(1, 'El email es obligatorio')
-    .email('Ingresa un email valido'),
+  email: z.string().min(1, 'El email es obligatorio').email('Ingresa un email valido'),
   password: z
     .string()
     .min(1, 'La contraseña es obligatoria')
@@ -70,10 +67,7 @@ export default function LoginScreen() {
       style={styles.keyboardView}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
-      <ScrollView
-        contentContainerStyle={styles.scrollContent}
-        keyboardShouldPersistTaps="handled"
-      >
+      <ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled">
         <View style={styles.container}>
           {/* Encabezado */}
           <View style={styles.header}>
@@ -104,9 +98,7 @@ export default function LoginScreen() {
                   />
                 )}
               />
-              {errors.email && (
-                <Text style={styles.errorText}>{errors.email.message}</Text>
-              )}
+              {errors.email && <Text style={styles.errorText}>{errors.email.message}</Text>}
             </View>
 
             {/* Campo password */}
@@ -129,9 +121,7 @@ export default function LoginScreen() {
                   />
                 )}
               />
-              {errors.password && (
-                <Text style={styles.errorText}>{errors.password.message}</Text>
-              )}
+              {errors.password && <Text style={styles.errorText}>{errors.password.message}</Text>}
             </View>
 
             {/* Error del servidor (Supabase) */}
