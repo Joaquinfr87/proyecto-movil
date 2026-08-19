@@ -14,11 +14,12 @@ function NavigationGate() {
     if (loading) return;
 
     const inAuthGroup = segments[0] === 'auth';
+    const inSplash = segments[0] === 'splash';
 
-    if (!session && !inAuthGroup) {
-      // Redirigir a login si el usuario no tiene sesion activa
-      router.replace('/auth/login');
-    } else if (session && inAuthGroup) {
+    if (!session && !inAuthGroup && !inSplash) {
+      // Mostrar splash si el usuario no tiene sesion activa
+      router.replace('/splash');
+    } else if (session && (inAuthGroup || inSplash)) {
       // Redirigir a tabs principales si el usuario ya esta autenticado
       router.replace('/(tabs)');
     }
@@ -36,6 +37,7 @@ function NavigationGate() {
     <>
       <StatusBar style="dark" />
       <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="splash" />
         <Stack.Screen name="(tabs)" />
         <Stack.Screen name="auth/login" />
         <Stack.Screen name="auth/register" />
