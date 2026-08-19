@@ -45,59 +45,62 @@ Supabase configurado, esquema de base de datos creado, auth funcional, datos sem
 
 ---
 
-## Sprint 2: Frontend Core (Dias 4-8)
+## Sprint 2: Frontend Core MVP
 
 ### Objetivo
-Todas las pantallas del MVP funcionando: mapa, catalogo, detalle, favoritos, busqueda.
+Todas las pantallas del MVP funcionando con datos reales de Supabase.
 
-### Dia 4 - Jueves: Mapa + Catalogo
+> Sin division por dia. Tareas organizadas por grupo con dependencias claras.
+> Ver `PLAN-SEMANA2.md` para detalle completo y `ASIGNACION-SPRINT2.md` para asignaciones.
 
-| ID | Tarea | Asignado | Herramienta IA |
-|---|---|---|---|
-| T-016 | Implementar pantalla de mapa con react-native-maps | David | opencode |
-| T-017 | Cargar marcadores de escenarios desde Supabase en el mapa | David | opencode |
-| T-018 | Implementar pantalla de catalogo (FlatList de escenarios) | Angel | opencode |
-| T-019 | Crear componente ScenarioCard reutilizable | Angel | opencode |
-| T-020 | Obtener ubicacion actual del usuario con expo-location | David | opencode |
+### Grupo 1: Infraestructura
 
-### Dia 5 - Viernes: Detalle + Navegacion
+| ID | Tarea | Asignado | Dependencias |
+|----|-------|----------|--------------|
+| T-016 | Instalar `react-native-maps` y `expo-location` | Nicolas | Ninguna |
+| T-017 | Configurar `QueryClientProvider` de React Query | David | Ninguna |
+| T-018 | Crear componente `ScenarioCard` reutilizable | Angel | Ninguna |
+| T-019 | Crear componente `LoadingSpinner` | Angel | Ninguna |
+| T-020 | Crear componente `EmptyState` | Angel | Ninguna |
 
-| ID | Tarea | Asignado | Herramienta IA |
-|---|---|---|---|
-| T-021 | Implementar pantalla de detalle de escenario | Angel | opencode |
-| T-022 | Implementar navegacion inferior (tabs: Inicio, Buscar, Perfil) | David | opencode |
-| T-023 | Conectar detalle con parametros de ruta (ID del escenario) | David | opencode |
-| T-024 | Mostrar disciplinas, horarios, capacidad en el detalle | Angel | opencode |
-| T-025 | Implementar boton de favorito en el detalle | Angel | opencode |
+### Grupo 2: Capa de Datos
 
-### Dia 6 - Lunes: Favoritos + Busqueda
+| ID | Tarea | Asignado | Dependencias |
+|----|-------|----------|--------------|
+| T-021 | Crear hook `useScenarios` con React Query | Nicolas | T-016 |
+| T-022 | Crear hook `useFavorites` con React Query | Nicolas | T-016 |
+| T-023 | Implementar pantalla de mapa con `react-native-maps` | David | T-016, T-017 |
+| T-024 | Obtener ubicacion del usuario con `expo-location` | David | T-016 |
 
-| ID | Tarea | Asignado | Herramienta IA |
-|---|---|---|---|
-| T-026 | Implementar tabla de favoritos y funcion de guardado | Nicolas | opencode |
-| T-027 | Crear pantalla de Favoritos con lista de escenarios guardados | Angel | opencode |
-| T-028 | Implementar busqueda por nombre en el catalogo | David | opencode |
-| T-029 | Implementar filtros basicos (por deporte, tipo de escenario) | David | opencode |
-| T-030 | Conectar marcadores del mapa con pantalla de detalle | David | opencode |
+### Grupo 3: Pantallas MVP
 
-### Dia 7 - Martes: Eventos + Pulido Basico
+| ID | Tarea | Asignado | Dependencias |
+|----|-------|----------|--------------|
+| T-025 | Implementar pantalla de catalogo (FlatList) | Angel | T-018, T-019, T-020, T-021 |
+| T-026 | Conectar marcadores del mapa con pantalla de detalle | David | T-023 |
+| T-027 | Implementar pantalla de Favoritos | Angel | T-018, T-019, T-020, T-022 |
+| T-028 | Implementar pantalla de detalle de escenario | Angel | T-018, T-019, T-021, T-022 |
 
-| ID | Tarea | Asignado | Herramienta IA |
-|---|---|---|---|
-| T-031 | Mostrar eventos programados en el detalle del escenario | Angel | opencode |
-| T-032 | Implementar pull-to-refresh en catalogo y favoritos | David | opencode |
-| T-033 | Agregar loading states (spinners) en todas las pantallas | Angel | opencode |
-| T-034 | Manejar estados vacios (sin resultados, sin favoritos) | Angel | opencode |
-| T-035 | Integrar todo: probar flujo completo de navegacion | David + Nicolas | Manual |
+### Grupo 4: Funcionalidad + Pulido
 
-### Dia 8 - Miercoles: Integracion Total
+| ID | Tarea | Asignado | Dependencias |
+|----|-------|----------|--------------|
+| T-029 | Implementar busqueda por nombre en catalogo | David | T-025 |
+| T-030 | Implementar filtros por deporte y tipo | David | T-025 |
+| T-031 | Implementar toggle de favorito (agregar/quitar) | David | T-022, T-028 |
+| T-032 | Manejar estados de error de red en todas las pantallas | David | T-025, T-027, T-028 |
+| T-033 | Pull-to-refresh en catalogo y favoritos | Angel | T-025, T-027 |
+| T-034 | Subir imagenes de prueba a Supabase Storage | Nicolas | T-016 |
 
-| ID | Tarea | Asignado | Herramienta IA |
-|---|---|---|---|
-| T-036 | Probar en Android real: auth -> mapa -> detalle -> favorito | Angel + David | Manual |
-| T-037 | Corregir bugs de integracion encontrados | David + Nicolas | opencode |
-| T-038 | Optimizar consultas a Supabase (indices, selects optimizados) | Nicolas | Supabase Dashboard |
-| T-039 | Verificar que los datos semilla se ven bien en todas las pantallas | Angel | Manual |
+### Grupo 5: Integracion y Cierre
+
+| ID | Tarea | Asignado | Dependencias |
+|----|-------|----------|--------------|
+| T-035 | Test end-to-end: auth → mapa → detalle → favorito | Joaquin + Angel | Todas |
+| T-036 | Corregir bugs de integracion | David + Nicolas | T-035 |
+| T-037 | Verificar que funciona en Android real | Angel + David | T-036 |
+| T-038 | Optimizar queries de Supabase (indices) | Nicolas | T-035 |
+| T-039 | Code review de todo el codigo del sprint | Joaquin | Todas |
 
 **Entregable Sprint 2:** App completa con todas las pantallas del MVP funcionando.
 
@@ -153,7 +156,7 @@ MVP pulido, sin bugs criticos, tema visual consistente, documentacion lista.
 
 | Persona | Sprint 1 | Sprint 2 | Sprint 3 | Total |
 |---|---|---|---|---|
-| **Joaquin** | Coordinacion | Revision | Docs + Entrega | ~15h |
-| **Nicolas** | Supabase + DB + Auth | Favoritos + Optimizacion | Bugs + Entrega | ~30h |
-| **David** | Expo + Navegacion | Mapa + Busqueda + Filtros | Bugs + Rendimiento + Demo | ~30h |
-| **Angel** | Componentes + Auth UI | Detalle + Favoritos + Eventos | Tema + Testing | ~25h |
+| **Joaquin** | Coordinacion | Review + Test E2E | Docs + Entrega | ~15h |
+| **Nicolas** | Supabase + DB + Auth | Deps + Hooks + Storage + Optimizacion | Bugs + Entrega | ~30h |
+| **David** | Expo + Navegacion | Mapa + Busqueda + Filtros + Error Handling | Bugs + Rendimiento + Demo | ~30h |
+| **Angel** | Componentes + Auth UI | UI Components + Catalogo + Favoritos + Detalle + Testing | Tema + Testing Final | ~25h |
