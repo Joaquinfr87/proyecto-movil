@@ -8,15 +8,14 @@ import {
   FlatList,
   TouchableOpacity,
 } from 'react-native';
-import { Map, Camera, Marker, RasterSource, Layer, type StyleSpecification } from '@maplibre/maplibre-react-native';
+import { Map, Camera, Marker } from '@maplibre/maplibre-react-native';
 import * as Location from 'expo-location';
 import { useRouter } from 'expo-router';
 import { useScenarios } from '../../hooks/useScenarios';
 import { colors, spacing, fontSize, fontWeight } from '../../theme';
 
 const MAPTILER_KEY = process.env.EXPO_PUBLIC_MAPTILER_API_KEY!;
-const EMPTY_STYLE = { version: 8, sources: {}, layers: [] } as StyleSpecification;
-const RASTER_TILES = `https://api.maptiler.com/tiles/streets-v2/{z}/{x}/{y}.png?key=${MAPTILER_KEY}`;
+const MAP_STYLE = `https://api.maptiler.com/maps/streets-v4/style.json?key=${MAPTILER_KEY}`;
 
 const BOLIVIA_CENTER: [number, number] = [-65.0, -17.0];
 
@@ -109,11 +108,7 @@ export default function MapScreen() {
 
   return (
     <View style={styles.container}>
-      <Map mapStyle={EMPTY_STYLE} style={styles.map}>
-        <RasterSource id="maptiler-raster" tiles={[RASTER_TILES]} tileSize={256}>
-          <Layer id="maptiler-raster-layer" type="raster" source="maptiler-raster" />
-        </RasterSource>
-
+      <Map mapStyle={MAP_STYLE} style={styles.map}>
         <Camera
           initialViewState={{
             center: cameraCenter,
