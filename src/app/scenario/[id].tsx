@@ -7,12 +7,16 @@ import {
   TouchableOpacity,
   StyleSheet,
   Dimensions,
+  Alert,
+  ActivityIndicator,
 } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import { useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '../../context/AuthContext';
 import { useScenario } from '../../hooks/useScenarios';
 import { useIsFavorite, useToggleFavorite } from '../../hooks/useFavorites';
+import { useUploadImage } from '../../hooks/useUploadImage';
 import { LoadingSpinner } from '../../components/common/LoadingSpinner';
 import { EmptyState } from '../../components/common/EmptyState';
 import { colors, spacing, borderRadius, fontSize, fontWeight } from '../../theme';
@@ -25,11 +29,17 @@ export default function ScenarioDetailScreen() {
   const router = useRouter();
   const { user } = useAuth();
 
+  const queryClient = useQueryClient();
   const { data: scenario, isLoading, error } = useScenario(id ?? '');
   const { data: isFavorite } = useIsFavorite(user?.id ?? '', id ?? '');
   const { toggleFavorite, isToggling } = useToggleFavorite();
+  const { uploadImage, isUploading } = useUploadImage();
 
   const [imageError, setImageError] = useState(false);
+
+  // Solo admin y gestor pueden subir imágenes
+  const userRole = user?.user_metadata?.role;
+  const canUpload = userRole === 'admin' || userRole === 'gestor';
 
   const primaryImage = scenario?.scenario_images?.find((img) => img.is_primary);
   const imageUrl = !imageError
@@ -39,6 +49,16 @@ export default function ScenarioDetailScreen() {
   const handleToggleFavorite = async () => {
     if (!user?.id || !id) return;
     await toggleFavorite(user.id, id);
+  };
+
+  const handleUploadImage = async () => {
+    if (!id) return;
+    const result = await uploadImage(id);
+    if (result) {
+      // Invalidar cache para recargar el escenario con la nueva imagen
+      await queryClient.invalidateQueries({ queryKey: ['scenario', id] });
+      Alert.alert('Éxito', 'Imagen subida correctamente.');
+    }
   };
 
   if (isLoading) {
@@ -78,6 +98,22 @@ export default function ScenarioDetailScreen() {
           <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
             <Ionicons name="arrow-back" size={22} color={colors.white} />
           </TouchableOpacity>
+
+          {/* Botón de subir imagen (solo admin/gestor) */}
+          {canUpload && (
+            <TouchableOpacity
+              style={styles.uploadButton}
+              onPress={handleUploadImage}
+              disabled={isUploading}
+              activeOpacity={0.85}
+            >
+              {isUploading ? (
+                <ActivityIndicator size="small" color={colors.white} />
+              ) : (
+                <Ionicons name="camera-outline" size={22} color={colors.white} />
+              )}
+            </TouchableOpacity>
+          )}
 
           {/* Badge estado */}
           <View
@@ -232,6 +268,17 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: spacing.lg,
     left: spacing.md,
+    width: 40,
+    height: 40,
+    borderRadius: borderRadius.full,
+    backgroundColor: 'rgba(0,0,0,0.45)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  uploadButton: {
+    position: 'absolute',
+    top: spacing.lg,
+    right: spacing.md,
     width: 40,
     height: 40,
     borderRadius: borderRadius.full,
