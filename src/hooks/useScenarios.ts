@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '../services/supabase';
-import type { Scenario } from '../types';
+import type { Scenario, Event } from '../types';
 
 export interface ScenarioImage {
   url: string;
@@ -16,6 +16,7 @@ export interface ScenarioSport {
 export interface ScenarioWithDetails extends Scenario {
   scenario_images: ScenarioImage[];
   scenario_sports: ScenarioSport[];
+  events: Event[];
 }
 
 async function fetchScenarios(): Promise<ScenarioWithDetails[]> {
