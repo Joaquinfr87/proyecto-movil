@@ -31,6 +31,7 @@ export interface Database {
           created_at?: string;
           updated_at?: string;
         };
+        Relationships: [];
       };
       scenarios: {
         Row: {
@@ -75,6 +76,7 @@ export interface Database {
           created_at?: string;
           updated_at?: string;
         };
+        Relationships: [];
       };
       sports: {
         Row: {
@@ -92,6 +94,7 @@ export interface Database {
           nombre?: string;
           descripcion?: string;
         };
+        Relationships: [];
       };
       scenario_sports: {
         Row: {
@@ -106,6 +109,7 @@ export interface Database {
           scenario_id?: string;
           sport_id?: string;
         };
+        Relationships: [];
       };
       events: {
         Row: {
@@ -138,6 +142,7 @@ export interface Database {
           created_at?: string;
           updated_at?: string;
         };
+        Relationships: [];
       };
       favorites: {
         Row: {
@@ -155,6 +160,7 @@ export interface Database {
           scenario_id?: string;
           created_at?: string;
         };
+        Relationships: [];
       };
       scenario_images: {
         Row: {
@@ -184,6 +190,7 @@ export interface Database {
           display_order?: number;
           created_at?: string;
         };
+        Relationships: [];
       };
     };
     Views: Record<string, never>;
