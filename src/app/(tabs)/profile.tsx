@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Alert, Platform } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { colors, spacing } from '../../theme';
 import { useAuth } from '../../context/AuthContext';
@@ -7,10 +7,16 @@ export default function ProfileScreen() {
   const { user, signOut } = useAuth();
 
   const handleSignOut = () => {
-    Alert.alert('Cerrar sesión', '¿Estás seguro?', [
-      { text: 'Cancelar', style: 'cancel' },
-      { text: 'Cerrar sesión', style: 'destructive', onPress: signOut },
-    ]);
+    if (Platform.OS === 'web') {
+      if (window.confirm('Cerrar sesión: ¿Estás seguro?')) {
+        signOut();
+      }
+    } else {
+      Alert.alert('Cerrar sesión', '¿Estás seguro?', [
+        { text: 'Cancelar', style: 'cancel' },
+        { text: 'Cerrar sesión', style: 'destructive', onPress: signOut },
+      ]);
+    }
   };
 
   return (
