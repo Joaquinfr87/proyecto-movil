@@ -42,6 +42,9 @@
 
 \begin{document}
 
+% --- Numeración: romano antes del Capítulo I, arábigo desde el Capítulo I ---
+\pagenumbering{roman}
+
 % --- Portada (no muestra número y no cuenta: el entorno titlepage parte de 1)
 \input{formato/portada}
 
@@ -56,6 +59,10 @@
 \newpage
 \listoffigures
 \clearpage
+
+% --- Cambio a numeración arábiga para el contenido principal -------------
+\clearpage
+\pagenumbering{arabic}
 
 % ============================================================================
 %  CONTENIDO  (un capítulo con su carátula y un archivo por sección)
