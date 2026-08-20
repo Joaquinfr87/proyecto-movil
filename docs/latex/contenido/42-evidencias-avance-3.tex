@@ -1,0 +1,85 @@
+% ============================================================================
+%  SECCIÓN 3.26: EVIDENCIAS DEL AVANCE
+% ============================================================================
+
+\section{Evidencias del avance}
+
+A continuaci\'on se presentan las evidencias del avance correspondiente al
+PDF~3. Las capturas de pantalla de cada ya fueron mostradas en la secci\'on de
+construcci\'on de pantallas (secci\'on~3.17), por lo que aqu\'i se referencian
+por su etiqueta y se complementan con evidencias adicionales del repositorio
+y la ejecuci\'on en dispositivo.
+
+% --- EVIDENCIA 1 ---
+\subsubsection*{Evidencia 1: Pantallas implementadas}
+
+Las cinco pantallas principales fueron implementadas y validadas en el
+dispositivo f\'isico. Las capturas correspondientes se presentan en las
+figuras~\ref{fig:pantalla-splash} a~\ref{fig:pantalla-perfil} de la
+secci\'on~3.17.
+
+\begin{itemize}
+  \item Figura~\ref{fig:pantalla-splash}: Pantalla de bienvenida (Splash).
+  \item Figura~\ref{fig:pantalla-login}: Pantalla de inicio de sesi\'on.
+  \item Figura~\ref{fig:pantalla-registro}: Pantalla de registro.
+  \item Figura~\ref{fig:pantalla-tabs}: Pantalla principal con barra de
+    navegaci\'on inferior.
+  \item Figura~\ref{fig:pantalla-scenario-detail}: Pantalla de detalle del
+    escenario.
+  \item Figura~\ref{fig:pantalla-perfil}: Pantalla de perfil de usuario.
+\end{itemize}
+
+% --- EVIDENCIA 2 ---
+\subsubsection*{Evidencia 2: Navegaci\'on entre pantallas}
+
+Se implement\'o la navegaci\'on completa entre pantallas utilizando
+expo-router: Splash $\rightarrow$ Login $\rightarrow$ Registro, Login
+$\rightarrow$ Tabs, y cierre de sesi\'on desde el perfil que regresa al
+splash. El diagrama de navegaci\'on implementado se presenta en la
+figura~\ref{fig:navegacion-implementada} de la secci\'on~3.21.
+
+% --- EVIDENCIA 3 ---
+\subsubsection*{Evidencia 3: Aplicaci\'on ejecutada en dispositivo f\'isico}
+
+La aplicaci\'on se ejecut\'o y valid\'o en un tel\'efono f\'isico Android
+mediante Expo Go, verificando el rendimiento, la interacci\'on y el
+comportamiento de la interfaz en condiciones reales de uso.
+
+\begin{figure}[H]
+  \centering
+  \caption{Evidencia: Aplicaci\'on ejecutada en dispositivo f\'isico}
+  \label{fig:evidencia-dispositivo}
+  \contenidoConFuente{%
+    \includegraphics[width=0.48\linewidth]{evidencia-dispositivo-fisico.jpg}%
+  }{Elaboraci\'on propia (fotograf\'ia del dispositivo f\'isico).}
+\end{figure}
+
+% --- EVIDENCIA 4 ---
+\subsubsection*{Evidencia 4: Repositorio GitHub actualizado}
+
+El repositorio del proyecto fue actualizado con los avances del PDF~3,
+incluyendo las pantallas implementadas, la configuraci\'on del tema, los
+componentes reutilizables y la navegaci\'on.
+
+\begin{figure}[H]
+  \centering
+  \caption{Evidencia: Repositorio GitHub actualizado con avances del PDF 3}
+  \label{fig:evidencia-github-pdf3}
+  \contenidoConFuente{%
+    \includegraphics[width=0.62\linewidth]{evidencia-repositorio-pdf3.png}%
+  }{Elaboraci\'on propia (captura del repositorio en GitHub).}
+\end{figure}
+
+% --- EVIDENCIA 5 ---
+\subsubsection*{Evidencia 5: Commits realizados}
+
+Los commits realizados durante el avance documentan los principales hitos del
+desarrollo:
+
+\begin{lstlisting}[style=terminal]
+feat(t007): implementar pantallas login y register con validacion
+feat(nav): configurar flujo de navegacion y proteccion de rutas (T-010)
+feat(ui): reemplazar emojis por Ionicons y agregar pantalla perfil con logout
+feat: integrar splash screen con logo y boton de Comenzar
+refactor(t012): extraer AuthGuard a componente reutilizable
+\end{lstlisting}

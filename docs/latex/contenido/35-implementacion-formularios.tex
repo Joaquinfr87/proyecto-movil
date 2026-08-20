@@ -1,0 +1,187 @@
+% ============================================================================
+%  SECCIÓN 3.19: IMPLEMENTACIÓN DE FORMULARIOS
+% ============================================================================
+
+\section{Implementaci\'on de formularios}
+
+La implementaci\'on de formularios es uno de los requisitos fundamentales de
+este avance, pues permite al usuario interactuar con la aplicaci\'on mediante
+la ingresa de datos. Para las pantallas de inicio de sesi\'on y registro se
+utilizaron las librer\'ias \texttt{react-hook-form} y \texttt{@hookform/resolvers}
+con validaci\'on \texttt{Zod}, que permiten gestionar el estado del formulario,
+validar los campos en tiempo real y mostrar mensajes de error al usuario.
+
+\subsection{Librer\'ias utilizadas}
+
+\begin{table}[H]
+  \centering
+  \caption{Librer\'ias para gesti\'on de formularios}
+  \contenidoConFuente{%
+    \begin{tablaAPA}
+      \begin{tabular}{@{}p{3.4cm}p{4.0cm}p{8.2cm}@{}}
+        \toprule
+        \textbf{Librer\'ia} & \textbf{Versi\'on} & \textbf{Prop\'osito} \\\
+        \midrule
+        \texttt{react-hook-form} & \texttt{\^{}7.85.0} & Gestor de formularios
+        ligero que reduce re-renders innecesarios y simplifica la
+        validaci\'on de campos. \\\
+        \addlinespace
+        \texttt{@hookform/resolvers} & \texttt{\^{}5.9.0} & Integraci\'on de
+        \texttt{react-hook-form} con esquemas de validaci\'on externos como
+        Zod. \\\
+        \addlinespace
+        \texttt{Zod} & \texttt{\^{}4.4.3} & Librer\'ia de validaci\'on y
+        definici\'on de esquemas con tipado est\'atico en TypeScript. \\\
+        \bottomrule
+      \end{tabular}
+    \end{tablaAPA}%
+  }{Elaboraci\'on propia en base al archivo \texttt{package.json} del
+  proyecto.}
+\end{table}
+
+\subsection{Definici\'on del esquema de validaci\'on}
+
+Cada formulario se define mediante un esquema Zod que establece las reglas de
+validaci\'on de cada campo. El esquema se compila est\'aticamente con
+TypeScript, lo que permite inferir el tipo de datos del formulario
+autom\'aticamente.
+
+A continuaci\'on se presenta el esquema de validaci\'on del formulario de
+registro:
+
+\begin{lstlisting}
+const registerSchema = z
+  .object({
+    fullName: z
+      .string()
+      .min(1, 'El nombre es obligatorio')
+      .min(3, 'El nombre debe tener al menos 3 caracteres')
+      .max(100, 'El nombre es demasiado largo'),
+    email: z
+      .string()
+      .min(1, 'El email es obligatorio')
+      .email('Ingresa un email valido'),
+    password: z
+      .string()
+      .min(1, 'La contraseña es obligatoria')
+      .min(6, 'La contraseña debe tener al menos 6 caracteres'),
+    confirmPassword: z
+      .string()
+      .min(1, 'Confirma tu contraseña'),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: 'Las contraseñas no coinciden',
+    path: ['confirmPassword'],
+  });
+\end{lstlisting}
+
+El esquema del formulario de inicio de sesi\'on es m\'as sencillo, requiriendo
+\'unicamente el campo de email y contrase\~na:
+
+\begin{lstlisting}
+const loginSchema = z.object({
+  email: z
+    .string()
+    .min(1, 'El email es obligatorio')
+    .email('Ingresa un email valido'),
+  password: z
+    .string()
+    .min(1, 'La contraseña es obligatoria')
+    .min(6, 'La contraseña debe tener al menos 6 caracteres'),
+});
+\end{lstlisting}
+
+\subsection{Integraci\'on con react-hook-form}
+
+El componente \texttt{useForm} de \texttt{react-hook-form} se conecta con el
+esquema Zod mediante el \texttt{zodResolver}, que traduce las reglas de
+validaci\'on de Zod al formato de react-hook-form. El hook \texttt{Controller}
+se utiliza para controlar cada campo de texto individualmente.
+
+\begin{lstlisting}
+const {
+  control,
+  handleSubmit,
+  formState: { errors, isSubmitting },
+} = useForm<RegisterFormData>({
+  resolver: zodResolver(registerSchema),
+  defaultValues: {
+    fullName: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+  },
+});
+\end{lstlisting}
+
+Cada campo de texto se renderiza con el componente \texttt{Controller}, que
+sincroniza el valor del campo con el estado del formulario:
+
+\begin{lstlisting}
+<Controller
+  control={control}
+  name="email"
+  render={({ field: { onChange, onBlur, value } }) => (
+    <TextInput
+      style={[styles.input, errors.email && styles.inputError]}
+      placeholder="tu@email.com"
+      placeholderTextColor={colors.textSecondary}
+      value={value}
+      onChangeText={onChange}
+      onBlur={onBlur}
+      keyboardType="email-address"
+      autoCapitalize="none"
+    />
+  )}
+/>
+{errors.email && (
+  <Text style={styles.errorText}>{errors.email.message}</Text>
+)}
+\end{lstlisting}
+
+\subsection{Env\'io del formulario}
+
+El env\'io del formulario se gestiona mediante la funci\'on \texttt{onSubmit},
+que recibe los datos validados y ejecuta la acci\'on correspondiente (inicio de
+sesi\'on o registro) a trav\'es del contexto de autenticaci\'on. Durante el
+env\'io, se muestra un indicador de carga (\texttt{ActivityIndicator}) y se
+deshabilita el bot\'on para evitar env\'ios duplicados.
+
+\begin{lstlisting}
+const onSubmit = async (data: RegisterFormData) => {
+  setServerError(null);
+  setSuccessMessage(null);
+
+  const { error } = await signUp(
+    data.email, data.password, data.fullName
+  );
+
+  if (error) {
+    setServerError(error);
+    return;
+  }
+
+  setSuccessMessage(
+    'Cuenta creada. Revisa tu email para confirmar tu cuenta.'
+  );
+
+  setTimeout(() => {
+    router.replace('/auth/login');
+  }, 2500);
+};
+\end{lstlisting}
+
+\subsection{Manejo de errores del servidor}
+
+Adem\'as de las validaciones locales del cliente, la aplicaci\'on gestiona
+errores provenientes del servidor (Supabase), como credenciales inv\'alidas o
+correos ya registrados. Estos errores se muestran en una caja de estilo
+especial con fondo rojo claro, diferenci\'andolos de las validaciones de campo.
+
+\begin{lstlisting}
+{serverError && (
+  <View style={styles.serverErrorBox}>
+    <Text style={styles.serverErrorText}>{serverError}</Text>
+  </View>
+)}
+\end{lstlisting}

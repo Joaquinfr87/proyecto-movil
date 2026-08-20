@@ -1,0 +1,189 @@
+% ============================================================================
+%  SECCIÓN 3.21: IMPLEMENTACIÓN DE LA NAVEGACIÓN
+% ============================================================================
+
+\section{Implementaci\'on de la navegaci\'on}
+
+La navegaci\'on es uno de los aspectos m\'as importantes de una
+aplicaci\'on m\'ovil, pues define c\'omo el usuario se desplaza entre las
+diferentes pantallas \citep{pressman2010}. En el presente proyecto se
+utiliz\'o la librer\'ia \texttt{expo-router}, que implementa un sistema de
+navegaci\'on basado en archivos (file-based routing) similar al de Next.js,
+donde cada archivo en el directorio \texttt{src/app/} representa una ruta de
+la aplicaci\'on.
+
+\subsection{Estructura de navegaci\'on}
+
+La arquitectura de navegaci\'on de la aplicaci\'on se organiza en dos
+niveles principales: un \textbf{Stack Navigator} ra\'iz que gestiona las
+pantallas de autenticaci\'on y un \textbf{Tab Navigator} que gestiona las
+pesta\~nas principales de la aplicaci\'on.
+
+\begin{lstlisting}
+src/app/
+  _layout.tsx              Stack Navigator ra\'iz
+  splash.tsx               Pantalla de bienvenida
+  auth/
+    login.tsx              Pantalla de inicio de sesi\'on
+    register.tsx           Pantalla de registro
+  (tabs)/
+    _layout.tsx            Tab Navigator
+    index.tsx              Pesta\~na Inicio
+    search.tsx             Pesta\~na Buscar
+    favorites.tsx          Pesta\~na Favoritos
+    profile.tsx            Pesta\~na Perfil
+  scenario/
+    [id].tsx               Detalle del escenario (ruta din\'amica)
+\end{lstlisting}
+
+\subsection{Configuraci\'on del Stack Navigator ra\'iz}
+
+El layout ra\'iz (\texttt{\_layout.tsx}) define un \texttt{Stack Navigator}
+que gestiona todas las pantallas de la aplicaci\'on. Todas las pantallas se
+configuran con \texttt{headerShown: false} para ocultar la barra de
+navegaci\'on nativa y utilizar las propias barras dise\~nadas en cada pantalla.
+
+\begin{lstlisting}
+export default function RootLayout() {
+  return (
+    <AuthProvider>
+      <AuthGuard>
+        <StatusBar style="dark" />
+        <Stack screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="splash" />
+          <Stack.Screen name="(tabs)" />
+          <Stack.Screen name="auth/login" />
+          <Stack.Screen name="auth/register" />
+          <Stack.Screen name="scenario/[id]" />
+        </Stack>
+      </AuthGuard>
+    </AuthProvider>
+  );
+}
+\end{lstlisting}
+
+Los proveedores \texttt{AuthProvider} y el componente \texttt{AuthGuard}
+se envuelven alrededor del Stack Navigator para que toda la aplicaci\'on tenga
+acceso al contexto de autenticaci\'on y a la protecci\'on de rutas.
+
+\subsection{Configuraci\'on del Tab Navigator}
+
+El Tab Navigator (\texttt{(tabs)/\_layout.tsx}) define las cuatro
+pesta\~nas principales de la aplicaci\'on con sus respectivos \'iconos y
+t\'itulos. Cada pesta\~na se configura con los colores del tema para
+mantener la identidad visual.
+
+\begin{lstlisting}
+export default function TabLayout() {
+  return (
+    <Tabs
+      screenOptions={{
+        tabBarActiveTintColor: colors.primary,
+        tabBarInactiveTintColor: colors.textSecondary,
+        headerShown: false,
+      }}
+    >
+      <Tabs.Screen
+        name="index"
+        options={{
+          title: 'Inicio',
+          tabBarIcon: ({ color, size }) =>
+            <Ionicons name="home-outline" size={size} color={color} />,
+        }}
+      />
+      <Tabs.Screen name="search" options={{ title: 'Buscar', ... }} />
+      <Tabs.Screen name="favorites" options={{ title: 'Favoritos', ... }} />
+      <Tabs.Screen name="profile" options={{ title: 'Perfil', ... }} />
+    </Tabs>
+  );
+}
+\end{lstlisting}
+
+\subsection{Navegaci\'on entre pantallas}
+
+La navegaci\'on entre pantallas se implementa mediante el hook
+\texttt{useRouter} de \texttt{expo-router}, que permite ejecutar funciones
+de navegaci\'on como \texttt{replace} (reemplazar la pantalla actual) y
+\texttt{push} (apilar una nueva pantalla).
+
+\begin{lstlisting}
+// Desde Splash hacia Login
+const router = useRouter();
+const handleComenzar = () => {
+  router.replace('/auth/login');
+};
+
+// Desde Login hacia Tabs (despu\'es de autenticar)
+const onSubmit = async (data) => {
+  const { error } = await signIn(data.email, data.password);
+  if (!error) router.replace('/(tabs)');
+};
+
+// Navegaci\'on con Link (declarativa)
+<Link href="/auth/register" asChild>
+  <TouchableOpacity>
+    <Text style={styles.link}> Registrate</Text>
+  </TouchableOpacity>
+</Link>
+\end{lstlisting}
+
+\subsection{Rutas din\'amicas}
+
+La pantalla de detalle del escenario utiliza una ruta din\'amica
+(\texttt{scenario/[id].tsx}) que recibe el identificador del escenario como
+par\'ametro de URL. Este patr\'on permite navegar a la detalle de cualquier
+escenario con una sola ruta.
+
+\begin{lstlisting}
+// Navegaci\'on hacia el detalle de un escenario
+router.push('/scenario/123');
+
+// En la pantalla de detalle, lectura del par\'ametro
+import { useLocalSearchParams } from 'expo-router';
+
+export default function ScenarioDetailScreen() {
+  const { id } = useLocalSearchParams<{ id: string }>();
+  // ...
+}
+\end{lstlisting}
+
+\subsection{Diagrama de navegaci\'on implementado}
+
+\begin{figure}[H]
+  \centering
+  \caption{Diagrama de navegaci\'on implementado en la aplicaci\'on \nombreApp{}}
+  \label{fig:navegacion-implementada}
+  \contenidoConFuente{%
+  \begin{tikzpicture}[
+      nodo/.style={rectangle, draw=black!70, rounded corners=2pt,
+                   minimum width=3.2cm, minimum height=0.8cm,
+                   align=center, fill=gray!10, font=\small},
+      stack/.style={rectangle, draw=blue!60, rounded corners=3pt,
+                    dashed, inner sep=8pt, fill=blue!3},
+      tab/.style={rectangle, draw=green!60, rounded corners=3pt,
+                  dashed, inner sep=8pt, fill=green!3},
+      flecha/.style={-{Stealth[length=2.5mm]}, thick}
+    ]
+    % Stack Navigator
+    \node[stack, fit={(0,0) (7,3.5)}, label={[font=\small\bfseries]above:Stack Navigator}] (stack) {};
+    \node[nodo, fill=yellow!15] (splash) at (3.5,2.5) {Splash};
+    \node[nodo] (login) at (1.5,1.2) {Login};
+    \node[nodo] (register) at (5.5,1.2) {Registro};
+    \node[nodo] (detail) at (5.5,0.0) {Scenario [id]};
+
+    % Tab Navigator
+    \node[tab, fit={(10,-1.5) (16.5,3.5)}, label={[font=\small\bfseries]above:Tab Navigator}] (tabs) {};
+    \node[nodo] (home) at (11.2,2.5) {Inicio};
+    \node[nodo] (search) at (14.8,2.5) {Buscar};
+    \node[nodo] (fav) at (11.2,0.7) {Favoritos};
+    \node[nodo] (profile) at (14.8,0.7) {Perfil};
+
+    \draw[flecha] (splash) -- (login);
+    \draw[flecha] (splash) -- (register);
+    \draw[flecha] (login) -- (register) node[midway, below, font=\scriptsize] {Registrate};
+    \draw[flecha] (login) -- (home) node[midway, above, font=\scriptsize] {Autenticar};
+    \draw[flecha] (home) -- (detail);
+    \draw[flecha, dashed] (profile) to[bend right=30] node[below, font=\scriptsize] {signOut} (login);
+  \end{tikzpicture}%
+  }{Elaboraci\'on propia en base al c\'odigo fuente de la aplicaci\'on.}
+\end{figure}

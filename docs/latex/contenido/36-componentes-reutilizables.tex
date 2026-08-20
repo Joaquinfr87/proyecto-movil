@@ -1,0 +1,211 @@
+% ============================================================================
+%  SECCIÓN 3.20: COMPONENTES REUTILIZABLES
+% ============================================================================
+
+\section{Componentes reutilizables}
+
+La reutilizaci\'on de componentes es un principio fundamental del desarrollo
+de software que reduce la duplicaci\'on de c\'odigo, facilita el mantenimiento
+y garantiza la consistencia visual en toda la aplicaci\'on
+\citep{sommerville2011}. En el presente proyecto se implementaron los
+siguientes componentes y patrones reutilizables.
+
+\subsection{Componente AuthGuard (vigilante de autenticaci\'on)}
+
+El componente \texttt{AuthGuard} es un componente de alto orden que envuelve
+toda la aplicaci\'on y controla el acceso a las pantallas seg\'un el estado de
+autenticaci\'on del usuario. Implementa la l\'ogica de redireccionamiento
+autom\'atico: si el usuario no est\'a autenticado y no se encuentra en una
+pantalla de autenticaci\'on, es redirigido a la pantalla de splash; si est\'a
+autenticado pero se encuentra en una pantalla de autenticaci\'on, es redirigido
+a la pantalla principal.
+
+\begin{lstlisting}
+export function AuthGuard({ children }: { children: React.ReactNode }) {
+  const { session, loading } = useAuth();
+  const segments = useSegments();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (loading) return;
+
+    const inAuthGroup = segments[0] === 'auth';
+    const inSplash = segments[0] === 'splash';
+
+    if (!session && !inAuthGroup && !inSplash) {
+      router.replace('/splash');
+    } else if (session && (inAuthGroup || inSplash)) {
+      router.replace('/(tabs)');
+    }
+  }, [session, loading, segments, router]);
+
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color={colors.primary} />
+      </View>
+    );
+  }
+
+  return <>{children}</>;
+}
+\end{lstlisting}
+
+Este componente se integra en el layout ra\'iz de la aplicaci\'on
+(\texttt{\_layout.tsx}), envolviendo a todos los componentes hijos. La
+ventaja de este patr\'on es que centraliza la l\'ogica de protecci\'on de rutas
+en un solo lugar, evitando duplicar c\'odigo en cada pantalla.
+
+\begin{figure}[H]
+  \centering
+  \caption{Diagrama de flujo del componente AuthGuard}
+  \label{fig:authguard-flow}
+  \contenidoConFuente{%
+  \begin{tikzpicture}[
+      nodo/.style={rectangle, draw=black!70, rounded corners=2pt,
+                   minimum width=3.0cm, minimum height=0.9cm,
+                   align=center, fill=gray!10, font=\small},
+      decision/.style={diamond, draw=black!70, rounded corners=2pt,
+                       minimum width=2.8cm, minimum height=1.0cm,
+                       align=center, fill=orange!10, font=\small},
+      flecha/.style={-{Stealth[length=2.5mm]}, thick}
+    ]
+    \node[decision] (check) at (0,0) {\'Es autenticado?};
+    \node[nodo] (splash) at (-3.5,-2) {Redirigir a Splash};
+    \node[nodo] (tabs) at (3.5,-2) {Redirigir a Tabs};
+    \node[nodo] (auth) at (3.5,2) {Permitir acceso};
+
+    \draw[flecha] (check) -- node[below left] {No} (splash);
+    \draw[flecha] (check) -- node[below right] {S\'i} (auth);
+    \draw[flecha] (tabs) -- node[above right] {S\'i} (check);
+  \end{tikzpicture}%
+  }{Elaboraci\'on propia en base al c\'odigo fuente del componente.}
+\end{figure}
+
+\subsection{Contexto de autenticaci\'on (AuthContext)}
+
+El \texttt{AuthContext} es un contexto de React que centraliza el estado de
+autenticaci\'on de la aplicaci\'on, proporcionando a cualquier componente hijo
+acceso al usuario actual, la sesi\'on y las funciones de inicio de sesi\'on,
+registro y cierre de sesi\'on. El contexto gestiona la suscripci\'on a cambios
+de autenticaci\'on en tiempo real a trav\'es de la API de Supabase.
+
+\begin{lstlisting}
+interface AuthContextType {
+  session: Session | null;
+  user: User | null;
+  loading: boolean;
+  signIn: (email: string, password: string)
+    => Promise<{ error?: string }>;
+  signUp: (email: string, password: string, fullName: string)
+    => Promise<{ error?: string }>;
+  signOut: () => Promise<void>;
+}
+\end{lstlisting}
+
+El contexto se define una sola vez en el layout ra\'iz de la aplicaci\'on y
+est\'a disponible para todas las pantallas y componentes a trav\'es del hook
+\texttt{useAuth()}.
+
+\subsection{Sistema de tema visual}
+
+El sistema de tema visual se define en el directorio \texttt{src/theme/} y
+centraliza los colores, espaciados, tama\~nos de fuente y radios de borde de
+la aplicaci\'on. Este patr\'on garantiza que todas las pantallas mantengan una
+identidad visual coherente.
+
+\subsubsection{Paleta de colores}
+
+La paleta de colores se define en el archivo \texttt{colors.ts} y utiliza un
+sistema de tokens de diseño que asocia cada color a un nombre sem\'antico:
+
+\begin{lstlisting}
+export const colors = {
+  primary: '#2563EB',
+  primaryDark: '#1D4ED8',
+  primaryLight: '#93C5FD',
+
+  secondary: '#10B981',
+  secondaryDark: '#059669',
+  secondaryLight: '#6EE7B7',
+
+  background: '#F8FAFC',
+  surface: '#FFFFFF',
+  surfaceVariant: '#F1F5F9',
+
+  text: '#0F172A',
+  textSecondary: '#64748B',
+  textInverse: '#FFFFFF',
+
+  border: '#E2E8F0',
+  borderLight: '#F1F5F9',
+
+  error: '#EF4444',
+  errorLight: '#FCA5A5',
+  success: '#22C55E',
+  warning: '#F59E0B',
+} as const;
+\end{lstlisting}
+
+La paleta se inspira en la escala de colores de Tailwind CSS, lo que permite
+mantener un estilo visual moderno y consistente. Los colores se agrupan en
+categor\'ias: primarios (azul), secundarios (verde), superficies (grises),
+texto, bordes y estados (error, \'exito, advertencia).
+
+\subsubsection{Sistema de espaciado}
+
+El sistema de espaciado se define en el archivo \texttt{spacing.ts} y
+establece una escala de valores fijos que se aplican de forma consistente en
+todos los componentes:
+
+\begin{lstlisting}
+export const spacing = {
+  xs: 4, sm: 8, md: 16, lg: 24, xl: 32, xxl: 48,
+} as const;
+
+export const borderRadius = {
+  sm: 4, md: 8, lg: 12, xl: 16, full: 9999,
+} as const;
+
+export const fontSize = {
+  xs: 12, sm: 14, md: 16, lg: 18, xl: 20, xxl: 24, title: 32,
+} as const;
+\end{lstlisting}
+
+Este sistema de tokens se exporta desde el archivo \texttt{index.ts} del
+directorio \texttt{theme/} y se importa en cada pantalla mediante una sola
+importaci\'on, simplificando el acceso a las constantes de dise\~no.
+
+\subsection{Tipos de datos compartidos}
+
+Los tipos de datos se definen en el directorio \texttt{src/types/} e incluyen
+las interfaces para los modelos de dominio de la aplicaci\'on: usuarios,
+escenarios, deportes, eventos, favoritos e im\'agenes de escenarios. Estos
+tipos se utilizan en toda la aplicaci\'on para garantizar la consistencia de
+los datos.
+
+\begin{lstlisting}
+export interface User {
+  id: string;
+  email: string;
+  full_name: string;
+  role: 'admin' | 'gestor' | 'asistente';
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Scenario {
+  id: string;
+  nombre: string;
+  tipo: string;
+  descripcion: string;
+  capacidad: number;
+  direccion: string;
+  latitud: number;
+  longitud: number;
+  estado: string;
+  created_by: string | null;
+  created_at: string;
+  updated_at: string;
+}
+\end{lstlisting}

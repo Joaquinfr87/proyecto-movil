@@ -1,0 +1,95 @@
+% ============================================================================
+%  SECCIÓN 3.24: COMPARACIÓN WIREFRAME VS IMPLEMENTACIÓN
+% ============================================================================
+
+\section{Comparaci\'on wireframe vs implementaci\'on}
+
+Siguiendo la gu\'ia del avance, se realiza una comparaci\'on entre los
+wireframes dise\~nados en el primer avance (secci\'on de wireframes iniciales) y
+las pantallas implementadas en esta etapa. La tabla resume los elementos
+conservados, modificados, agregados y pendientes en cada pantalla.
+
+\begin{table}[H]
+  \centering
+  \caption{Comparativa entre wireframes e implementaci\'on}
+  \label{tab:comparacion-wireframe}
+  \contenidoConFuente{%
+    \begin{tablaAPA}
+      \begin{tabular}{@{}p{2.6cm}p{3.0cm}p{3.2cm}p{3.0cm}p{3.2cm}@{}}
+        \toprule
+        \textbf{Pantalla} & \textbf{Conservados} & \textbf{Modificados} &
+        \textbf{Agregados} & \textbf{Pendientes} \\\
+        \midrule
+        Splash & Logo, nombre de la app, bot\'on de acci\'on &
+        Fondo con forma decorativa curva en lugar de fondo plano &
+        Mensaje tagline \textit{``Descubre, explora y conecta''} &
+        Animaci\'on de transici\'on \\\
+        \addlinespace
+        Login & Campos de email y contrase\~na, bot\'on de acci\'on, enlace a
+        registro & Layout centrado vertical con espaciado amplio &
+        Indicador de carga, mensajes de error de validaci\'on &
+        Iconos en los campos de texto \\\
+        \addlinespace
+        Registro & Campos de nombre, email, contrase\~na, bot\'on de registro &
+        Agregado campo de confirmaci\'on de contrase\~na &
+        Validaci\'on en tiempo real con Zod, mensaje de \'exito,
+        redireccionamiento autom\'atico &
+        Selector de rol de usuario \\\
+        \addlinespace
+        Principal & Barra de navegaci\'on inferior con 4 secciones &
+        Las 4 pesta\~nas reemplazan el dise\~no de mapa propuesto &
+        \'Iconos de Ionicons en cada pesta\~na, colores del tema &
+        Mapa interactivo, barra de b\'usqueda \\\
+        \addlinespace
+        Detalle & Nombre del escenario, imagen, informaci\'on b\'asica &
+        Recibe ID por ruta din\'amica &
+        Placeholder funcional que valida la navegaci\'on &
+        Imagen del escenario, disciplinas, horarios, bot\'on de favorito \\\
+        \bottomrule
+      \end{tabular}
+    \end{tablaAPA}%
+  }{Elaboraci\'on propia en base a la comparaci\'on entre los wireframes del
+  primer avance y la implementaci\'on actual.}
+\end{table}
+
+\subsection{An\'alisis por pantalla}
+
+\subsubsection{Pantalla Splash}
+
+El wireframe original mostraba un dise\~no simple con logo, nombre y bot\'on.
+La implementaci\'on conserva estos tres elementos y agrega un fondo decorativo
+con forma curva que genera una identidad visual m\'as fuerte. El mensaje tagline
+se agrad\'o como elemento adicional para comunicar la propuesta de valor de la
+aplicaci\'on.
+
+La implementaci\'on actual de la pantalla Splash se presenta en la
+figura~\ref{fig:pantalla-splash} de la secci\'on de construcci\'on de
+pantallas. El wireframe original del primer avance se presenta en la
+figura~\ref{fig:wireframes-acceso} de la secci\'on de wireframes iniciales.
+La comparaci\'on muestra que se conservaron los elementos fundamentales
+(logo, nombre, bot\'on de acci\'on) y se a\~nadi\'o un fondo decorativo
+y un mensaje tagline para reforzar la identidad visual.
+
+\subsubsection{Pantallas de login y registro}
+
+Los wireframes originales propon\'ian campos de texto simples con un bot\'on de
+acci\'on. La implementaci\'on conserva esta estructura y agrega
+validaci\'on en tiempo real, mensajes de error, indicadores de carga y
+enlaces de navegaci\'on entre pantallas. El formulario de registro incorpora
+un campo adicional de confirmaci\'on de contrase\~na que no exist\'ia en el
+wireframe original, mejorando la seguridad de la experiencia de registro.
+
+\subsubsection{Pantalla principal}
+
+El wireframe original propon\'ia una pantalla con barra de b\'usqueda y mapa
+interactivo. La implementaci\'on actual presenta una barra de navegaci\'on
+inferior con cuatro pesta\~nas, lo que proporciona una estructura de
+navegaci\'on m\'as clara. El mapa interactivo y la barra de b\'usqueda est\'an
+pendientes de implementaci\'on en avances posteriores.
+
+\subsubsection{Pantalla de detalle}
+
+El wireframe propon\'ia una ficha completa con imagen, disciplinas, capacidad,
+horarios y bot\'on de favorito. La implementaci\'on actual es un placeholder
+funcional que valida la navegaci\'on y la recepci\'on de par\'ametros por ruta
+din\'amica, dejando el dise\~no visual completo para un avance futuro.

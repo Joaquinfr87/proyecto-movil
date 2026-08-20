@@ -1,0 +1,209 @@
+% ============================================================================
+%  SECCIÓN 3.18: USO DE WIDGETS DE REACT NATIVE Y DISEÑO MEDIANTE LAYOUTS
+% ============================================================================
+
+\section{Uso de widgets de React Native y dise\~no mediante layouts}
+
+Para la construcci\'on de las interfaces de la aplicaci\'on \nombreApp{}, se
+utilizaron los componentes nativos de React Native que equivalen a los widgets
+de Flutter descritos en la gu\'ia del avance. A continuaci\'on se presenta un
+an\'alisis de los widgets empleados y de los patrones de dise\~no de layouts
+aplicados en las pantallas.
+
+\subsection{Widgets de React Native utilizados}
+
+Los widgets de React Native son componentes de interfaz que se renderizan
+directamente en el dispositivo m\'ovil. En la siguiente tabla se presenta la
+relaci\'on entre los widgets de Flutter recomendados en la gu\'ia del avance y
+sus equivalentes en React Native, junto con los componentes adicionales que se
+emplearon en el proyecto.
+
+\begin{table}[H]
+  \centering
+  \caption{Relaci\'on de widgets Flutter vs React Native}
+  \contenidoConFuente{%
+    \begin{tablaAPA}
+      \begin{tabular}{@{}p{3.4cm}p{4.0cm}p{8.2cm}@{}}
+        \toprule
+        \textbf{Widget Flutter} & \textbf{Equivalente React Native} &
+        \textbf{Uso en el proyecto} \\\
+        \midrule
+        \texttt{TextField} & \texttt{TextInput} & Campos de formulario
+        (email, contrase\~na, nombre) en las pantallas de login y registro. \\\
+        \addlinespace
+        \texttt{Text} & \texttt{Text} & T\'itulos, subt\'itulos, mensajes,
+        etiquetas y textos informativos en todas las pantallas. \\\
+        \addlinespace
+        \texttt{ElevatedButton} & \texttt{TouchableOpacity} & Botones de
+        acci\'on: \textit{``Comenzar''}, \textit{``Iniciar sesi\'on''},
+        \textit{``Crear cuenta''}, \textit{``Cerrar sesi\'on''}. \\\
+        \addlinespace
+        \texttt{Column} & \texttt{View} con \texttt{flexDirection: 'column'} &
+        Organizaci\'on vertical de elementos en todas las pantallas. \\\
+        \addlinespace
+        \texttt{Row} & \texttt{View} con \texttt{flexDirection: 'row'} &
+        Disposici\'on horizontal: barra de navegaci\'on, footer de enlaces,
+        bot\'on de logout con icono. \\\
+        \addlinespace
+        \texttt{Padding} & \texttt{padding*} en \texttt{StyleSheet} &
+        Espaciado interno de contenedores, campos y botones. \\\
+        \addlinespace
+        \texttt{Container} & \texttt{View} con estilos de fondo y borde &
+        Contenedores de avatar, campos de formulario y cajas de mensajes. \\\
+        \addlinespace
+        -- & \texttt{KeyboardAvoidingView} & Ajuste autom\'atico de la
+        interfaz cuando aparece el teclado virtual. \\\
+        \addlinespace
+        -- & \texttt{ScrollView} & Desplazamiento del contenido cuando
+        excede el tama\~no de la pantalla. \\\
+        \addlinespace
+        -- & \texttt{ActivityIndicator} & Indicador de carga durante el
+        env\'io de formularios (login y registro). \\\
+        \addlinespace
+        -- & \texttt{Alert} & Di\'alogo de confirmaci\'on para el cierre
+        de sesi\'on. \\\
+        \bottomrule
+      \end{tabular}
+    \end{tablaAPA}%
+  }{Elaboraci\'on propia en base al c\'odigo fuente de la aplicaci\'on.}
+\end{table}
+
+Todos los widgets se importan desde el m\'odulo \texttt{react-native}, que
+proporciona componentes nativos optimizados para cada plataforma. Adem\'as, se
+utiliz\'o la librer\'ia \texttt{@expo/vector-icons/Ionicons} para los
+\'iconos de la barra de navegaci\'on inferior y de la pantalla de perfil.
+
+\subsection{Uso de estilos con StyleSheet}
+
+Los estilos de cada componente se definen mediante el objeto
+\texttt{StyleSheet.create()} de React Native, que permite declarar estilos
+tipados y optimizados para cada pantalla. A continuaci\'on se presenta un
+ejemplo del estilo del bot\'on de la pantalla de bienvenida.
+
+\begin{lstlisting}
+const styles = StyleSheet.create({
+  button: {
+    backgroundColor: colors.white,
+    paddingVertical: spacing.md + 2,
+    borderRadius: borderRadius.full,
+    alignItems: 'center',
+    shadowColor: colors.black,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 6,
+  },
+  buttonText: {
+    color: colors.primary,
+    fontSize: fontSize.lg,
+    fontWeight: fontWeight.bold,
+    letterSpacing: 0.5,
+  },
+});
+\end{lstlisting}
+
+\subsection{Dise\~no mediante layouts (flexbox)}
+
+El sistema de layout de React Native se basa en \textbf{Flexbox}, un modelo de
+dise\~no que permite organizar los elementos de forma flexible y responsiva. A
+diferencia de Flutter, que utiliza \texttt{Row} y \texttt{Column} como
+widgets separados, en React Native se controla la direcci\'on del layout a
+trav\'es de la propiedad \texttt{flexDirection} del contenedor \texttt{View}.
+
+\subsubsection{Layout vertical (equivalente a Column)}
+
+El layout vertical es el patr\'on m\'as utilizado en las pantallas de la
+aplicaci\'on. Se aplica mediante \texttt{flexDirection: 'column'} (valor por
+defecto de \texttt{View}) y permite organizar los elementos de arriba hacia
+abajo.
+
+\begin{lstlisting}
+// Layout vertical: encabezado, campos y botón
+<View style={styles.container}>
+  <View style={styles.header}>
+    <Text style={styles.title}>Bienvenido</Text>
+    <Text style={styles.subtitle}>Inicia sesión para continuar</Text>
+  </View>
+  <View style={styles.form}>
+    <TextInput ... />
+    <TextInput ... />
+    <TouchableOpacity ... />
+  </View>
+</View>
+\end{lstlisting}
+
+Este patr\'on se aplica en la pantalla de login (encabezado + formulario +
+footer), en la pantalla de registro (encabezado + 4 campos + bot\'on + enlace)
+y en la pantalla de perfil (avatar + nombre + email + bot\'on de cerrar sesi\'on).
+
+\subsubsection{Layout horizontal (equivalente a Row)}
+
+El layout horizontal se utiliza para elementos que se disponen de izquierda a
+derecha, como el footer de enlaces en las pantallas de login y registro, y la
+barra de navegaci\'on inferior.
+
+\begin{lstlisting}
+// Layout horizontal: footer con enlace a registro
+<View style={styles.footer}>
+  <Text style={styles.footerText}>¿No tienes cuenta?</Text>
+  <Link href="/auth/register" asChild>
+    <TouchableOpacity>
+      <Text style={styles.link}> Registrate</Text>
+    </TouchableOpacity>
+  </Link>
+</View>
+\end{lstlisting}
+
+\begin{lstlisting}
+// Layout horizontal: botón de cerrar sesión con icono
+<TouchableOpacity style={styles.logoutButton} onPress={handleSignOut}>
+  <Ionicons name="log-out-outline" size={20} color={colors.error} />
+  <Text style={styles.logoutText}>Cerrar sesión</Text>
+</TouchableOpacity>
+\end{lstlisting}
+
+\subsubsection{Uso de flex para distribuir espacio}
+
+La propiedad \texttt{flex} permite distribuir el espacio disponible entre los
+elementos hijos. En la pantalla de bienvenida se utiliza \texttt{flex: 1} en
+el contenedor de contenido para que ocupe todo el espacio vertical disponible,
+empujando el bot\'on \textit{``Comenzar''} hacia la parte inferior.
+
+\begin{lstlisting}
+content: {
+  flex: 1,              // Ocupa todo el espacio disponible
+  alignItems: 'center',  // Centra horizontalmente
+  justifyContent: 'center', // Centra verticalmente
+  zIndex: 1,
+},
+\end{lstlisting}
+
+\subsubsection{Contenedores con Card (equivalente a Container)}
+
+Los contenedores visuales tipo tarjeta se implementan con \texttt{View} +
+estilos de fondo, borde y sombra. El ejemplo m\'as representativo es el avatar
+de la pantalla de perfil, que utiliza un contenedor circular con sombra.
+
+\begin{lstlisting}
+logoWrapper: {
+  width: 140,
+  height: 140,
+  borderRadius: borderRadius.full,
+  backgroundColor: colors.white,
+  alignItems: 'center',
+  justifyContent: 'center',
+  shadowColor: colors.black,
+  shadowOffset: { width: 0, height: 8 },
+  shadowOpacity: 0.2,
+  shadowRadius: 16,
+  elevation: 10,
+},
+\end{lstlisting}
+
+\subsubsection{Listas y datos est\'aticos}
+
+En esta etapa del desarrollo, los datos se presentan de forma est\'atica en
+cada pantalla. La pantalla de perfil muestra la informaci\'on del usuario
+obtenida del contexto de autenticaci\'on, y las pantallas de b\'usqueda y
+favoritos presentan contenido placeholder. La integraci\'on con datos din\'amicos
+desde Supabase se realizar\'a en avances posteriores.

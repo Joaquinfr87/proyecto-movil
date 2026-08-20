@@ -1,0 +1,113 @@
+% ============================================================================
+%  SECCIÓN 3.22: CONFIGURACIÓN DEL TEMA VISUAL
+% ============================================================================
+
+\section{Configuraci\'on del tema visual}
+
+La configuraci\'on del tema visual es un requisito fundamental del avance,
+pues asegura que todas las pantallas mantengan una identidad visual coherente
+\citep{nielsen1994}. En esta secci\'on se documenta la paleta de colores, la
+tipograf\'ia, la escala de espaciado y los estilos de componentes que
+conforman el sistema de dise\~no de la aplicaci\'on \nombreApp{}.
+
+\subsection{Paleta de colores}
+
+La paleta de colores se define en el archivo \texttt{src/theme/colors.ts}
+y sigue una estructura de tokens de dise\~no inspirada en la escala de
+colores de Tailwind CSS. Cada color se asocia a un nombre sem\'antico que
+describe su funci\'on en la interfaz.
+
+\begin{table}[H]
+  \centering
+  \caption{Paleta de colores de la aplicaci\'on \nombreApp{}}
+  \contenidoConFuente{%
+    \begin{tablaAPA}
+      \begin{tabular}{@{}p{2.2cm}p{2.6cm}p{2.2cm}p{8.6cm}@{}}
+        \toprule
+        \textbf{Categor\'ia} & \textbf{Token} & \textbf{Valor} &
+        \textbf{Uso} \\\
+        \midrule
+        \textbf{Primario} & \texttt{primary} & \texttt{\#2563EB} & Color
+        principal de la marca: botones, enlaces, \'iconos activos. \\\
+        \addlinespace
+        Primario & \texttt{primaryDark} & \texttt{\#1D4ED8} & Fondo de la
+        parte superior del splash. \\\
+        \addlinespace
+        Primario & \texttt{primaryLight} & \texttt{\#93C5FD} & Texto tagline
+        del splash, elementos secundarios. \\\
+        \addlinespace
+        \textbf{Secundario} & \texttt{secondary} & \texttt{\#10B981} & Color
+        de \'exito, confirmaciones positivas. \\\
+        \addlinespace
+        \textbf{Superficie} & \texttt{background} & \texttt{\#F8FAFC} &
+        Fondo general de todas las pantallas. \\\
+        \addlinespace
+        Superficie & \texttt{surface} & \texttt{\#FFFFFF} & Fondo de
+        tarjetas, campos de formulario y botones. \\\
+        \addlinespace
+        \textbf{Texto} & \texttt{text} & \texttt{\#0F172A} & Color principal
+        del texto (t\'itulos, contenido). \\\
+        \addlinespace
+        Texto & \texttt{textSecondary} & \texttt{\#64748B} & Texto
+        secundario, subt\'itulos y placeholders. \\\
+        \addlinespace
+        \textbf{Estado} & \texttt{error} & \texttt{\#EF4444} & Errores de
+        validaci\'on y mensajes de error del servidor. \\\
+        \addlinespace
+        Estado & \texttt{success} & \texttt{\#22C55E} & Mensajes de
+        \'exito (registro exitoso). \\\
+        \addlinespace
+        Estado & \texttt{warning} & \texttt{\#F59E0B} & Advertencias
+        (reservado para avances futuros). \\\
+        \bottomrule
+      \end{tabular}
+    \end{tablaAPA}%
+  }{Elaboraci\'on propia en base al archivo \texttt{colors.ts} del proyecto.}
+\end{table}
+
+\subsection{Escalas de tipograf\'ia y espaciado}
+
+La aplicaci\'on utiliza la tipograf\'ia del sistema (\texttt{fontFamily}
+por defecto de React Native), que var\'ia seg\'un la plataforma: San Francisco
+en iOS y Roboto en Android. Se define una escala de tama\~nos de fuente que
+va desde 12\,pt (\texttt{xs}) hasta 32\,pt (\texttt{title}).
+
+\begin{table}[H]
+  \centering
+  \caption{Escalas de tipograf\'ia y espaciado del tema}
+  \contenidoConFuente{%
+    \begin{tablaAPA}
+      \begin{tabular}{@{}p{3.2cm}p{3.6cm}p{8.8cm}@{}}
+        \toprule
+        \textbf{Token} & \textbf{Valor} & \textbf{Uso} \\\
+        \midrule
+        \texttt{fontSize.xs} & 12\,pt & Mensajes de error y pie de figura. \\\
+        \addlinespace
+        \texttt{fontSize.sm} & 14\,pt & Etiquetas de campo y texto secundario. \\\
+        \addlinespace
+        \texttt{fontSize.md} & 16\,pt & Texto de cuerpo y contenido principal. \\\
+        \addlinespace
+        \texttt{fontSize.lg} & 18\,pt & Texto de botones. \\\
+        \addlinespace
+        \texttt{fontSize.title} & 32\,pt & T\'itulos de pantalla. \\\
+        \addlinespace
+        \texttt{spacing.md} & 16\,pt & Espaciado est\'andar entre
+        elementos. \\\
+        \addlinespace
+        \texttt{borderRadius.md} & 8\,pt & Radio de bordes de campos y
+        botones. \\\
+        \bottomrule
+      \end{tabular}
+    \end{tablaAPA}%
+  }{Elaboraci\'on propia en base al archivo \texttt{spacing.ts} del proyecto.}
+\end{table}
+
+\subsection{Identidad visual coherente}
+
+Todas las pantallas de la aplicaci\'on utilizan la misma paleta de colores y
+las mismas escalas de espaciado y tipograf\'ia, lo que garantiza que la
+aplicaci\'on se vea como un solo producto y no como pantallas dise\~nadas por
+separado. Los componentes de interfaz (botones, campos de texto, tarjetas)
+siguen patrones visuales consistentes: botones primarios con fondo de color
+\texttt{primary} y texto blanco, campos de formulario con fondo \texttt{surface}
+y borde \texttt{border}, y mensajes de error con fondo \texttt{errorLight}.

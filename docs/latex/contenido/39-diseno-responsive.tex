@@ -1,0 +1,128 @@
+% ============================================================================
+%  SECCIÓN 3.23: DISEÑO RESPONSIVE
+% ============================================================================
+
+\section{Dise\~no responsive}
+
+El dise\~no responsive garantiza que la interfaz de la aplicaci\'on se adapte
+correctamente a diferentes tama\~nos de pantalla y condiciones de uso
+\citep{nielsen1994, pressman2010}. En el contexto del desarrollo m\'ovil, esto
+implica considerar la aparici\'on del teclado virtual, la variaci\'on en los
+tama\~nos de dispositivo y la orientaci\'on de la pantalla.
+
+\subsection{Adaptaci\'on al teclado virtual}
+
+Las pantallas que contienen formularios (login y registro) utilizan el
+componente \texttt{KeyboardAvoidingView} de React Native, que detecta
+autom\'aticamente la aparici\'on del teclado virtual y ajusta el layout de la
+interfaz para que los campos de texto no queden ocultos detr\'as del teclado.
+
+\begin{lstlisting}
+<KeyboardAvoidingView
+  style={styles.keyboardView}
+  behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+>
+  <ScrollView
+    contentContainerStyle={styles.scrollContent}
+    keyboardShouldPersistTaps="handled"
+  >
+    {/* Contenido del formulario */}
+  </ScrollView>
+</KeyboardAvoidingView>
+\end{lstlisting}
+
+La propiedad \texttt{behavior} se configura de forma condicional seg\'un la
+plataforma: en iOS se utiliza \texttt{'padding'} y en Android se utiliza
+\texttt{'height'}. Adem\'as, \texttt{keyboardShouldPersistTaps="handled"}
+permite que los toques en botones se registren aunque el teclado est\'e
+visible.
+
+\subsection{Desplazamiento con ScrollView}
+
+El componente \texttt{ScrollView} se utiliza en las pantallas de login y
+registro para permitir el desplazamiento del contenido cuando el formulario
+excede el tama\~no de la pantalla. Esto es especialmente importante en
+dispositivos con pantallas peque\~nas o cuando el teclado virtual reduce el
+espacio visible.
+
+\begin{lstlisting}
+<ScrollView
+  contentContainerStyle={styles.scrollContent}
+  keyboardShouldPersistTaps="handled"
+>
+  <View style={styles.container}>
+    {/* Contenido del formulario */}
+  </View>
+</ScrollView>
+\end{lstlisting}
+
+\subsection{Layouts flexibles con Flexbox}
+
+El sistema Flexbox de React Native se utiliza de forma extensiva para crear
+layouts que se adaptan autom\'aticamente al tama\~no de la pantalla. Las
+propiedades clave utilizadas son:
+
+\begin{table}[H]
+  \centering
+  \caption{Propiedades Flexbox utilizadas en el dise\~no responsive}
+  \contenidoConFuente{%
+    \begin{tablaAPA}
+      \begin{tabular}{@{}p{3.4cm}p{12.2cm}@{}}
+        \toprule
+        \textbf{Propiedad} & \textbf{Aplicaci\'on} \\\
+        \midrule
+        \texttt{flex: 1} & Permite que un contenedor ocupe todo el espacio
+        disponible, distribuyendo el espacio proporcionalmente entre los
+        elementos hijos. \\\
+        \addlinespace
+        \texttt{flexDirection: 'column'} & Organiza los elementos de arriba
+        hacia abajo (layout vertical), patr\'on principal de las pantallas. \\\
+        \addlinespace
+        \texttt{flexDirection: 'row'} & Organiza los elementos de izquierda a
+        derecha (layout horizontal), utilizado en footers y barras de
+        herramientas. \\\
+        \addlinespace
+        \texttt{alignItems: 'center'} & Centra los elementos hijos
+        horizontalmente dentro de su contenedor. \\\
+        \addlinespace
+        \texttt{justifyContent: 'center'} & Centra los elementos hijos
+        verticalmente dentro de su contenedor. \\\
+        \addlinespace
+        \texttt{justifyContent: 'space-between'} & Distribuye el espacio
+        uniformemente entre los elementos, utilizado en el splash. \\\
+        \bottomrule
+      \end{tabular}
+    \end{tablaAPA}%
+  }{Elaboraci\'on propia en base al c\'odigo fuente de la aplicaci\'on.}
+\end{table}
+
+\subsection{Uso de porcentajes y anchos relativos}
+
+La aplicaci\'on utiliza anchos relativos (porcentajes) para componentes que
+deben adaptarse al tama\~no de la pantalla, como el bot\'on \textit{``Comenzar''}
+del splash que ocupa el 100\% del ancho disponible:
+
+\begin{lstlisting}
+footer: {
+  width: '100%',
+  zIndex: 1,
+},
+\end{lstlisting}
+
+\subsection{Pr\'acticas de accesibilidad visual}
+
+Se aplicaron las siguientes pr\'acticas para mejorar la accesibilidad visual de
+la interfaz:
+
+\begin{itemize}
+  \item Contraste adecuado entre texto y fondo, siguiendo las pautas de
+    accesibilidad (texto principal \texttt{\#0F172A} sobre fondo
+    \texttt{\#F8FAFC}, ratio de contraste superior a 4.5:1).
+  \item Tama\~nos de texto m\'inimos de 12\,pt para garantizar la legibilidad.
+  \item Campos de formulario con altura m\'inima de 44\,pt para facilitar la
+    interacci\'on con el dedo.
+  \item Uso de \texttt{placeholderTextColor} para diferenciar el texto
+    placeholder del texto ingresado por el usuario.
+  \item Indicadores visuales de estado: bordes rojos para errores de
+    validaci\'on, indicadores de carga durante el env\'io de formularios.
+\end{itemize}
