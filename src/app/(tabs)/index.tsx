@@ -8,6 +8,7 @@ import {
   FlatList,
   TouchableOpacity,
 } from 'react-native';
+import { Map, Camera, Marker } from '@maplibre/maplibre-react-native';
 import * as Location from 'expo-location';
 import { useRouter } from 'expo-router';
 import { useQuery } from '@tanstack/react-query';
@@ -15,34 +16,18 @@ import { supabase } from '../../services/supabase';
 import { Scenario } from '../../types';
 import { colors, spacing, fontSize, fontWeight } from '../../theme';
 
-// react-native-maps solo funciona en plataformas nativas (iOS/Android)
-let MapView: any = null;
-let Marker: any = null;
-let PROVIDER_DEFAULT: any = null;
+const MAPTILER_KEY = process.env.EXPO_PUBLIC_MAPTILER_API_KEY!;
+const MAP_STYLE = `https://api.maptiler.com/maps/streets-v4/style.json?key=${MAPTILER_KEY}`;
 
-if (Platform.OS !== 'web') {
-  const maps = require('react-native-maps');
-  MapView = maps.default;
-  Marker = maps.Marker;
-  PROVIDER_DEFAULT = maps.PROVIDER_DEFAULT;
-}
-
-// Region inicial: centro de Bolivia
-const BOLIVIA_CENTER = {
-  latitude: -17.0,
-  longitude: -65.0,
-  latitudeDelta: 8,
-  longitudeDelta: 8,
-};
+const BOLIVIA_CENTER: [number, number] = [-65.0, -17.0];
 
 export default function MapScreen() {
   const router = useRouter();
-  const [userLocation, setUserLocation] =
-    useState<Location.LocationObject | null>(null);
-  const [initialRegion, setInitialRegion] = useState(BOLIVIA_CENTER);
+  const [userLocation, setUserLocation] = useState<[number, number] | null>(
+    null,
+  );
   const [locationLoading, setLocationLoading] = useState(true);
 
-  // T-023: Cargar escenarios desde Supabase
   const {
     data: scenarios,
     isLoading,
@@ -61,7 +46,6 @@ export default function MapScreen() {
     },
   });
 
-  // T-024: Obtener ubicacion del usuario (solo en nativo)
   useEffect(() => {
     if (Platform.OS === 'web') {
       setLocationLoading(false);
@@ -82,15 +66,7 @@ export default function MapScreen() {
           accuracy: Location.Accuracy.Balanced,
         });
 
-        setUserLocation(location);
-
-        // Centrar mapa en la ubicacion del usuario
-        setInitialRegion({
-          latitude: location.coords.latitude,
-          longitude: location.coords.longitude,
-          latitudeDelta: 0.05,
-          longitudeDelta: 0.05,
-        });
+        setUserLocation([location.coords.longitude, location.coords.latitude]);
       } catch {
         // Si falla la ubicacion, usar region por defecto (Bolivia)
       } finally {
@@ -99,7 +75,9 @@ export default function MapScreen() {
     })();
   }, []);
 
-  // Estado de carga
+  const cameraCenter = userLocation ?? BOLIVIA_CENTER;
+  const cameraZoom = userLocation ? 14 : 5;
+
   if (isLoading || locationLoading) {
     return (
       <View style={styles.loadingContainer}>
@@ -109,7 +87,6 @@ export default function MapScreen() {
     );
   }
 
-  // Estado de error
   if (error) {
     return (
       <View style={styles.loadingContainer}>
@@ -121,7 +98,6 @@ export default function MapScreen() {
     );
   }
 
-  // --- Web fallback: lista de escenarios ---
   if (Platform.OS === 'web') {
     return (
       <View style={styles.webContainer}>
@@ -148,47 +124,43 @@ export default function MapScreen() {
     );
   }
 
-  // --- Native: Mapa real ---
   return (
     <View style={styles.container}>
-      <MapView
-        style={styles.map}
-        provider={PROVIDER_DEFAULT}
-        initialRegion={initialRegion}
-        showsUserLocation={false}
-        showsMyLocationButton={false}
-      >
-        {/* Marcadores de escenarios */}
+      <Map mapStyle={MAP_STYLE} style={styles.map}>
+        <Camera
+          initialViewState={{
+            center: cameraCenter,
+            zoom: cameraZoom,
+          }}
+        />
+
         {scenarios?.map((scenario) => (
           <Marker
             key={scenario.id}
-            coordinate={{
-              latitude: scenario.latitud,
-              longitude: scenario.longitud,
-            }}
-            title={scenario.nombre}
-            description={scenario.tipo}
-            pinColor={colors.primary}
-            onCalloutPress={() =>
-              router.push(`/scenario/${scenario.id}`)
-            }
-          />
+            id={scenario.id}
+            lngLat={[scenario.longitud, scenario.latitud]}
+            onPress={() => router.push(`/scenario/${scenario.id}`)}
+          >
+            <View style={styles.markerContainer}>
+              <View style={styles.markerDot} />
+            </View>
+          </Marker>
         ))}
 
-        {/* T-024: Marcador de ubicacion del usuario */}
         {userLocation && (
           <Marker
-            coordinate={{
-              latitude: userLocation.coords.latitude,
-              longitude: userLocation.coords.longitude,
-            }}
-            title="Tu ubicacion"
-            pinColor={colors.secondary}
-          />
+            id="user-location"
+            lngLat={userLocation}
+            anchor="center"
+          >
+            <View style={styles.userMarkerContainer}>
+              <View style={styles.userMarkerDot} />
+              <View style={styles.userMarkerRing} />
+            </View>
+          </Marker>
         )}
-      </MapView>
+      </Map>
 
-      {/* Indicador de cantidad de escenarios */}
       <View style={styles.infoBar}>
         <Text style={styles.infoText}>
           {scenarios?.length ?? 0} escenarios encontrados
@@ -227,6 +199,46 @@ const styles = StyleSheet.create({
     color: colors.primary,
     textDecorationLine: 'underline',
   },
+  markerContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  markerDot: {
+    width: 14,
+    height: 14,
+    borderRadius: 7,
+    backgroundColor: colors.primary,
+    borderWidth: 2,
+    borderColor: colors.white,
+    shadowColor: colors.black,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 4,
+  },
+  userMarkerContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 30,
+    height: 30,
+  },
+  userMarkerDot: {
+    width: 14,
+    height: 14,
+    borderRadius: 7,
+    backgroundColor: colors.secondary,
+    borderWidth: 2,
+    borderColor: colors.white,
+    zIndex: 2,
+  },
+  userMarkerRing: {
+    position: 'absolute',
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    backgroundColor: `${colors.secondary}30`,
+    zIndex: 1,
+  },
   infoBar: {
     position: 'absolute',
     bottom: spacing.lg,
@@ -248,7 +260,6 @@ const styles = StyleSheet.create({
     fontWeight: fontWeight.medium,
     color: colors.text,
   },
-  // Web fallback styles
   webContainer: {
     flex: 1,
     backgroundColor: colors.background,
