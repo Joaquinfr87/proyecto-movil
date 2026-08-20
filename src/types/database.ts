@@ -1,13 +1,7 @@
 // Tipos generados desde la base de datos de Supabase
 // Ejecutar: pnpm db:types para regenerar
 
-export type Json =
-  | string
-  | number
-  | boolean
-  | null
-  | { [key: string]: Json | undefined }
-  | Json[];
+export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
 
 export interface Database {
   public: {
