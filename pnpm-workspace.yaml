@@ -1,4 +1,5 @@
 allowBuilds:
+  dtrace-provider: true
   unrs-resolver: true
 minimumReleaseAgeExclude:
   - '@expo/cli@57.0.14'
@@ -11,3 +12,4 @@ minimumReleaseAgeExclude:
   - expo-constants@57.0.10
   - expo-server@57.0.2
   - expo@57.0.12
+onlyBuiltDependenciesFile: ''
