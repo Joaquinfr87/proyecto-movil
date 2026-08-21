@@ -70,6 +70,7 @@
 
 % --- Tablas y figuras --------------------------------------------------------
 \RequirePackage{booktabs}        % tablas profesionales
+\RequirePackage{array}           % extensiones de columnas (m{} para centrado vertical)
 \RequirePackage{float}           % posicionamiento de flotantes
 \setlength{\tabcolsep}{4pt}      % evita desbordes por el ancho de las columnas
 \RequirePackage{caption}
@@ -79,7 +80,7 @@
   \renewcommand{\figurename}{FIGURA}%
   \renewcommand{\tablename}{TABLA}%
 }
-\captionsetup{font=small, labelfont=bf, textfont=it, singlelinecheck=true, skip=6pt}
+\captionsetup{font=small, labelfont=bf, textfont=normal, singlelinecheck=true, skip=6pt}
 \captionsetup[table]{labelsep=colon, position=above, justification=centering}
 \captionsetup[figure]{labelsep=colon, position=above, justification=centering}
 

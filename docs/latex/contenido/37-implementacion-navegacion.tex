@@ -156,34 +156,34 @@ export default function ScenarioDetailScreen() {
   \contenidoConFuente{%
   \begin{tikzpicture}[
       nodo/.style={rectangle, draw=black!70, rounded corners=2pt,
-                   minimum width=3.2cm, minimum height=0.8cm,
-                   align=center, fill=gray!10, font=\small},
+                   minimum width=3.0cm, minimum height=0.7cm,
+                   align=center, fill=gray!10, font=\scriptsize},
       stack/.style={rectangle, draw=blue!60, rounded corners=3pt,
-                    dashed, inner sep=8pt, fill=blue!3},
+                    dashed, inner sep=10pt, fill=blue!3},
       tab/.style={rectangle, draw=green!60, rounded corners=3pt,
-                  dashed, inner sep=8pt, fill=green!3},
-      flecha/.style={-{Stealth[length=2.5mm]}, thick}
+                  dashed, inner sep=10pt, fill=green!3},
+      flecha/.style={-{Stealth[length=2mm]}, thick}
     ]
     % Stack Navigator
-    \node[stack, fit={(0,0) (7,3.5)}, label={[font=\small\bfseries]above:Stack Navigator}] (stack) {};
-    \node[nodo, fill=yellow!15] (splash) at (3.5,2.5) {Splash};
-    \node[nodo] (login) at (1.5,1.2) {Login};
-    \node[nodo] (register) at (5.5,1.2) {Registro};
-    \node[nodo] (detail) at (5.5,0.0) {Scenario [id]};
+    \node[stack, fit={(0,0) (7.5,4)}, label={[font=\small\bfseries]above:Stack Navigator}] (stack) {};
+    \node[nodo, fill=yellow!15] (splash) at (3.75,3.0) {Splash};
+    \node[nodo] (login) at (1.8,1.5) {Login};
+    \node[nodo] (register) at (5.7,1.5) {Registro};
+    \node[nodo] (detail) at (5.7,0.0) {Scenario [id]};
 
     % Tab Navigator
-    \node[tab, fit={(10,-1.5) (16.5,3.5)}, label={[font=\small\bfseries]above:Tab Navigator}] (tabs) {};
-    \node[nodo] (home) at (11.2,2.5) {Inicio};
-    \node[nodo] (search) at (14.8,2.5) {Buscar};
-    \node[nodo] (fav) at (11.2,0.7) {Favoritos};
-    \node[nodo] (profile) at (14.8,0.7) {Perfil};
+    \node[tab, fit={(10.5,-1.5) (17.5,4)}, label={[font=\small\bfseries]above:Tab Navigator}] (tabs) {};
+    \node[nodo] (home) at (11.8,2.8) {Inicio};
+    \node[nodo] (search) at (15.5,2.8) {Buscar};
+    \node[nodo] (fav) at (11.8,0.8) {Favoritos};
+    \node[nodo] (profile) at (15.5,0.8) {Perfil};
 
     \draw[flecha] (splash) -- (login);
     \draw[flecha] (splash) -- (register);
-    \draw[flecha] (login) -- (register) node[midway, below, font=\scriptsize] {Registrate};
-    \draw[flecha] (login) -- (home) node[midway, above, font=\scriptsize] {Autenticar};
+    \draw[flecha] (login) -- (register) node[midway, below, font=\tiny] {Registrate};
+    \draw[flecha] (login) -- (home) node[midway, above, font=\tiny] {Autenticar};
     \draw[flecha] (home) -- (detail);
-    \draw[flecha, dashed] (profile) to[bend right=30] node[below, font=\scriptsize] {signOut} (login);
+    \draw[flecha, dashed] (profile) to[bend right=25] node[below, font=\tiny] {signOut} (login);
   \end{tikzpicture}%
   }{Elaboraci\'on propia en base al c\'odigo fuente de la aplicaci\'on.}
 \end{figure}

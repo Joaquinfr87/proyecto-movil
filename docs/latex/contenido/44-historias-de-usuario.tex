@@ -1,0 +1,265 @@
+% ============================================================================
+%  SECCIÓN 3.28: HISTORIAS DE USUARIO
+% ============================================================================
+
+\section{Historias de usuario}
+
+Las historias de usuario permiten capturar los requisitos desde la perspectiva
+del usuario final, describiendo \textit{qué} necesita y \textit{por qué}, sin
+especificar \textit{cómo} se implementará \citep{beck2001, cohn2004}. A
+continuación se presentan las historias de usuario definidas para el MVP de
+la aplicación \nombreApp{}, organizadas por épico.
+
+\subsection{Épico: Autenticación}
+
+\begin{table}[H]
+  \centering
+  \caption{Historias de usuario -- Autenticación}
+  \contenidoConFuente{%
+    \begin{tablaAPA}
+      \begin{tabular}{@{}p{1.2cm}m{7.0cm}m{2.0cm}m{2.5cm}m{2.5cm}@{}}
+        \toprule
+        \textbf{ID} & \textbf{Historia} & \textbf{Prioridad} &
+        \textbf{Estado} & \textbf{Sprint} \\
+        \midrule
+        HU-01 & Como visitante, quiero crear una cuenta con mi correo y
+        contraseña para poder acceder a la aplicación. & Alta & Completada &
+        Sprint 1 \\
+        \addlinespace
+        HU-02 & Como usuario, quiero iniciar sesión con mis credenciales
+        para acceder a mi perfil y datos. & Alta & Completada & Sprint 1 \\
+        \addlinespace
+        HU-03 & Como usuario, quiero cerrar sesión de forma segura para
+        proteger mis datospersonales. & Alta & Completada & Sprint 1 \\
+        \addlinespace
+        HU-04 & Como usuario, quiero que la app recuerde mi sesión para no
+        tener que iniciar sesión cada vez que la abra. & Media & Completada &
+        Sprint 1 \\
+        \bottomrule
+      \end{tabular}
+    \end{tablaAPA}%
+  }{Elaboración propia.}
+\end{table}
+
+\subsection{Épico: Exploración de escenarios}
+
+\begin{table}[H]
+  \centering
+  \caption{Historias de usuario -- Exploración}
+  \contenidoConFuente{%
+    \begin{tablaAPA}
+      \begin{tabular}{@{}p{1.2cm}m{7.0cm}m{2.0cm}m{2.5cm}m{2.5cm}@{}}
+        \toprule
+        \textbf{ID} & \textbf{Historia} & \textbf{Prioridad} &
+        \textbf{Estado} & \textbf{Sprint} \\
+        \midrule
+        HU-05 & Como usuario, quiero ver el listado de escenarios
+        deportivos para conocer la oferta disponible. & Alta & Completada &
+        Sprint 2 \\
+        \addlinespace
+        HU-06 & Como usuario, quiero buscar escenarios por nombre para
+        encontrar rápidamente uno específico. & Alta & Completada & Sprint 2
+        \\
+        \addlinespace
+        HU-07 & Como usuario, quiero filtrar escenarios por deporte y tipo
+        para reducir los resultados a mi interés. & Alta & Completada &
+        Sprint 2 \\
+        \addlinespace
+        HU-08 & Como usuario, quiero ver la ubicación de los escenarios en
+        un mapa para planificar mi visita. & Alta & Completada & Sprint 2 \\
+        \addlinespace
+        HU-09 & Como usuario, quiero ver la ubicación actual en el mapa
+        para orientarme respecto a los escenarios cercanos. & Media &
+        Completada & Sprint 2 \\
+        \addlinespace
+        HU-10 & Como usuario, quiero ver el detalle completo de un
+        escenario (disciplinas, horarios, servicios) para decidir si lo
+        visito. & Alta & Completada & Sprint 2 \\
+        \addlinespace
+        HU-11 & Como usuario, quiero ver los eventos programados en un
+        escenario para planificar mi asistencia. & Media & Completada &
+        Sprint 2 \\
+        \bottomrule
+      \end{tabular}
+    \end{tablaAPA}%
+  }{Elaboración propia.}
+\end{table}
+
+\subsection{Épico: Favoritos}
+
+\begin{table}[H]
+  \centering
+  \caption{Historias de usuario -- Favoritos}
+  \contenidoConFuente{%
+    \begin{tablaAPA}
+      \begin{tabular}{@{}p{1.2cm}m{7.0cm}m{2.0cm}m{2.5cm}m{2.5cm}@{}}
+        \toprule
+        \textbf{ID} & \textbf{Historia} & \textbf{Prioridad} &
+        \textbf{Estado} & \textbf{Sprint} \\
+        \midrule
+        HU-12 & Como usuario, quiero guardar un escenario como favorito
+        para acceder rápidamente después. & Alta & Completada & Sprint 2 \\
+        \addlinespace
+        HU-13 & Como usuario, quiero quitar un escenario de mis favoritos
+        si ya no me interesa. & Alta & Completada & Sprint 2 \\
+        \addlinespace
+        HU-14 & Como usuario, quiero ver mi lista de favoritos para
+        consultar los escenarios que guardé. & Alta & Completada & Sprint 2
+        \\
+        \bottomrule
+      \end{tabular}
+    \end{tablaAPA}%
+  }{Elaboración propia.}
+\end{table}
+
+\subsection{Épico: Gestión de contenido}
+
+\begin{table}[H]
+  \centering
+  \caption{Historias de usuario -- Gestión}
+  \contenidoConFuente{%
+    \begin{tablaAPA}
+      \begin{tabular}{@{}p{1.2cm}m{7.0cm}m{2.0cm}m{2.5cm}m{2.5cm}@{}}
+        \toprule
+        \textbf{ID} & \textbf{Historia} & \textbf{Prioridad} &
+        \textbf{Estado} & \textbf{Sprint} \\
+        \midrule
+        HU-15 & Como gestor, quiero registrar la información de mi
+        escenario para darle visibilidad. & Media & Pendiente & Sprint 3 \\
+        \addlinespace
+        HU-16 & Como gestor, quiero actualizar los datos de mi escenario
+        para mantener la información al día. & Media & Pendiente & Sprint 3
+        \\
+        \addlinespace
+        HU-17 & Como administrador, quiero gestionar los usuarios del
+        sistema para validar la información publicada. & Baja & Pendiente &
+        Futuro \\
+        \bottomrule
+      \end{tabular}
+    \end{tablaAPA}%
+  }{Elaboración propia.}
+\end{table}
+
+\subsection{Épico: Interfaz y experiencia}
+
+\begin{table}[H]
+  \centering
+  \caption{Historias de usuario -- Interfaz}
+  \contenidoConFuente{%
+    \begin{tablaAPA}
+      \begin{tabular}{@{}p{1.2cm}m{7.0cm}m{2.0cm}m{2.5cm}m{2.5cm}@{}}
+        \toprule
+        \textbf{ID} & \textbf{Historia} & \textbf{Prioridad} &
+        \textbf{Estado} & \textbf{Sprint} \\
+        \midrule
+        HU-18 & Como usuario, quiero ver una pantalla de bienvenida con el
+        logo para identificar la app. & Media & Completada & Sprint 1 \\
+        \addlinespace
+        HU-19 & Como usuario, quiero que la app tenga un tema visual
+        consistente para una experiencia agradable. & Media & Completada &
+        Sprint 3 \\
+        \addlinespace
+        HU-20 & Como usuario, quiero que la app muestre indicadores de
+        carga mientras obtiene datos para saber que está funcionando. &
+        Media & Completada & Sprint 2 \\
+        \addlinespace
+        HU-21 & Como usuario, quiero ver mensajes amigables cuando no hay
+        datos disponibles para entender la situación. & Baja & Completada &
+        Sprint 2 \\
+        \addlinespace
+        HU-22 & Como usuario, quiero refrescar el contenido con un gesto
+        de deslizar para obtener datos actualizados. & Baja & Completada &
+        Sprint 2 \\
+        \bottomrule
+      \end{tabular}
+    \end{tablaAPA}%
+  }{Elaboración propia.}
+\end{table}
+
+\subsection{Mapa de historias de usuario}
+
+La siguiente figura presenta la relación entre las historias de usuario y los
+módulos de la aplicación:
+
+\begin{figure}[H]
+  \centering
+  \caption{Mapa de historias de usuario por módulo}
+  \label{fig:mapa-historias}
+  \contenidoConFuente{%
+  \begin{tikzpicture}[
+      modulo/.style={rectangle, draw=black!60, rounded corners=2pt,
+                     align=center, fill=blue!8, font=\scriptsize,
+                     text width=3.2cm, minimum height=1.0cm},
+      historia/.style={rectangle, draw=black!40, rounded corners=1pt,
+                       align=left, fill=green!5, font=\tiny,
+                       text width=2.8cm, minimum height=0.5cm},
+      flecha/.style={-{Stealth[length=1.5mm]}, thick, draw=black!40}
+    ]
+    \node[modulo] (auth) at (0,3) {Autenticación\\(HU-01 a HU-04)};
+    \node[modulo] (expl) at (-4.5,1) {Exploración\\(HU-05 a HU-11)};
+    \node[modulo] (fav) at (4.5,1) {Favoritos\\(HU-12 a HU-14)};
+    \node[modulo] (gest) at (-4.5,-1.5) {Gestión\\(HU-15 a HU-17)};
+    \node[modulo] (ui) at (4.5,-1.5) {Interfaz\\(HU-18 a HU-22)};
+
+    \draw[flecha] (auth) -- (-1.5,2);
+    \draw[flecha] (auth) -- (1.5,2);
+    \draw[flecha] (expl) -- (-1.5,0.5);
+    \draw[flecha] (fav) -- (1.5,0.5);
+  \end{tikzpicture}%
+  }{Elaboración propia.}
+\end{figure}
+
+\subsection{Criterios de aceptación (ejemplo)}
+
+A continuación se presentan los criterios de aceptación para las historias de
+usuario más representativas:
+
+\subsubsection{HU-05: Ver listado de escenarios}
+
+\begin{enumerate}
+  \item Al abrir la pantalla de catálogo, se muestra el listado completo de
+    escenarios deportivos.
+  \item Cada elemento del listado muestra: nombre, dirección, deportes
+    disponibles e imagen principal.
+  \item El listado se carga en menos de 3 segundos.
+  \item Si no hay escenarios disponibles, se muestra un mensaje informativo.
+  \item Se puede deslizar hacia abajo para refrescar los datos.
+\end{enumerate}
+
+\subsubsection{HU-06: Buscar escenarios por nombre}
+
+\begin{enumerate}
+  \item Existe un campo de búsqueda en la parte superior de la pantalla de
+    catálogo.
+  \item Al escribir al menos 2 caracteres, se filtran los escenarios cuyo
+    nombre contiene el texto ingresado.
+  \item La búsqueda es en tiempo real (se actualiza con cada carácter
+    ingresado).
+  \item Si no hay resultados, se muestra un mensaje indicando que no se
+    encontraron escenarios.
+\end{enumerate}
+
+\subsubsection{HU-08: Ver ubicación en el mapa}
+
+\begin{enumerate}
+  \item Al abrir la pantalla de mapa, se muestran los marcadores de todos
+    los escenarios.
+  \item Al tocar un marcador, se muestra un popup con el nombre y dirección
+    del escenario.
+  \item El mapa muestra la ubicación actual del usuario con un marcador
+    especial.
+  \item El mapa permite hacer zoom y desplazarse libremente.
+\end{enumerate}
+
+\subsubsection{HU-12: Guardar escenario como favorito}
+
+\begin{enumerate}
+  \item En la pantalla de detalle, existe un botón de ``favorito'' (ícono
+    de estrella o corazón).
+  \item Al tocar el botón, el escenario se agrega a la lista de favoritos
+    del usuario.
+  \item El botón cambia de apariencia para indicar que el escenario ya es
+    favorito.
+  \item El favorito se persiste en la base de datos y sobrevive al cierre
+    de la aplicación.
+\end{enumerate}

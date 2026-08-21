@@ -1,0 +1,208 @@
+% ============================================================================
+%  SECCIÓN 3.27: METODOLOGÍA DE DESARROLLO - SCRUM
+% ============================================================================
+
+\section{Metodología de desarrollo: Scrum}
+
+Para el desarrollo del proyecto se adoptó la metodología ágil \textbf{Scrum},
+que permite organizar el trabajo en iteraciones cortas (\textit{sprints}) con
+entregas incrementales de valor \citep{schwaber2020, beck2001}. Esta elección
+responde a la necesidad de obtener un MVP funcional en un plazo reducido de
+tres semanas, aprovechando la flexibilidad de Scrum para adaptar los
+requerimientos durante el desarrollo.
+
+\subsection{Equipo Scrum}
+
+El equipo se organizó con los siguientes roles:
+
+\begin{table}[H]
+  \centering
+  \caption{Roles del equipo Scrum}
+  \contenidoConFuente{%
+    \begin{tablaAPA}
+      \begin{tabular}{@{}p{4.5cm}m{10.5cm}@{}}
+        \toprule
+        \textbf{Rol} & \textbf{Responsabilidades} \\
+        \midrule
+        Product Owner & Define las prioridades del producto, valida las
+        historias de usuario y aprueba las entregas. \\
+        \addlinespace
+        Scrum Master & Facilita las ceremonias, elimina bloqueos del equipo y
+        asegura el cumplimiento del proceso. \\
+        \addlinespace
+        Development Team & Desarrolla, prueba y entrega los incrementos del
+        producto en cada sprint. \\
+        \bottomrule
+      \end{tabular}
+    \end{tablaAPA}%
+  }{Elaboración propia con base a \citet{schwaber2020}.}
+\end{table}
+
+\subsection{Organización del equipo}
+
+\begin{table}[H]
+  \centering
+  \caption{Integrantes y roles en el proyecto}
+  \contenidoConFuente{%
+    \begin{tablaAPA}
+      \begin{tabular}{@{}p{4.5cm}m{3.0cm}m{8.0cm}@{}}
+        \toprule
+        \textbf{Integrante} & \textbf{Rol Scrum} & \textbf{Responsabilidad
+        técnica} \\
+        \midrule
+        Joaquin Felipez Rojas & Scrum Master & Coordinación, revisión de
+        código, documentación final. \\
+        \addlinespace
+        Nicolas Reguerin Meneses & Development Team & Backend: Supabase,
+        base de datos, autenticación. \\
+        \addlinespace
+        David Cruz Huanca & Development Team & Navegación, mapa, filtros,
+        búsqueda, manejo de estado. \\
+        \addlinespace
+        Angel Rojas Hinojosa & Development Team & UI/UX: pantallas,
+        componentes reutilizables, testing. \\
+        \bottomrule
+      \end{tabular}
+    \end{tablaAPA}%
+  }{Elaboración propia.}
+\end{table}
+
+\subsection{Duración y estructura de sprints}
+
+El proyecto se planificó en \textbf{3 sprints} de una semana cada uno, con un
+total de 12 días hábiles de desarrollo:
+
+\begin{table}[H]
+  \centering
+  \caption{Estructura de sprints del proyecto}
+  \contenidoConFuente{%
+    \begin{tablaAPA}
+      \begin{tabular}{@{}p{2.5cm}m{2.5cm}m{5.5cm}m{4.0cm}@{}}
+        \toprule
+        \textbf{Sprint} & \textbf{Duración} & \textbf{Objetivo} &
+        \textbf{Entregable} \\
+        \midrule
+        Sprint 1 & Días 1--3 & Configurar Supabase, esquema de base de datos,
+        autenticación y datos semilla & App conectada a Supabase con auth
+        funcional \\
+        \addlinespace
+        Sprint 2 & Días 4--8 & Implementar todas las pantallas del MVP con
+        datos reales & App navegable: mapa, catálogo, detalle, favoritos \\
+        \addlinespace
+        Sprint 3 & Días 9--12 & Tema visual, corrección de bugs, pruebas y
+        documentación & MVP pulido y listo para entregar \\
+        \bottomrule
+      \end{tabular}
+    \end{tablaAPA}%
+  }{Elaboración propia.}
+\end{table}
+
+\subsection{Ceremonias Scrum}
+
+Se implementaron las ceremonias estándar de Scrum adaptadas al contexto
+académico:
+
+\begin{table}[H]
+  \centering
+  \caption{Ceremonias Scrum implementadas}
+  \contenidoConFuente{%
+    \begin{tablaAPA}
+      \begin{tabular}{@{}p{3.5cm}m{2.5cm}m{2.5cm}m{6.0cm}@{}}
+        \toprule
+        \textbf{Ceremonia} & \textbf{Frecuencia} & \textbf{Duración} &
+        \textbf{Descripción} \\
+        \midrule
+        Sprint Planning & Inicio de sprint & 30--45 min & Se definen las
+        historias de usuario del sprint y se asignan tareas. \\
+        \addlinespace
+        Daily Standup & Diaria (async) & 5 min & Cada integrante reporta:
+        qué hizo, qué hará y si tiene bloqueos. \\
+        \addlinespace
+        Sprint Review & Fin de sprint & 30 min & Demostración del
+        incremento terminado al equipo y al docente. \\
+        \addlinespace
+        Retrospectiva & Fin de sprint & 15 min & Identificación de mejoras
+        para el siguiente sprint. \\
+        \bottomrule
+      \end{tabular}
+    \end{tablaAPA}%
+  }{Elaboración propia con base a \citet{schwaber2020}.}
+\end{table}
+
+\subsection{Backlog del producto}
+
+El Product Backlog se gestionó mediante \textbf{GitHub Projects} con un tablero
+kanban. Las tareas se identificaron con códigos del tipo \texttt{T-XXX} y se
+organizaron en las siguientes categorías:
+
+\begin{itemize}
+  \item \textbf{Infraestructura:} Configuración de entorno, dependencias,
+    base de datos.
+  \item \textbf{Funcionalidad:} Pantallas, navegación, autenticación,
+    mapa, catálogo, favoritos.
+  \item \textbf{Integración:} Conexión frontend--backend, hooks de datos,
+    estados de carga.
+  \item \textbf{Pulido:} Tema visual, corrección de bugs, pruebas,
+    documentación.
+\end{itemize}
+
+\subsection{Burndown por sprint}
+
+El progreso de cada sprint se midió con el tablero kanban de GitHub Projects,
+donde las tareas avanzan por las columnas: \textit{To Do} $\rightarrow$
+\textit{In Progress} $\rightarrow$ \textit{In Review} $\rightarrow$
+\textit{Done}. A continuación se presenta un resumen de las tareas completadas
+por sprint:
+
+\begin{table}[H]
+  \centering
+  \caption{Tareas completadas por sprint}
+  \contenidoConFuente{%
+    \begin{tablaAPA}
+      \begin{tabular}{@{}p{3.0cm}m{2.5cm}m{2.5cm}m{8.0cm}@{}}
+        \toprule
+        \textbf{Sprint} & \textbf{Creadas} & \textbf{Completadas} &
+        \textbf{Principales entregas} \\
+        \midrule
+        Sprint 1 & 15 & 15 & Proyecto Supabase, esquema SQL, auth,
+        pantallas login/registro, splash \\
+        \addlinespace
+        Sprint 2 & 24 & 24 & Hooks de datos, mapa, catálogo, detalle,
+        favoritos, filtros, búsqueda \\
+        \addlinespace
+        Sprint 3 & 17 & 17 & Tema visual, componentes base, pruebas,
+        documentación, entrega \\
+        \bottomrule
+      \end{tabular}
+    \end{tablaAPA}%
+  }{Elaboración propia en base al tablero de GitHub Projects.}
+\end{table}
+
+\subsection{Definición de Hecho (DoD)}
+
+Una tarea se consideraba ``hecha'' cuando cumplía con los siguientes criterios:
+
+\begin{enumerate}
+  \item El código está completo y funcional en el dispositivo de prueba.
+  \item Se realizó \textit{code review} por al menos un integrante del equipo.
+  \item No genera errores en la consola del desarrollador.
+  \item Se verificó en al menos un dispositivo Android físico.
+  \item El código fue mergeado a la rama \texttt{develop} sin conflictos.
+  \item Se documentó el cambio en el mensaje de commit con el formato
+    \texttt{feat(scope): descripción}.
+\end{enumerate}
+
+\subsection{Adaptaciones al contexto académico}
+
+Dado el plazo reducido de tres semanas, se realizaron las siguientes
+adaptaciones al proceso estándar de Scrum:
+
+\begin{itemize}
+  \item Los sprints se comprimieron a una semana en lugar de las dos habituales.
+  \item Las reuniones diarias se realizaron de forma asíncrona por chat,
+    evitando reuniones innecesarias.
+  \item Se utilizó herramientas de inteligencia artificial para generar el
+    código base, reduciendo los tiempos de desarrollo.
+  \item El Product Owner y el Scrum Master fueron el mismo integrante,
+    simplificando la toma de decisiones.
+\end{itemize}
