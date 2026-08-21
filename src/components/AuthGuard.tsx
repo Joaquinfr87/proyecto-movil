@@ -9,20 +9,21 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
   const segments = useSegments();
   const router = useRouter();
 
+  const inAuthGroup = segments[0] === 'auth';
+  const inSplash = segments[0] === 'splash';
+  const isRedirectingToAuth = !session && !inAuthGroup && !inSplash;
+
   useEffect(() => {
     if (loading) return;
 
-    const inAuthGroup = segments[0] === 'auth';
-    const inSplash = segments[0] === 'splash';
-
-    if (!session && !inAuthGroup && !inSplash) {
+    if (isRedirectingToAuth) {
       router.replace('/splash');
     } else if (session && (inAuthGroup || inSplash)) {
       router.replace('/(tabs)');
     }
-  }, [session, loading, segments, router]);
+  }, [session, loading, segments, router, isRedirectingToAuth, inAuthGroup, inSplash]);
 
-  if (loading) {
+  if (loading || isRedirectingToAuth) {
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color={colors.primary} />
