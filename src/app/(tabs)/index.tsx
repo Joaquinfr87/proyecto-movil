@@ -13,6 +13,7 @@ import { useRouter } from 'expo-router';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '../../services/supabase';
 import { Scenario } from '../../types';
+import { ErrorState } from '../../components/common/ErrorState';
 import { colors, spacing, fontSize, fontWeight } from '../../theme';
 
 // react-native-maps solo funciona en plataformas nativas (iOS/Android)
@@ -112,12 +113,12 @@ export default function MapScreen() {
   // Estado de error
   if (error) {
     return (
-      <View style={styles.loadingContainer}>
-        <Text style={styles.errorText}>Error al cargar escenarios</Text>
-        <Text style={styles.retryText} onPress={() => refetch()}>
-          Toca para reintentar
-        </Text>
-      </View>
+      <ErrorState
+        icon="map-outline"
+        title="Error al cargar el mapa"
+        message="No se pudieron cargar los escenarios deportivos. Toca para reintentar."
+        onRetry={() => refetch()}
+      />
     );
   }
 

@@ -5,6 +5,7 @@ import { useFavorites } from '../../hooks/useFavorites';
 import { ScenarioCard } from '../../components/common/ScenarioCard';
 import { LoadingSpinner } from '../../components/common/LoadingSpinner';
 import { EmptyState } from '../../components/common/EmptyState';
+import { ErrorState } from '../../components/common/ErrorState';
 import { colors, spacing, fontSize, fontWeight } from '../../theme';
 
 export default function FavoritesScreen() {
@@ -24,11 +25,10 @@ export default function FavoritesScreen() {
 
   if (error) {
     return (
-      <EmptyState
-        icon="wifi-outline"
-        title="Error al cargar datos"
-        subtitle="No se pudieron cargar tus favoritos. Toca para reintentar."
-        actionButton={{ label: 'Reintentar', onPress: () => refetch() }}
+      <ErrorState
+        title="Error al cargar favoritos"
+        message="No se pudieron cargar tus escenarios guardados. Toca para reintentar."
+        onRetry={() => refetch()}
       />
     );
   }
