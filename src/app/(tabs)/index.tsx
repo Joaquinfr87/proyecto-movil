@@ -12,6 +12,7 @@ import { Map, Camera, Marker } from '@maplibre/maplibre-react-native';
 import * as Location from 'expo-location';
 import { useRouter } from 'expo-router';
 import { useScenarios } from '../../hooks/useScenarios';
+import { ErrorState } from '../../components/common/ErrorState';
 import { colors, spacing, fontSize, fontWeight } from '../../theme';
 
 const MAPTILER_KEY = process.env.EXPO_PUBLIC_MAPTILER_API_KEY!;
@@ -71,12 +72,12 @@ export default function MapScreen() {
 
   if (error) {
     return (
-      <View style={styles.loadingContainer}>
-        <Text style={styles.errorText}>Error al cargar escenarios</Text>
-        <Text style={styles.retryText} onPress={() => refetch()}>
-          Toca para reintentar
-        </Text>
-      </View>
+      <ErrorState
+        icon="map-outline"
+        title="Error al cargar el mapa"
+        message="No se pudieron cargar los escenarios deportivos. Toca para reintentar."
+        onRetry={() => refetch()}
+      />
     );
   }
 

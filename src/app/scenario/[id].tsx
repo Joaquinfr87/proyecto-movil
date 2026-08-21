@@ -19,6 +19,7 @@ import { useIsFavorite, useToggleFavorite } from '../../hooks/useFavorites';
 import { useUploadImage } from '../../hooks/useUploadImage';
 import { LoadingSpinner } from '../../components/common/LoadingSpinner';
 import { EmptyState } from '../../components/common/EmptyState';
+import { ErrorState } from '../../components/common/ErrorState';
 import { colors, spacing, borderRadius, fontSize, fontWeight } from '../../theme';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
@@ -30,7 +31,7 @@ export default function ScenarioDetailScreen() {
   const { user } = useAuth();
 
   const queryClient = useQueryClient();
-  const { data: scenario, isLoading, error } = useScenario(id ?? '');
+  const { data: scenario, isLoading, error, refetch } = useScenario(id ?? '');
   const { data: isFavorite } = useIsFavorite(user?.id ?? '', id ?? '');
   const { toggleFavorite, isToggling } = useToggleFavorite();
   const { uploadImage, isUploading } = useUploadImage();
@@ -65,12 +66,22 @@ export default function ScenarioDetailScreen() {
     return <LoadingSpinner message="Cargando escenario..." />;
   }
 
-  if (error || !scenario) {
+  if (error) {
+    return (
+      <ErrorState
+        title="Error al cargar escenario"
+        message="No se pudo obtener la información de este escenario. Toca para reintentar."
+        onRetry={() => refetch()}
+      />
+    );
+  }
+
+  if (!scenario) {
     return (
       <EmptyState
         icon="alert-circle-outline"
         title="Escenario no encontrado"
-        subtitle="No pudimos cargar la información de este escenario."
+        subtitle="No pudimos encontrar la información de este escenario."
         actionButton={{ label: 'Volver', onPress: () => router.back() }}
       />
     );
