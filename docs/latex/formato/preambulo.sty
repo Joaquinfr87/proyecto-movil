@@ -72,7 +72,8 @@
 \RequirePackage{booktabs}        % tablas profesionales
 \RequirePackage{array}           % extensiones de columnas (m{} para centrado vertical)
 \RequirePackage{float}           % posicionamiento de flotantes
-\setlength{\tabcolsep}{4pt}      % evita desbordes por el ancho de las columnas
+\setlength{\tabcolsep}{3pt}      % reduce padding para evitar desbordes
+\renewcommand{\arraystretch}{1.3}   % espacio vertical entre filas de tablas
 \RequirePackage{caption}
 % babel (español) reasigna \figurename/\tablename al iniciar el documento;
 % por eso la renombración a MAYÚSCULAS debe hacerse después (AtBeginDocument).
@@ -111,15 +112,42 @@
 % --- Gráficos y diagramas ----------------------------------------------------
 \RequirePackage{graphicx}
 \graphicspath{{figuras/}}   % las imágenes se colocan en la carpeta figuras/
+% Escalar figuras automáticamente para que no se salgan del texto
+\newsavebox{\imagenBox}
+\newcommand{\figuraSegura}[3][0.90]{%
+  \begin{lrbox}{\imagenBox}
+    \includegraphics[width=\textwidth,height=0.6\textheight,keepaspectratio]{#2}%
+  \end{lrbox}
+  \ifdim \wd\imagenBox > \textwidth
+    \begin{center}
+      \resizebox{\textwidth}{!}{\usebox{\imagenBox}}%
+    \end{center}
+  \else
+    \begin{center}
+      \usebox{\imagenBox}%
+    \end{center}
+  \fi
+}
 \RequirePackage{tikz}
-\usetikzlibrary{shapes.geometric, arrows.meta, positioning, calc}
+\usetikzlibrary{shapes.geometric, arrows.meta, positioning, calc, fit}
 
 % --- Código fuente -----------------------------------------------------------
 \RequirePackage{listings}
 \RequirePackage{xcolor}
 \definecolor{codigofondo}{RGB}{245,245,245}
 \lstset{
-  basicstyle=\ttfamily\footnotesize,
+  basicstyle=\small\sffamily,
+  backgroundcolor=\color{codigofondo},
+  frame=single,
+  breaklines=true,
+  literate={ó}{{\'o}}1 {é}{{\'e}}1 {á}{{\'a}}1 {ú}{{\'u}}1 {ñ}{{\~n}}1
+           {Ó}{{\'O}}1 {É}{{\'E}}1 {Á}{{\'A}}1 {Ú}{{\'U}}1 {Ñ}{{\~N}}1
+           {í}{{\'i}}1 {Í}{{\'I}}1
+           {¿}{{?}}1 {¡}{{!}}1
+}
+\definecolor{codigofondo}{RGB}{245,245,245}
+\lstset{
+  basicstyle=\small\sffamily,
   backgroundcolor=\color{codigofondo},
   frame=single,
   breaklines=true
@@ -132,7 +160,7 @@
 \definecolor{termout}{RGB}{171,178,191}
 \definecolor{termok}{RGB}{152,195,121}
 \lstdefinestyle{terminal}{
-  basicstyle=\ttfamily\footnotesize\color{termfg},
+  basicstyle=\small\sffamily\color{termfg},
   backgroundcolor=\color{termbg},
   rulecolor=\color{termbg},
   frame=single,
