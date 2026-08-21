@@ -125,6 +125,8 @@ Esto:
 3. Abre la app automaticamente
 
 > **Importante:** Se usa `expo run:android` (build nativo) y **NO** Expo Go, porque la app usa librerias nativas (MapLibre, expo-location, etc.) que no estan soportadas en Expo Go.
+>
+> **Si ves `ERR_PNPM_IGNORED_BUILDS`:** Ejecuta `pnpm approve-builds dtrace-provider` antes de continuar (ver seccion 8).
 
 ## 7. Tecnologias del Mapa
 
@@ -151,6 +153,21 @@ Se usa **MapLibre** en vez de `react-native-maps` por estas razones:
 3. Los marcadores de escenarios se dibujan encima del mapa usando el componente `<Marker>`.
 
 ## 8. Errores Comunes y Soluciones
+
+### `ERR_PNPM_IGNORED_BUILDS` (dtrace-provider)
+
+**Causa:** pnpm v10+ bloquea scripts de build de paquetes por defecto por seguridad. El paquete `dtrace-provider` (usado por Supabase CLI) necesita compilarse.
+
+**Solucion:**
+```bash
+# Aprobar el build del paquete
+pnpm approve-builds dtrace-provider
+
+# Luego ejecutar la app normalmente
+pnpm exec expo run:android
+```
+
+> **Nota:** Este error solo aparece la primera vez. Una vez aprobado, no vuelve a salir.
 
 ### Mapa en negro
 
