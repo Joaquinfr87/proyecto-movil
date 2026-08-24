@@ -1,0 +1,115 @@
+% ============================================================================
+%  SECCIÓN 4.10: PRUEBAS FUNCIONALES Y DIFICULTADES DEL AVANCE
+% ============================================================================
+
+\section{Pruebas funcionales y dificultades del avance}
+
+\subsection{Pruebas manuales de la l\'ogica implementada}
+
+Siguiendo la gu\'ia del avance, se realizaron pruebas manuales sobre los
+formularios, las validaciones y la funcionalidad principal interactiva.
+Las pruebas se ejecutaron en un dispositivo f\'isico Android mediante
+Expo Go y cubren los siete casos propuestos por la gu\'ia:
+
+\begin{table}[H]
+  \centering
+  \caption{Resultados de las pruebas funcionales del avance}
+  \label{tab:pruebas-logica}
+  \contenidoConFuente{%
+    \begin{tablaAPA}
+      \begin{tabular}{@{}p{0.8cm}p{3.6cm}p{2.0cm}p{8.6cm}@{}}
+        \toprule
+        \textbf{ID} & \textbf{Prueba} & \textbf{Resultado} &
+        \textbf{Observaciones} \\
+        \midrule
+        P1 & Formulario vacío & Aprobado & Al presionar el botón sin
+        completar campos, cada campo muestra su mensaje de obligatoriedad
+        debajo en color rojo; el envío no se ejecuta. \\
+        \addlinespace
+        P2 & Formulario parcialmente lleno & Aprobado & Solo los campos
+        incompletos o inválidos son señalados; los válidos conservan el
+        borde normal. \\
+        \addlinespace
+        P3 & Datos incorrectos & Aprobado & Con un email sin formato
+        válido o una contraseña menor a 6 caracteres, Zod muestra los
+        mensajes específicos de cada regla. \\
+        \addlinespace
+        P4 & Datos correctos & Aprobado & El botón se deshabilita y
+        muestra un indicador de carga durante el envío; al finalizar se
+        informa que la cuenta fue creada. \\
+        \addlinespace
+        P5 & Acción principal (favorito) & Aprobado & El toggle añade o
+        elimina el escenario en Supabase y la lista de favoritos se
+        actualiza tras invalidar el caché de React Query. \\
+        \addlinespace
+        P6 & Cambio de estado & Aprobado & El botón cambia de estado
+        vacío a lleno; mientras dura la operación queda deshabilitado,
+        evitando toques duplicados. \\
+        \addlinespace
+        P7 & Caso de error & Aprobado & Con credenciales inválidas se
+        muestra la caja de error del servidor; con un escenario
+        inexistente se muestra el estado vacío en lugar de una pantalla
+        en blanco. \\
+        \bottomrule
+      \end{tabular}
+    \end{tablaAPA}%
+  }{Elaboración propia en base a las pruebas realizadas en dispositivo
+  físico.}
+\end{table}
+
+\subsection{Dificultades encontradas en el avance}
+
+Durante el desarrollo de este avance se encontraron las siguientes
+dificultades, junto con las soluciones aplicadas:
+
+\begin{table}[H]
+  \centering
+  \caption{Dificultades del avance y soluciones aplicadas}
+  \label{tab:dificultades-avance4}
+  \contenidoConFuente{%
+    \begin{tablaAPA}
+      \begin{tabular}{@{}p{5.5cm}p{9.5cm}@{}}
+        \toprule
+        \textbf{Problema} & \textbf{Solución} \\
+        \midrule
+        El registro con correos ficticios no permitía iniciar sesión:
+        Supabase creaba la cuenta pero exigía confirmación por correo,
+        imposible de completar con un buzón inexistente. & Se identificó
+        que el proyecto alojado tiene activada la opción \textit{Confirm
+        email}. Se implementó la verificación mediante código de un solo
+        uso (\textit{OTP}) enviado al correo real, con pantalla dedicada
+        para ingresarlo y opción de reenvío. \\
+        \addlinespace
+        El servidor de correo integrado de Supabase limita el envío a
+        aproximadamente dos mensajes por hora, insuficiente para las
+        pruebas del equipo. & Se ajustaron los límites de autenticación
+        disponibles en el panel y se documentó la configuración de un
+        servidor SMTP externo gratuito para despliegues con mayor
+        volumen. \\
+        \addlinespace
+        La lista de escenarios no reflejaba los cambios al agregar o
+        quitar un favorito hasta reiniciar la aplicación. & Tras cada
+        mutación se invalidan las consultas de React Query asociadas
+        (\textit{favorites} y \textit{favorite}), forzando la
+        resincronización de la interfaz. \\
+        \addlinespace
+        La búsqueda filtraba mientras el usuario aún escribía,
+        generando filtrados intermedios innecesarios. & Se introdujo un
+        retardo (\textit{debounce}) de 300 ms con limpieza del temporizador
+        al desmontar el componente, evitando fugas de memoria. \\
+        \addlinespace
+        Los botones permitían toques repetidos durante operaciones
+        asíncronas, duplicando registros de favoritos. & Se incorporaron
+        estados de envío (\textit{isSubmitting}, \textit{isToggling}) que
+        deshabilitan el botón y muestran un indicador de carga. \\
+        \addlinespace
+        Al consultar un escenario inexistente la pantalla quedaba en
+        blanco sin retroalimentación. & La función de consulta retorna
+        \textit{null} ante el código \textit{PGRST116} y la interfaz
+        muestra el componente de estado vacío con mensaje informativo. \\
+        \bottomrule
+      \end{tabular}
+    \end{tablaAPA}%
+  }{Elaboración propia en base a las dificultades encontradas durante el
+  desarrollo.}
+\end{table}

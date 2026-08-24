@@ -186,8 +186,12 @@ async function updateScenario(
 A continuaci\'on se presenta el flujo completo de la funcionalidad de
 favoritos, que involucra las operaciones Read, Create y Delete:
 
-\begin{center}
-\begin{tikzpicture}[
+\begin{figure}[H]
+  \centering
+  \caption{Flujo completo de la funcionalidad de favoritos}
+  \label{fig:flujo-favoritos}
+  \contenidoConFuente{%
+  \begin{tikzpicture}[
   node distance=0.6cm,
   nodo/.style={rectangle, draw=black!60, rounded corners, minimum width=2.8cm,
     minimum height=0.6cm, align=center, font=\small},
@@ -205,4 +209,5 @@ favoritos, que involucra las operaciones Read, Create y Delete:
   \draw[flecha] (toggle) -- (invalidar);
   \draw[flecha] (invalidar) -- (actualizar);
 \end{tikzpicture}
-\end{center}
+  }{Elaboraci\'on propia.}
+\end{figure}

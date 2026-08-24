@@ -1,0 +1,179 @@
+% ============================================================================
+%  SECCIÓN 4.11: EVIDENCIAS DEL AVANCE
+% ============================================================================
+
+\section{Evidencias del avance}
+
+A continuaci\'on se presentan las evidencias del avance correspondiente al
+PDF~4, organizadas seg\'un la gu\'ia: formularios funcionando, validaciones,
+mensajes de error y \'exito, cambio de estado, funcionalidad principal,
+listas din\'amicas, b\'usqueda y repositorio actualizado.
+
+% --- EVIDENCIA 1 ---
+\subsubsection*{Evidencia 1: Formulario funcionando}
+
+El formulario de registro captura los datos introducidos por el usuario.
+Los valores ingresados se conservan en el estado del formulario mientras
+se completa:
+
+\begin{figure}[H]
+  \centering
+  \caption{Evidencia: Formulario de registro en funcionamiento}
+  \label{fig:evidencia4-formulario}
+  \contenidoConFuente{%
+    \includegraphics[width=0.28\linewidth]{evidencia-formulario-registro.jpg}%
+  }{Elaboraci\'on propia (captura de la aplicaci\'on).}
+\end{figure}
+
+% --- EVIDENCIA 2 ---
+\subsubsection*{Evidencia 2: Validaci\'on de campos}
+
+Al enviar el formulario con datos incompletos o inv\'alidos, cada campo
+incumplido muestra su mensaje de error espec\'ifico debajo, con borde rojo:
+
+\begin{figure}[H]
+  \centering
+  \caption{Evidencia: Validaci\'on de campos del registro}
+  \label{fig:evidencia4-validacion-registro}
+  \contenidoConFuente{%
+    \includegraphics[width=0.28\linewidth]{evidencia-validacion-registro.jpg}%
+  }{Elaboraci\'on propia (captura de la aplicaci\'on).}
+\end{figure}
+
+% --- EVIDENCIA 3 ---
+\subsubsection*{Evidencia 3: Mensaje de error}
+
+En el inicio de sesi\'on, un email sin formato v\'alido es bloqueado por la
+validaci\'on antes de llegar al servidor; las credenciales incorrectas se
+comunican mediante la caja de error del servidor:
+
+\begin{figure}[H]
+  \centering
+  \caption{Evidencia: Mensaje de error en el inicio de sesi\'on}
+  \label{fig:evidencia4-error-login}
+  \contenidoConFuente{%
+    \includegraphics[width=0.28\linewidth]{evidencia-validacion-campo-login.jpg}%
+  }{Elaboraci\'on propia (captura de la aplicaci\'on).}
+\end{figure}
+
+% --- EVIDENCIA 4 ---
+\subsubsection*{Evidencia 4: Mensaje de operaci\'on exitosa}
+
+Tras completar el registro con datos correctos, la aplicaci\'on informa que
+la cuenta fue creada e indica el siguiente paso (verificar el correo):
+
+\begin{figure}[H]
+  \centering
+  \caption{Evidencia: Mensaje de operaci\'on exitosa}
+  \label{fig:evidencia4-exito-registro}
+  \contenidoConFuente{%
+    \includegraphics[width=0.28\linewidth]{evidencia-exito-registro.jpg}%
+  }{Elaboraci\'on propia (captura de la aplicaci\'on).}
+\end{figure}
+
+% --- EVIDENCIA 5 ---
+\subsubsection*{Evidencia 5: Cambio de estado}
+
+El bot\'on de favorito refleja el estado interno: coraz\'on vac\'io cuando el
+escenario no est\'a guardado y coraz\'on lleno despu\'es de presionarlo. La
+interfaz cambia sin recargar la pantalla:
+
+\begin{figure}[H]
+  \centering
+  \caption{Evidencia: Cambio de estado del bot\'on de favorito}
+  \label{fig:evidencia4-favorito-antes}
+  \contenidoConFuente{%
+    \includegraphics[width=0.28\linewidth]{evidencia-favorito-antes.jpg}%
+  }{Elaboraci\'on propia (captura de la aplicaci\'on).}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \caption{Evidencia: Estado actualizado tras presionar el bot\'on}
+  \label{fig:evidencia4-favorito-despues}
+  \contenidoConFuente{%
+    \includegraphics[width=0.28\linewidth]{evidencia-favorito-despues.jpg}%
+  }{Elaboraci\'on propia (captura de la aplicaci\'on).}
+\end{figure}
+
+% --- EVIDENCIA 6 ---
+\subsubsection*{Evidencia 6: Funcionalidad principal interactiva}
+
+La funcionalidad principal del avance es la gesti\'on de favoritos: el
+usuario guarda escenarios deportivos desde la pantalla de detalle y la
+lista se sincroniza en tiempo real con la base de datos (evidencias 5 y
+figura~\ref{fig:flujo-favoritos}). Esta funcionalidad se relaciona
+directamente con el MVP definido en el PDF~1, cuyo prop\'osito es facilitar
+el acceso a informaci\'on confiable sobre la infraestructura deportiva.
+
+% --- EVIDENCIA 7 ---
+\subsubsection*{Evidencia 7: Lista din\'amica}
+
+La lista de escenarios responde a los cambios de estado: al aplicar
+filtros o modificar favoritos, la lista se re-renderiza autom\'aticamente
+reflejando la nueva situaci\'on de los datos:
+
+\begin{figure}[H]
+  \centering
+  \caption{Evidencia: Lista din\'amica de escenarios}
+  \label{fig:evidencia4-lista-dinamica}
+  \contenidoConFuente{%
+    \includegraphics[width=0.28\linewidth]{evidencia-lista-dinamica.jpg}%
+  }{Elaboraci\'on propia (captura de la aplicaci\'on).}
+\end{figure}
+
+% --- EVIDENCIA 8 ---
+\subsubsection*{Evidencia 8: B\'usqueda}
+
+La b\'usqueda filtra los escenarios mientras el usuario escribe, con un
+retardo de 300~ms para evitar filtrados intermedios:
+
+\begin{figure}[H]
+  \centering
+  \caption{Evidencia: B\'usqueda de escenarios por nombre}
+  \label{fig:evidencia4-busqueda}
+  \contenidoConFuente{%
+    \includegraphics[width=0.28\linewidth]{evidencia-busqueda.jpg}%
+  }{Elaboraci\'on propia (captura de la aplicaci\'on).}
+\end{figure}
+
+Adem\'as, la b\'usqueda puede combinarse con los filtros por tipo de
+escenario y por deporte:
+
+\begin{figure}[H]
+  \centering
+  \caption{Evidencia: B\'usqueda combinada con filtros}
+  \label{fig:evidencia4-busqueda-filtros}
+  \contenidoConFuente{%
+    \includegraphics[width=0.28\linewidth]{evidencia-busqueda-filtros.jpg}%
+  }{Elaboraci\'on propia (captura de la aplicaci\'on).}
+\end{figure}
+
+% --- EVIDENCIA 9 ---
+\subsubsection*{Evidencia 9: Flujo completo de la funcionalidad}
+
+El flujo completo de la funcionalidad de favoritos queda documentado por
+las evidencias anteriores: b\'usqueda del escenario
+(figura~\ref{fig:evidencia4-busqueda}), apertura del detalle, presi\'on del
+bot\'on de guardado (figuras~\ref{fig:evidencia4-favorito-antes}
+y~\ref{fig:evidencia4-favorito-despues}) y verificaci\'on del elemento en la
+lista de favoritos (figura~\ref{fig:evidencia4-lista-dinamica}). El
+diagrama del proceso completo se presenta en la
+figura~\ref{fig:flujo-favoritos} de la secci\'on de operaciones CRUD.
+
+% --- EVIDENCIA 10 ---
+\subsubsection*{Evidencia 10: Proyecto actualizado en GitHub}
+
+El historial de commits documenta la evoluci\'on progresiva del proyecto,
+incluyendo la integraci\'on de l\'ogica, validaciones y estado del avance:
+
+\begin{lstlisting}[style=terminal]
+feat(upload): agregar funcionalidad de subir imagenes desde la app
+fix(types): agregar events al tipo ScenarioWithDetails para detalle
+chore(deps): agregar react-dom y react-native-web para soporte web
+docs: agregar metodologia Scrum, historias de usuario y correcciones
+docs: agregar contenido del PDF 4 - logica, formularios, validaciones
+\end{lstlisting}
+
+La captura general del repositorio se present\'o en la
+figura~\ref{fig:repositorio-github} de la configuraci\'on de Git y GitHub.
