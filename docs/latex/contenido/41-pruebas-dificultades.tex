@@ -20,39 +20,39 @@ dispositivo f\'isico Android mediante Expo Go.
       \begin{tabular}{@{}p{0.8cm}p{4.8cm}p{1.8cm}p{7.6cm}@{}}
         \toprule
         \textbf{ID} & \textbf{Prueba} & \textbf{Resultado} &
-        \textbf{Observaciones} \\\
+        \textbf{Observaciones} \\\\
         \midrule
         P1 & Splash $\rightarrow$ Login (bot\'on \textit{``Comenzar''}) &
         Aprobado & La transici\'on se realiza de forma fluida mediante
-        \texttt{router.replace}. \\\
+        \texttt{router.replace}. \\\\
         \addlinespace
         P2 & Login $\rightarrow$ Registro (enlace \textit{``Registrate''}) &
         Aprobado & El enlace navega correctamente a la pantalla de registro
-        usando \texttt{Link}. \\\
+        usando \texttt{Link}. \\\\
         \addlinespace
         P3 & Registro $\rightarrow$ Login (despu\'es de registro exitoso) &
         Aprobado & Tras mostrar mensaje de \'exito, la aplicaci\'on redirige
-        autom\'aticamente al login. \\\
+        autom\'aticamente al login. \\\\
         \addlinespace
         P4 & Login $\rightarrow$ Tabs (despu\'es de autenticar) &
         Aprobado & La autenticaci\'on con Supabase funciona y el
-        \texttt{AuthGuard} redirige a las pesta\~nas. \\\
+        \texttt{AuthGuard} redirige a las pesta\~nas. \\\\
         \addlinespace
         P5 & Tabs: Inicio $\rightarrow$ Buscar $\rightarrow$ Favoritos
         $\rightarrow$ Perfil & Aprobado & El Tab Navigator cambia entre
-        pesta\~nas correctamente. \\\
+        pesta\~nas correctamente. \\\\
         \addlinespace
         P6 & Perfil $\rightarrow$ Cerrar sesi\'on $\rightarrow$ Splash &
         Aprobado & El di\'alogo de confirmaci\'on funciona y la sesi\'on se
-        cierra correctamente. \\\
+        cierra correctamente. \\\\
         \addlinespace
         P7 & Splash (sin sesi\'on) al abrir la app &
         Aprobado & El \texttt{AuthGuard} redirige a splash cuando no hay
-        sesi\'on activa. \\\
+        sesi\'on activa. \\\\
         \addlinespace
         P8 & Cierre de sesi\'on regresa al login &
         Aprobado & Despu\'es de cerrar sesi\'on, la app muestra la pantalla
-        de splash/login. \\\
+        de splash/login. \\\\
         \bottomrule
       \end{tabular}
     \end{tablaAPA}%
@@ -73,34 +73,34 @@ dificultades, junto con las soluciones aplicadas:
     \begin{tablaAPA}
       \begin{tabular}{@{}p{5.5cm}p{9.5cm}@{}}
         \toprule
-        \textbf{Problema} & \textbf{Soluci\'on} \\\
+        \textbf{Problema} & \textbf{Soluci\'on} \\\\
         \midrule
         El teclado virtual cubr\'ia los campos de texto en las pantallas de
         login y registro. & Se implement\'o \texttt{KeyboardAvoidingView} con
         comportamiento condicional por plataforma (\texttt{padding} en iOS,
         \texttt{height} en Android) y se envolvi\'o el formulario en un
-        \texttt{ScrollView}. \\\
+        \texttt{ScrollView}. \\\\
         \addlinespace
         La navegaci\'on entre pantallas no funcionaba correctamente despu\'es
         de cerrar sesi\'on, mostrando pantallas protegidas. & Se revis\'o la
         implementaci\'on del \texttt{AuthGuard} y se asegur\'o de que
         \texttt{router.replace} se utilize en lugar de \texttt{router.push}
-        para evitar el hist\'orico de navegaci\'on. \\\
+        para evitar el hist\'orico de navegaci\'on. \\\\
         \addlinespace
         Los colores y espaciados no eran consistentes entre pantallas al
         principio del desarrollo. & Se centralizaron todas las constantes
         visuales en el directorio \texttt{src/theme/} y se crearon tokens de
-        dise\~no reutilizables (colores, espaciado, tama\~nos de fuente). \\\
+        dise\~no reutilizables (colores, espaciado, tama\~nos de fuente). \\\\
         \addlinespace
         La validaci\'on de formularios con mensajes de error en tiempo real
         generaba complejidad en el manejo de estado. & Se integr\'o
         \texttt{react-hook-form} con \texttt{Zod} para simplificar la
-        validaci\'on declarativa y el manejo de errores de campo. \\\
+        validaci\'on declarativa y el manejo de errores de campo. \\\\
         \addlinespace
         El componente \texttt{AuthGuard} generaba bucles de redireccionamiento
         al verificar el estado de autenticaci\'on. & Se a\~nadi\'o la
         condici\'on de \texttt{loading} para evitar que el componente tome
-        decisiones antes de que la sesi\'on est\'e cargada. \\\
+        decisiones antes de que la sesi\'on est\'e cargada. \\\\
         \bottomrule
       \end{tabular}
     \end{tablaAPA}%
