@@ -1,0 +1,129 @@
+% ============================================================================
+%  SECCIÓN 4.6: GESTIÓN DEL ESTADO
+% ============================================================================
+
+\section{Gesti\'on del estado}
+
+La gesti\'on del estado es un concepto fundamental en el desarrollo de
+aplicaciones m\'oviles. Una aplicaci\'on puede encontrarse en diferentes
+situaciones y la interfaz debe reflejar el estado actual en todo momento.
+
+\subsection{Concepto de estado}
+
+El estado es la representaci\'on de la situaci\'on actual de la aplicaci\'on en
+un momento dado. Cuando el usuario realiza una acci\'on, el estado cambia y
+la interfaz se actualiza para mostrar el resultado:
+
+\begin{center}
+\begin{tikzpicture}[
+  node distance=0.6cm,
+  nodo/.style={rectangle, draw=black!60, rounded corners, minimum width=2.5cm,
+    minimum height=0.6cm, align=center, font=\small},
+  flecha/.style={-Stealth, thick}
+]
+  \node[nodo] (inicial) {Estado inicial};
+  \node[nodo, right=of inicial] (cargando) {Cargando};
+  \node[nodo, right=of cargando] (datos) {Datos disponibles};
+  \node[nodo, right=of datos] (interactua) {Usuario interact\'ua};
+  \node[nodo, right=of interactua] (actualizado) {Estado actualizado};
+  \draw[flecha] (inicial) -- (cargando);
+  \draw[flecha] (cargando) -- (datos);
+  \draw[flecha] (datos) -- (interactua);
+  \draw[flecha] (interactua) -- (actualizado);
+\end{tikzpicture}
+\end{center}
+
+\subsection{Estrategias de gesti\'on de estado}
+
+El proyecto utiliza tres estrategias complementarias para la gesti\'on del
+estado, cada una adecuada para un tipo de informaci\'on espec\'ifica:
+
+\begin{table}[H]
+  \centering
+  \caption{Estrategias de gesti\'on de estado}
+  \contenidoConFuente{%
+    \begin{tablaAPA}
+      \begin{tabular}{@{}p{3.4cm}p{3.6cm}p{8.6cm}@{}}
+        \toprule
+        \textbf{Estrategia} & \textbf{Herramienta} & \textbf{Uso} \\
+        \midrule
+        Estado local & \textit{useState} & Formularios, filtros,
+        toggles de UI, valores de entrada. \\
+        \addlinespace
+        Estado global & \textit{React Context} & Sesi\'on de usuario,
+        autenticaci\'on y cierre de sesi\'on. \\
+        \addlinespace
+        Estado del servidor & \textit{React Query} & Consultas y
+        mutaciones de datos, cache y revalidaci\'on. \\
+        \bottomrule
+      \end{tabular}
+    \end{tablaAPA}%
+  }{Elaboraci\'on propia en base al an\'alisis del c\'odigo fuente.}
+\end{table}
+
+\subsection{Estado global con React Context}
+
+El contexto de autenticaci\'on (\textit{AuthContext}) gestiona el estado
+global de la sesi\'on del usuario. Este contexto proporciona la sesi\'on actual,
+el objeto del usuario y las funciones de inicio de sesi\'on, registro y
+cierre de sesi\'on a todos los componentes de la aplicaci\'on:
+
+\begin{lstlisting}
+interface AuthContextType {
+  session: Session | null;
+  user: User | null;
+  loading: boolean;
+  signIn: (email: string, password: string)
+    => Promise<{ error?: string }>;
+  signUp: (email: string, password: string, fullName: string)
+    => Promise<{ error?: string }>;
+  signOut: () => Promise<void>;
+}
+\end{lstlisting}
+
+El contexto escucha los cambios de autenticaci\'on en tiempo real mediante
+\textit{onAuthStateChange} de Supabase y actualiza el estado de la sesi\'on
+autom\'aticamente.
+
+\subsection{Estado del servidor con React Query}
+
+React Query gestiona el estado de las consultas a Supabase, incluyendo
+carga, error, datos y revalidaci\'on. Cada hook de consulta define un
+tiempo de validez (\textit{staleTime}) que determina cu\'ando los datos
+consideran desactualizados:
+
+\begin{lstlisting}
+// Los datos se consideran frescos por 5 minutos
+return useQuery({
+  queryKey: ['scenarios'],
+  queryFn: fetchScenarios,
+  staleTime: 1000 * 60 * 5,
+});
+\end{lstlisting}
+
+Despu\'es de una mutaci\'on (como a\~nadir o eliminar un favorito), se
+invalida el cache correspondiente para que la siguiente consulta obtenga
+los datos actualizados:
+
+\begin{lstlisting}
+await queryClient.invalidateQueries({
+  queryKey: ['favorites', userId]
+});
+\end{lstlisting}
+
+\subsection{Ciclo de vida del estado}
+
+El ciclo de vida del estado en la aplicaci\'on sigue el siguiente patr\'on:
+
+\begin{enumerate}
+  \item \textbf{Inicializaci\'on:} la pantalla se carga y el hook de
+    consulta inicia la petici\'on a Supabase.
+  \item \textbf{Carga:} se muestra el componente \textit{LoadingSpinner}
+    mientras se esperan los datos.
+  \item \textbf{Datos disponibles:} la interfaz se renderiza con la
+    informaci\'on obtenida.
+  \item \textbf{Interacci\'on del usuario:} el usuario realiza una acci\'on
+    (b\'usqueda, filtro, favorito).
+  \item \textbf{Actualizaci\'on:} el estado se actualiza y la interfaz
+    se re-renderiza con los nuevos datos.
+\end{enumerate}

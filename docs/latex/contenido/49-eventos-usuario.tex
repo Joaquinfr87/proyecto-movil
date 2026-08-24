@@ -1,0 +1,133 @@
+% ============================================================================
+%  SECCIÓN 4.5: EVENTOS DE USUARIO
+% ============================================================================
+
+\section{Eventos de usuario}
+
+Los eventos de usuario son las interacciones que el realiza con la interfaz
+de la aplicaci\'on. Cada evento desencadena una acci\'on en la l\'ogica de
+negocio y, como resultado, la interfaz se actualiza para reflejar el nuevo
+estado.
+
+\subsection{Identificaci\'on de eventos}
+
+A continuaci\'on se identifican los eventos principales de cada pantalla y
+la acci\'on que provocan:
+
+\begin{table}[H]
+  \centering
+  \caption{Eventos de usuario por pantalla}
+  \contenidoConFuente{%
+    \begin{tablaAPA}
+      \begin{tabular}{@{}p{2.8cm}p{3.6cm}p{4.2cm}p{4.6cm}@{}}
+        \toprule
+        \textbf{Pantalla} & \textbf{Evento} & \textbf{Acci\'on} &
+        \textbf{Resultado} \\
+        \midrule
+        Login & \textit{onPress} & Enviar credenciales &
+        Navegaci\'on a tabs o error. \\
+        \addlinespace
+        Login & \textit{onPress} & Ir a registro &
+        Navegaci\'on a pantalla de registro. \\
+        \addlinespace
+        Registro & \textit{onPress} & Crear cuenta &
+        Mensaje de \'exito y redirecci\'on. \\
+        \addlinespace
+        Cat\'alogo & \textit{onChangeText} & Buscar &
+        Filtrado en tiempo real. \\
+        \addlinespace
+        Cat\'alogo & \textit{onPress} & Seleccionar chip &
+        Filtro por tipo o deporte. \\
+        \addlinespace
+        Detalle & \textit{onPress} & Guardar favorito &
+        Cambio de estado del bot\'on. \\
+        \addlinespace
+        Detalle & \textit{onPress} & Subir imagen &
+        Recarga de imagen del escenario. \\
+        \addlinespace
+        Perfil & \textit{onPress} & Cerrar sesi\'on &
+        Di\'alogo de confirmaci\'on. \\
+        \bottomrule
+      \end{tabular}
+    \end{tablaAPA}%
+  }{Elaboraci\'on propia en base al an\'alisis del c\'odigo fuente.}
+\end{table}
+
+\subsection{Implementaci\'on de eventos}
+
+Los eventos se implementan mediante las propiedades de los componentes de
+React Native. A continuaci\'on se presentan los patrones de implementaci\'on
+m\'as representativos.
+
+\subsubsection{Evento de b\'usqueda con debounce}
+
+La barra de b\'usqueda del cat\'alogo implementa un debounce de 300 ms para
+evitar consultas excesivas mientras el usuario escribe:
+
+\begin{lstlisting}
+const [searchQuery, setSearchQuery] = useState('');
+const [debouncedQuery, setDebouncedQuery] = useState('');
+
+useEffect(() => {
+  const timer = setTimeout(() => {
+    setDebouncedQuery(searchQuery.trim());
+  }, 300);
+
+  return () => clearTimeout(timer);
+}, [searchQuery]);
+\end{lstlisting}
+
+El valor \textit{debouncedQuery} se utiliza para filtrar los escenarios,
+mientras que \textit{searchQuery} actualiza la interfaz de forma inmediata.
+
+\subsubsection{Evento de toggle de favorito}
+
+El bot\'on de favorito en la pantalla de detalle ejecuta una operaci\'on
+as\'incrona que verifica el estado actual, ejecuta la adici\'on o
+eliminaci\'on y actualiza el cache de React Query:
+
+\begin{lstlisting}
+const handleToggleFavorite = async () => {
+  if (!user?.id || !id) return;
+  await toggleFavorite(user.id, id);
+};
+\end{lstlisting}
+
+\subsubsection{Evento de selecci\'on de filtros}
+
+Los chips de filtro por tipo y deporte se implementan con
+\textit{TouchableOpacity}. Al presionar un chip, se actualiza el estado
+local del filtro y la lista se re-renderiza autom\'aticamente:
+
+\begin{lstlisting}
+<TouchableOpacity
+  style={[styles.chip, selectedType === tipo && styles.chipActive]}
+  onPress={() => setSelectedType(
+    selectedType === tipo ? null : tipo
+  )}
+>
+  <Text style={styles.chipText}>{tipo}</Text>
+</TouchableOpacity>
+\end{lstlisting}
+
+\subsubsection{Evento de cierre de sesi\'on}
+
+El bot\'on de cerrar sesi\'on en la pantalla de perfil presenta un
+di\'alogo de confirmaci\'on antes de ejecutar la acci\'on, utiliz\'ando
+\textit{Alert.alert} en dispositivos m\'oviles y \textit{window.confirm}
+en web:
+
+\begin{lstlisting}
+const handleSignOut = () => {
+  if (Platform.OS === 'web') {
+    if (window.confirm('Cerrar sesion: Estas seguro?')) {
+      signOut();
+    }
+  } else {
+    Alert.alert('Cerrar sesion', 'Estas seguro?', [
+      { text: 'Cancelar', style: 'cancel' },
+      { text: 'Cerrar sesion', style: 'destructive', onPress: signOut },
+    ]);
+  }
+};
+\end{lstlisting}

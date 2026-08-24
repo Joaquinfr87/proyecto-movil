@@ -1,0 +1,208 @@
+% ============================================================================
+%  SECCIÓN 4.9: IMPLEMENTACIÓN DE OPERACIONES CRUD
+% ============================================================================
+
+\section{Implementaci\'on de operaciones CRUD}
+
+Las operaciones CRUD (Create, Read, Update, Delete) son la base de la
+interacci\'on de la aplicaci\'on con los datos. En este avance se implementan
+las operaciones de lectura, creaci\'on y eliminaci\'on, mientras que la
+operaci\'on de actualizaci\'on se reserva para un avance futuro.
+
+\subsection{Operaci\'on Read: consulta de escenarios}
+
+La operaci\'on de lectura es la m\'as utilizada en la aplicaci\'on. Los
+escenarios se obtienen desde Supabase y se almacenan en el cache de
+React Query para evitar consultas redundantes:
+
+\begin{lstlisting}
+async function fetchScenarios(): Promise<ScenarioWithDetails[]> {
+  const { data, error } = await supabase
+    .from('scenarios')
+    .select(`
+      *,
+      scenario_images(url, is_primary, storage_path,
+        display_order),
+      scenario_sports(sports(nombre))
+    `)
+    .eq('estado', 'activo')
+    .order('nombre');
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  return data as ScenarioWithDetails[];
+}
+\end{lstlisting}
+
+La consulta incluye las relaciones con im\'agenes, deportes y eventos,
+utilizando el sistema de relaciones de Supabase PostgREST.
+
+\subsection{Operaci\'on Read: consulta de un escenario}
+
+La consulta individual de un escenario se ejecuta cuando el usuario
+navega a la pantalla de detalle, utilizando el identificador de ruta:
+
+\begin{lstlisting}
+async function fetchScenarioById(
+  id: string
+): Promise<ScenarioWithDetails | null> {
+  const { data, error } = await supabase
+    .from('scenarios')
+    .select(`
+      *,
+      scenario_images(url, is_primary, storage_path,
+        display_order),
+      scenario_sports(sports(nombre)),
+      events(*)
+    `)
+    .eq('id', id)
+    .single();
+
+  if (error) {
+    if (error.code === 'PGRST116') return null;
+    throw new Error(error.message);
+  }
+
+  return data as ScenarioWithDetails;
+}
+\end{lstlisting}
+
+Si el escenario no existe (\textit{PGRST116}), la funci\'on retorna
+\textit{null} y la interfaz muestra un estado vac\'io.
+
+\subsection{Operaci\'on Create: a\~nadir favorito}
+
+La operaci\'on de creaci\'on se utiliza para a\~nadir un escenario a la
+lista de favoritos del usuario. La inserci\'on se realiza en la tabla
+\textit{favorites} de Supabase:
+
+\begin{lstlisting}
+async function addFavorite(
+  userId: string,
+  scenarioId: string
+): Promise<void> {
+  const { error } = await supabase
+    .from('favorites')
+    .insert({
+      user_id: userId,
+      scenario_id: scenarioId,
+    });
+
+  if (error) {
+    throw new Error(error.message);
+  }
+}
+\end{lstlisting}
+
+\subsection{Operaci\'on Delete: eliminar favorito}
+
+La operaci\'on de eliminaci\'on se utiliza para quitar un escenario de
+la lista de favoritos:
+
+\begin{lstlisting}
+async function removeFavorite(
+  userId: string,
+  scenarioId: string
+): Promise<void> {
+  const { error } = await supabase
+    .from('favorites')
+    .delete()
+    .eq('user_id', userId)
+    .eq('scenario_id', scenarioId);
+
+  if (error) {
+    throw new Error(error.message);
+  }
+}
+\end{lstlisting}
+
+\subsection{Operaci\'on Update: actualizaci\'on de escenario (pendiente)}
+
+La operaci\'on de actualizaci\'on de escenarios se encuentra en
+desarrollo y estar\'a disponible en un avance futuro. Esta
+funcionalidad permitir\'a a los usuarios con rol de administrador o
+gestor modificar la informaci\'on de un escenario existente, incluyendo
+su nombre, descripci\'on, capacidad y estado.
+
+La operaci\'on se implementar\'a mediante el m\'etodo \textit{update} de
+Supabase, con las siguientes restricciones de seguridad:
+
+\begin{lstlisting}
+// Pendiente de implementacion
+async function updateScenario(
+  id: string,
+  updates: Partial<Scenario>
+): Promise<void> {
+  const { error } = await supabase
+    .from('scenarios')
+    .update(updates)
+    .eq('id', id);
+
+  if (error) {
+    throw new Error(error.message);
+  }
+}
+\end{lstlisting}
+
+\subsection{Resumen de operaciones CRUD}
+
+\begin{table}[H]
+  \centering
+  \caption{Operaciones CRUD implementadas}
+  \contenidoConFuente{%
+    \begin{tablaAPA}
+      \begin{tabular}{@{}p{2.0cm}p{3.6cm}p{5.2cm}p{4.8cm}@{}}
+        \toprule
+        \textbf{Operaci\'on} & \textbf{Entidad} & \textbf{Funci\'on} &
+        \textbf{Estado} \\
+        \midrule
+        Read & Escenarios & \textit{fetchScenarios()} &
+        Implementada. \\
+        \addlinespace
+        Read & Escenario & \textit{fetchScenarioById()} &
+        Implementada. \\
+        \addlinespace
+        Read & Favoritos & \textit{fetchFavorites()} &
+        Implementada. \\
+        \addlinespace
+        Create & Favorito & \textit{addFavorite()} &
+        Implementada. \\
+        \addlinespace
+        Delete & Favorito & \textit{removeFavorite()} &
+        Implementada. \\
+        \addlinespace
+        Update & Escenario & \textit{updateScenario()} &
+        Pendiente. \\
+        \bottomrule
+      \end{tabular}
+    \end{tablaAPA}%
+  }{Elaboraci\'on propia en base al c\'odigo fuente del proyecto.}
+\end{table}
+
+\subsection{Flujo completo de favoritos}
+
+A continuaci\'on se presenta el flujo completo de la funcionalidad de
+favoritos, que involucra las operaciones Read, Create y Delete:
+
+\begin{center}
+\begin{tikzpicture}[
+  node distance=0.6cm,
+  nodo/.style={rectangle, draw=black!60, rounded corners, minimum width=2.8cm,
+    minimum height=0.6cm, align=center, font=\small},
+  flecha/.style={-Stealth, thick}
+]
+  \node[nodo] (consulta) {Consultar favoritos};
+  \node[nodo, right=of consulta] (muestra) {Mostrar lista};
+  \node[nodo, right=of muestra] (press) {Presionar boton};
+  \node[nodo, below=of press] (toggle) {Toggle favorito};
+  \node[nodo, left=of toggle] (invalidar) {Invalidar cache};
+  \node[nodo, left=of invalidar] (actualizar) {Actualizar interfaz};
+  \draw[flecha] (consulta) -- (muestra);
+  \draw[flecha] (muestra) -- (press);
+  \draw[flecha] (press) -- (toggle);
+  \draw[flecha] (toggle) -- (invalidar);
+  \draw[flecha] (invalidar) -- (actualizar);
+\end{tikzpicture}
+\end{center}

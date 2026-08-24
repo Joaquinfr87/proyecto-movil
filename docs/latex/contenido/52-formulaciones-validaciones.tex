@@ -1,0 +1,147 @@
+% ============================================================================
+%  SECCIÓN 4.8: FORMULACIÓN Y VALIDACIONES
+% ============================================================================
+
+\section{Formulaci\'on y validaciones}
+
+Las validaciones garantizan que los datos ingresados por el usuario cumplan
+con los requisitos del sistema antes de ser procesadas. En este proyecto,
+las validaciones se implementan mediante esquemas Zod que definen reglas
+claras para cada campo.
+
+\subsection{Reglas de validaci\'on}
+
+Las reglas de validaci\'on se establecen de acuerdo con los requerimientos
+funcionales del sistema:
+
+\begin{table}[H]
+  \centering
+  \caption{Reglas de validaci\'on de formularios}
+  \contenidoConFuente{%
+    \begin{tablaAPA}
+      \begin{tabular}{@{}p{3.4cm}p{5.6cm}p{6.6cm}@{}}
+        \toprule
+        \textbf{Campo} & \textbf{Regla} & \textbf{Mensaje de error} \\
+        \midrule
+        Nombre completo & Obligatorio, m\'inimo 3 caracteres &
+        ``El nombre debe tener al menos 3 caracteres''. \\
+        \addlinespace
+        Email & Obligatorio, formato v\'alido &
+        ``Ingresa un email v\'alido''. \\
+        \addlinespace
+        Contrase\~na & Obligatorio, m\'inimo 6 caracteres &
+        ``La contrase\~na debe tener al menos 6 caracteres''. \\
+        \addlinespace
+        Confirmar contrase\~na & Debe coincidir con contrase\~na &
+        ``Las contrase\~nas no coinciden''. \\
+        \bottomrule
+      \end{tabular}
+    \end{tablaAPA}%
+  }{Elaboraci\'on propia en base a los esquemas Zod del proyecto.}
+\end{table}
+
+\subsection{Implementaci\'on de validaciones con Zod}
+
+Cada formulario define un esquema Zod que codifica las reglas de
+validaci\'on. El esquema del formulario de registro valida cuatro campos
+y verifica la coincidencia de contrase\~nas mediante \textit{refine}:
+
+\begin{lstlisting}
+const registerSchema = z
+  .object({
+    fullName: z
+      .string()
+      .min(1, 'El nombre es obligatorio')
+      .min(3, 'El nombre debe tener al menos 3 caracteres')
+      .max(100, 'El nombre es demasiado largo'),
+    email: z
+      .string()
+      .min(1, 'El email es obligatorio')
+      .email('Ingresa un email valido'),
+    password: z
+      .string()
+      .min(1, 'La contrasena es obligatoria')
+      .min(6, 'La contrasena debe tener al menos 6 caracteres'),
+    confirmPassword: z
+      .string()
+      .min(1, 'Confirma tu contrasena'),
+  })
+  .refine(
+    (data) => data.password === data.confirmPassword,
+    {
+      message: 'Las contrasenas no coinciden',
+      path: ['confirmPassword'],
+    }
+  );
+\end{lstlisting}
+
+\subsection{Visualizaci\'on de errores}
+
+Los errores de validaci\'on se muestran debajo de cada campo en tiempo real,
+mientras el usuario escribe. El borde del campo cambia a color rojo para
+se\~nalar visualmente el error:
+
+\begin{lstlisting}
+<TextInput
+  style={[styles.input, errors.email && styles.inputError]}
+  placeholder="tu@email.com"
+  value={value}
+  onChangeText={onChange}
+  onBlur={onBlur}
+/>
+{errors.email && (
+  <Text style={styles.errorText}>{errors.email.message}</Text>
+)}
+\end{lstlisting}
+
+Los estilos aplicados son:
+
+\begin{lstlisting}
+inputError: {
+  borderColor: colors.error,  // Rojo #EF4444
+},
+errorText: {
+  fontSize: fontSize.xs,
+  color: colors.error,
+  marginTop: spacing.xs,
+},
+\end{lstlisting}
+
+\subsection{Errores del servidor}
+
+Adem\'as de las validaciones locales, la aplicaci\'on maneja errores
+provenientes del servidor (Supabase), como credenciales inv\'alidas o
+correos ya registrados. Estos errores se muestran en una caja especial
+con fondo rojo claro:
+
+\begin{lstlisting}
+{serverError && (
+  <View style={styles.serverErrorBox}>
+    <Text style={styles.serverErrorText}>{serverError}</Text>
+  </View>
+)}
+\end{lstlisting}
+
+\subsection{Control del estado de los botones}
+
+Los botones de env\'io se deshabilitan durante el proceso de
+autenticaci\'on para evitar env\'ios duplicados. Mientras se procesa la
+solicitud, se muestra un indicador de carga (\textit{ActivityIndicator})
+en lugar del texto del bot\'on:
+
+\begin{lstlisting}
+<TouchableOpacity
+  style={[styles.button, isSubmitting && styles.buttonDisabled]}
+  onPress={handleSubmit(onSubmit)}
+  disabled={isSubmitting}
+>
+  {isSubmitting ? (
+    <ActivityIndicator color={colors.white} />
+  ) : (
+    <Text style={styles.buttonText}>Iniciar sesion</Text>
+  )}
+</TouchableOpacity>
+\end{lstlisting}
+
+El estilo \textit{buttonDisabled} reduce la opacidad del bot\'on al 60\\%
+para indicar visualmente que no est\'a disponible.

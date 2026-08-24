@@ -1,0 +1,162 @@
+% ============================================================================
+%  SECCIÓN 4.3: IMPLEMENTACIÓN DE CLASES / COMPONENTES
+% ============================================================================
+
+\section{Implementaci\'on de componentes y hooks}
+
+En el ecosistema de React Native, la l\'ogica de negocio se organiza en
+componentes de interfaz y hooks personalizados que encapsulan la l\'ogica
+reutilizable. A continuaci\'on se describen los componentes y hooks clave
+implementados en el proyecto.
+
+\subsection{Componentes reutilizables}
+
+Los componentes reutilizables se encuentran en el directorio
+\textit{src/components/} y proporcionan elementos de interfaz comunes a
+m\'ultiples pantallas.
+
+\subsubsection{AuthGuard}
+
+El componente \textit{AuthGuard} es un componente de alto orden que envuelve
+a los componentes hijos y verifica si el usuario est\'a autenticado. Si no
+existe una sesi\'on activa, redirige al usuario a la pantalla de bienvenida:
+
+\begin{lstlisting}
+export function AuthGuard({ children }: { children: React.ReactNode }) {
+  const { session, loading } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!loading && !session) {
+      router.replace('/');
+    }
+  }, [session, loading]);
+
+  if (loading) {
+    return <LoadingSpinner message="Verificando sesion..." />;
+  }
+
+  return session ? <>{children}</> : null;
+}
+\end{lstlisting}
+
+\subsubsection{ScenarioCard}
+
+El componente \textit{ScenarioCard} renderiza una tarjeta con la informaci\'on
+resumida de un escenario, incluyendo imagen, nombre, tipo y direcci\'on.
+Se utiliza tanto en la pantalla de cat\'alogo como en la de favoritos:
+
+\begin{lstlisting}
+interface ScenarioCardProps {
+  scenario: ScenarioWithDetails;
+  onPress: (id: string) => void;
+}
+
+export function ScenarioCard({ scenario, onPress }: ScenarioCardProps) {
+  const primaryImage = scenario.scenario_images?.find(
+    (img) => img.is_primary
+  );
+
+  return (
+    <TouchableOpacity
+      style={styles.card}
+      onPress={() => onPress(scenario.id)}
+      activeOpacity={0.7}
+    >
+      {primaryImage && (
+        <Image source={{ uri: primaryImage.url }} style={styles.image} />
+      )}
+      <View style={styles.info}>
+        <Text style={styles.name}>{scenario.nombre}</Text>
+        <Text style={styles.tipo}>{scenario.tipo}</Text>
+        <Text style={styles.direccion} numberOfLines={1}>
+          {scenario.direccion}
+        </Text>
+      </View>
+    </TouchableOpacity>
+  );
+}
+\end{lstlisting}
+
+\subsubsection{Componentes de estado}
+
+El proyecto incluye tres componentes para manejar los estados de carga, error
+y vac\'io de las listas:
+
+\begin{itemize}
+  \item \textit{LoadingSpinner}: muestra un indicador de carga con un mensaje
+    descriptivo mientras se obtienen los datos.
+  \item \textit{ErrorState}: muestra un mensaje de error con un bot\'on para
+    reintentar la operaci\'on fallida.
+  \item \textit{EmptyState}: muestra un mensaje informativo cuando no hay
+    datos disponibles, con un bot\'on de acci\'on opcional.
+\end{itemize}
+
+\subsection{Hooks personalizados}
+
+Los hooks personalizados se encuentran en el directorio \textit{src/hooks/} y
+encapsulan la l\'ogica de consulta y mutaci\'on de datos.
+
+\subsubsection{useScenarios}
+
+El hook \textit{useScenarios} gestiona la obtenci\'on de escenarios desde
+Supabase. Utiliza \textit{React Query} para el cache y la revalidaci\'on:
+
+\begin{lstlisting}
+export function useScenarios() {
+  return useQuery({
+    queryKey: ['scenarios'],
+    queryFn: fetchScenarios,
+    staleTime: 1000 * 60 * 5,  // 5 minutos
+  });
+}
+
+export function useScenario(id: string) {
+  return useQuery({
+    queryKey: ['scenario', id],
+    queryFn: () => fetchScenarioById(id),
+    staleTime: 1000 * 60 * 5,
+    enabled: !!id,
+  });
+}
+\end{lstlisting}
+
+\subsubsection{useFavorites}
+
+El hook \textit{useFavorites} gestiona las operaciones de consulta,
+adici\'on y eliminaci\'on de favoritos. La funci\'on \textit{toggleFavorite}
+verifica el estado actual y ejecuta la operaci\'on correspondiente:
+
+\begin{lstlisting}
+export function useToggleFavorite() {
+  const queryClient = useQueryClient();
+  const [isToggling, setIsToggling] = useState(false);
+
+  const toggleFavorite = async (userId: string, scenarioId: string) => {
+    setIsToggling(true);
+    try {
+      const isFav = await checkIsFavorite(userId, scenarioId);
+
+      if (isFav) {
+        await removeFavorite(userId, scenarioId);
+      } else {
+        await addFavorite(userId, scenarioId);
+      }
+
+      // Invalidar cache para actualizar la interfaz
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: ['favorites', userId]
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ['favorite', userId, scenarioId]
+        }),
+      ]);
+    } finally {
+      setIsToggling(false);
+    }
+  };
+
+  return { toggleFavorite, isToggling };
+}
+\end{lstlisting}

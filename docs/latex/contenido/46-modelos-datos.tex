@@ -1,0 +1,134 @@
+% ============================================================================
+%  SECCIÓN 4.2: CREACIÓN DE MODELOS DE DATOS
+% ============================================================================
+
+\section{Creaci\'on de modelos de datos}
+
+Los modelos de datos definen la estructura de la informaci\'on que maneja la
+aplicaci\'on. En un proyecto con React Native y TypeScript, los modelos se
+implementan como interfaces o tipos que permiten el tipado est\'atico y la
+detecci\'on temprana de errores durante el desarrollo.
+
+\subsection{Interfaces principales}
+
+Los modelos de datos del proyecto se definen en el directorio
+\textit{src/types/} y se organizan de acuerdo con las entidades del dominio
+del sistema.
+
+\subsubsection{Modelo de escenario}
+
+El escenario deportivo es la entidad central del sistema. Cada escenario
+contiene informaci\'on b\'asica, una relaci\'on con deportes asociados, im\'agenes y
+eventos:
+
+\begin{lstlisting}
+export interface Scenario {
+  id: string;
+  nombre: string;
+  tipo: string;
+  direccion: string;
+  capacidad: number;
+  descripcion: string | null;
+  estado: 'activo' | 'inactivo';
+  latitud: number | null;
+  longitud: number | null;
+  created_at: string;
+}
+\end{lstlisting}
+
+Para las pantallas de detalle y cat\'alogo, se extiende el modelo con las
+relaciones necesarias:
+
+\begin{lstlisting}
+export interface ScenarioWithDetails extends Scenario {
+  scenario_images: ScenarioImage[];
+  scenario_sports: ScenarioSport[];
+  events: Event[];
+}
+\end{lstlisting}
+
+\subsubsection{Modelo de imagen del escenario}
+
+Cada escenario puede tener m\'ultiples im\'agenes, una de las cuales se marca
+como primaria:
+
+\begin{lstlisting}
+export interface ScenarioImage {
+  url: string;
+  is_primary: boolean;
+  storage_path: string;
+  display_order: number;
+}
+\end{lstlisting}
+
+\subsubsection{Modelo de deporte asociado}
+
+La relaci\'on entre escenarios y deportes se modela como una tabla intermedia
+que permite una relaci\'on de muchos a muchos:
+
+\begin{lstlisting}
+export interface ScenarioSport {
+  sports: { nombre: string };
+}
+\end{lstlisting}
+
+\subsubsection{Modelo de evento}
+
+Los eventos representan actividades pr\'oximas en cada escenario:
+
+\begin{lstlisting}
+export interface Event {
+  id: string;
+  scenario_id: string;
+  nombre: string;
+  descripcion: string | null;
+  fecha: string;
+  hora: string;
+  created_at: string;
+}
+\end{lstlisting}
+
+\subsubsection{Modelo de favorito}
+
+El modelo de favorito establece la relaci\'on entre un usuario y un escenario
+guardado:
+
+\begin{lstlisting}
+export interface Favorite {
+  user_id: string;
+  scenario_id: string;
+  created_at: string;
+}
+\end{lstlisting}
+
+\subsection{Resumen de modelos}
+
+\begin{table}[H]
+  \centering
+  \caption{Modelos de datos del sistema}
+  \contenidoConFuente{%
+    \begin{tablaAPA}
+      \begin{tabular}{@{}p{3.2cm}p{5.0cm}p{7.4cm}@{}}
+        \toprule
+        \textbf{Modelo} & \textbf{Campos principales} & \textbf{Prop\'osito} \\
+        \midrule
+        \textit{Scenario} & id, nombre, tipo, direccion, capacidad,
+        estado & Entidad central: escenario deportivo. \\
+        \addlinespace
+        \textit{ScenarioImage} & url, is\_primary, display\_order &
+        Im\'agenes asociadas a cada escenario. \\
+        \addlinespace
+        \textit{ScenarioSport} & sports (nombre) & Deportes disponibles
+        en el escenario. \\
+        \addlinespace
+        \textit{Event} & id, nombre, fecha, hora, descripcion &
+        Eventos pr\'oximos en cada escenario. \\
+        \addlinespace
+        \textit{Favorite} & user\_id, scenario\_id & Escenarios guardados
+        por el usuario. \\
+        \bottomrule
+      \end{tabular}
+    \end{tablaAPA}%
+  }{Elaboraci\'on propia en base a los archivos del directorio
+  \textit{src/types/}.}
+\end{table}

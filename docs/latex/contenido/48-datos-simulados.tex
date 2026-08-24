@@ -1,0 +1,96 @@
+% ============================================================================
+%  SECCIÓN 4.4: DATOS SIMULADOS
+% ============================================================================
+
+\section{Datos simulados}
+
+En esta etapa del desarrollo, la aplicaci\'on utiliza datos reales almacenados
+en Supabase, pero para las funcionalidades que a\'un no est\'an conectadas a la
+base de datos se emplean datos temporales dentro de la aplicaci\'on. La
+finalidad es comprender c\'omo manipular informaci\'on dentro de la aplicaci\'on
+antes de almacenarla en una base de datos.
+
+\subsection{Datos de escenarios (Supabase)}
+
+Los escenarios deportivos se obtienen desde la tabla \textit{scenarios} de
+Supabase, que contiene datos reales insertados mediante scripts de
+inicializaci\'on (\textit{seed data}). La consulta principal obtiene los
+escenarios activos junto con sus im\'agenes, deportes asociados y eventos:
+
+\begin{lstlisting}
+const { data, error } = await supabase
+  .from('scenarios')
+  .select(`
+    *,
+    scenario_images(url, is_primary, storage_path, display_order),
+    scenario_sports(sports(nombre))
+  `)
+  .eq('estado', 'activo')
+  .order('nombre');
+\end{lstlisting}
+
+Los datos iniciales incluyen escenarios deportivos de Cochabamba, como
+estadios, coliseos y canchas, con informaci\'on de capacidad, direcci\'on y
+deportes disponibles.
+
+\subsection{Datos de eventos (temporales)}
+
+Los eventos pr\'oximos de cada escenario se obtienen de la tabla
+\textit{events} de Supabase. En esta etapa, los eventos disponibles son
+limitados y se utilizan como datos de demostraci\'on para validar la
+visualizaci\'on en la pantalla de detalle:
+
+\begin{lstlisting}
+interface Event {
+  id: string;
+  nombre: string;
+  descripcion: string | null;
+  fecha: string;
+  hora: string;
+}
+\end{lstlisting}
+
+\subsection{Datos de usuario (Supabase Auth)}
+
+La informaci\'on del usuario autenticado se obtiene directamente de
+\textit{Supabase Auth}, que gestiona el registro, inicio de sesi\'on y
+cierre de sesi\'on. Los metadatos del usuario incluyen el nombre completo y
+el rol (\textit{asistente}, \textit{gestor} o \textit{admin}):
+
+\begin{lstlisting}
+const { error } = await supabase.auth.signUp({
+  email,
+  password,
+  options: {
+    data: {
+      full_name: fullName,
+      role: 'asistente',
+    },
+  },
+});
+\end{lstlisting}
+
+\subsection{Listas din\'amicas}
+
+La pantalla de cat\'alogo implementa listas din\'amicas que responden a los
+cambios en los filtros de b\'usqueda. Cuando el usuario escribe un t\'ermino
+de b\'usqueda, la lista se actualiza autom\'aticamente para mostrar \\nicamente
+los escenarios que coinciden con el criterio:
+
+\begin{center}
+\begin{tikzpicture}[
+  node distance=0.5cm,
+  caja/.style={rectangle, draw=black!60, rounded corners, minimum width=3.5cm,
+    minimum height=0.55cm, align=center, font=\small},
+  flecha/.style={-Stealth, thick}
+]
+  \node[caja] (datos) {Datos (Supabase)};
+  \node[caja, below=of datos] (estado) {Estado (filtros)};
+  \node[caja, below=of estado] (interfaz) {Interfaz (lista)};
+  \draw[flecha] (datos) -- (estado);
+  \draw[flecha] (estado) -- (interfaz);
+\end{tikzpicture}
+\end{center}
+
+Esta relaci\'on entre datos, estado e interfaz es fundamental para comprender
+c\'omo la aplicaci\'on maneja la informaci\'on de forma reactiva.

@@ -1,0 +1,100 @@
+% ============================================================================
+%  SECCIÓN 4.1: IDENTIFICACIÓN DE LA LÓGICA DE NEGOCIO
+% ============================================================================
+
+\section{Identificaci\'on de la l\'ogica de negocio}
+
+En el PDF 3 se construyeron las principales interfaces de la aplicaci\'on y se
+estableci\'o la navegaci\'on entre ellas. En este avance, la aplicaci\'on comienza
+a responder a las acciones del usuario. El cambio fundamental es que la
+aplicaci\'on deja de ser una colecci\'on est\'atica de pantallas y comienza a tomar
+decisiones y responder a los datos introducidos por el usuario.
+
+\subsection{Pantallas que requieren l\'ogica}
+
+No todas las pantallas de la aplicaci\'on requieren el mismo nivel de
+interacci\'on. A continuaci\'on se identifican las pantallas que necesitan
+l\'ogica de negocio y el tipo de interacci\'on que manejan:
+
+\begin{table}[H]
+  \centering
+  \caption{Pantallas con l\'ogica de negocio}
+  \contenidoConFuente{%
+    \begin{tablaAPA}
+      \begin{tabular}{@{}p{3.8cm}p{11.8cm}@{}}
+        \toprule
+        \textbf{Pantalla} & \textbf{Interacci\'on} \\
+        \midrule
+        Inicio de sesi\'on & Formulario con validaci\'on de credenciales,
+        manejo de errores del servidor y indicador de carga. \\
+        \addlinespace
+        Registro & Formulario con validaci\'on de cuatro campos,
+        confirmaci\'on de contrase\~na y mensaje de \'exito. \\
+        \addlinespace
+        Cat\'alogo (Buscar) & B\'usqueda por nombre con debounce,
+        filtros por tipo y deporte, limpieza de filtros. \\
+        \addlinespace
+        Detalle del escenario & Toggle de favorito, subida de imagen
+        (solo admin/gestor), visualizaci\'on de eventos. \\
+        \addlinespace
+        Favoritos & Lista din\'amica de escenarios guardados,
+        pull-to-refresh. \\
+        \addlinespace
+        Perfil & Cierre de sesi\'on con di\'alogo de confirmaci\'on. \\
+        \bottomrule
+      \end{tabular}
+    \end{tablaAPA}%
+  }{Elaboraci\'on propia en base al an\'alisis del c\'odigo fuente.}
+\end{table}
+
+\subsection{Flujo de datos de la aplicaci\'on}
+
+El flujo general de datos en la aplicaci\'on sigue el patr\'on propuesto por la
+gu\'ia del avance:
+
+\begin{center}
+\begin{tikzpicture}[
+  node distance=0.7cm,
+  nodo/.style={rectangle, draw=black!60, rounded corners, minimum width=2.8cm,
+    minimum height=0.7cm, align=center, font=\small},
+  flecha/.style={-Stealth, thick}
+]
+  \node[nodo] (usuario) {Usuario};
+  \node[nodo, below=of usuario] (interactua) {Interact\'ua};
+  \node[nodo, below=of interactua] (app) {Aplicaci\'on};
+  \node[nodo, below=of app] (procesa) {Procesa};
+  \node[nodo, below=of procesa] (estado) {Actualiza estado};
+  \node[nodo, below=of estado] (muestra) {Muestra resultado};
+  \draw[flecha] (usuario) -- (interactua);
+  \draw[flecha] (interactua) -- (app);
+  \draw[flecha] (app) -- (procesa);
+  \draw[flecha] (procesa) -- (estado);
+  \draw[flecha] (estado) -- (muestra);
+\end{tikzpicture}
+\end{center}
+
+En la pr\'actica, este flujo se implementa de la siguiente manera: el usuario
+presiona un bot\'on o ingresa datos en un campo de texto; la aplicaci\'on captura
+la acci\'on mediante un controlador o un evento \textit{onPress}; la l\'ogica de
+negocio valida los datos, ejecuta la operaci\'on correspondiente (consulta a
+Supabase, actualizaci\'on de estado local o navegaci\'on) y, finalmente, la interfaz
+se actualiza para reflejar el nuevo estado de la aplicaci\'on.
+
+\subsection{Operaciones de negocio identificadas}
+
+A partir del an\'alisis de las pantallas, se identificaron las siguientes
+operaciones de negocio principales:
+
+\begin{itemize}
+  \item \textbf{Autenticaci\'on:} inicio de sesi\'on, registro de nuevos usuarios
+    y cierre de sesi\'on, gestionados a trav\'es del contexto de autenticaci\'on
+    (\textit{AuthContext}).
+  \item \textbf{Consulta de escenarios:} obtenci\'on de la lista de escenarios
+    deportivos activos desde Supabase, con soporte para b\'usqueda y filtros.
+  \item \textbf{Gesti\'on de favoritos:} adicion y eliminaci\'on de escenarios a la
+    lista de favoritos del usuario, con sincronizaci\'on en tiempo real.
+  \item \textbf{Detalle del escenario:} visualizaci\'on de informaci\'on completa,
+    incluyendo imagen, deportes disponibles y eventos pr\'oximos.
+  \item \textbf{Subida de imagen:} carga de fotograf\'ias de escenarios,
+    restringida a usuarios con rol de administrador o gestor.
+\end{itemize}

@@ -1,0 +1,50 @@
+
+
+En el presente avance (PDF 4), la aplicaci\'on m\'ovil \\nombreApp{} ha
+evolucionado de ser una colecci\'on est\'atica de pantallas a una
+aplicaci\'on que responde a las acciones del usuario. Las principales
+conclusiones del avance son las siguientes:
+
+\begin{enumerate}
+  \item \textbf{L\'ogica de negocio identificada.} Se identificaron seis
+    pantallas que requieren l\'ogica de negocio: inicio de sesi\'on, registro,
+    cat\'alogo, detalle, favoritos y perfil. Cada pantalla gestiona
+    interacciones espec\'ificas que se documentaron en la matriz de eventos
+    de usuario.
+
+  \item \textbf{Modelos de datos definidos.} Se definieron cinco modelos
+    principales (Scenario, ScenarioImage, ScenarioSport, Event y Favorite)
+    mediante interfaces TypeScript que permiten el tipado est\'atico y la
+    detecci\'on temprana de errores.
+
+  \item \textbf{Gesti\'on del estado implementada.} Se implementaron tres
+    estrategias complementarias de gesti\'on del estado: estado local con
+    \textit{useState} para formularios y filtros, estado global con
+    \textit{React Context} para la sesi\'on de usuario, y estado del servidor
+    con \textit{React Query} para las consultas y mutaciones de datos.
+
+  \item \textbf{Validaciones funcionales.} Los formularios de registro e
+    inicio de sesi\'on incluyen validaciones en tiempo real mediante esquemas
+    Zod, con visualizaci\'on de errores y control del estado de los botones
+    durante el env\'io.
+
+  \item \textbf{Operaciones CRUD parcialmente implementadas.} Se implementaron
+    las operaciones de lectura (escenarios y favoritos), creaci\'on (a\~nadir
+    favorito) y eliminaci\'on (quitar favorito). La operaci\'on de
+    actualizaci\'on de escenarios se reserva para un avance futuro.
+
+  \item \textbf{B\'usqueda y filtros funcionales.} La pantalla de cat\'alogo
+    implementa b\'usqueda por nombre con debounce de 300 ms, filtros por tipo
+    de escenario y por deporte, con limpieza de filtros y estados vac\'ios
+    informativos.
+
+  \item \textbf{Funcionalidad de favoritos interactiva.} El usuario puede
+    a\~nadir y eliminar escenarios de su lista de favoritos, con
+    sincronizaci\'on en tiempo real mediante invalidaci\'on de cache de React Query.
+\end{enumerate}
+
+La aplicaci\'on ya no es solamente una interfaz visual; ahora comienza a
+comportarse como una aplicaci\'on m\'ovil real, procesando datos, validando
+entradas y actualizando su estado en respuesta a las acciones del usuario.
+Los datos utilizados actualmente provienen de Supabase y ser\'an
+complementados con funcionalidades CRUD completas en avances posteriores.

@@ -1,0 +1,165 @@
+% ============================================================================
+%  SECCIÓN 4.7: IMPLEMENTACIÓN DE ESTADO LOCAL
+% ============================================================================
+
+\section{Implementaci\'on de estado local}
+
+El estado local se gestiona mediante el hook \textit{useState} de React,
+que permite a los componentes mantener y actualizar su propio estado
+interno. Cada vez que el estado cambia, el componente se re-renderiza
+para reflejar la nueva situaci\'on en la interfaz.
+
+\subsection{Estados en formularios}
+
+Los formularios de inicio de sesi\'on y registro utilizan m\'ultiples
+estados locales para gestionar los valores de los campos, los mensajes
+de error y el estado de env\'io.
+
+\subsubsection{Estado del formulario de registro}
+
+El formulario de registro gestiona los siguientes estados locales:
+
+\begin{lstlisting}
+// Estado para errores del servidor
+const [serverError, setServerError] = useState<string | null>(null);
+
+// Estado para mensaje de exito
+const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
+// Estado del formulario (react-hook-form)
+const {
+  control,
+  handleSubmit,
+  formState: { errors, isSubmitting },
+} = useForm<RegisterFormData>({
+  resolver: zodResolver(registerSchema),
+  defaultValues: {
+    fullName: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+  },
+});
+\end{lstlisting}
+
+Cuando el usuario completa el formulario y lo env\'ia, la funci\'on
+\textit{onSubmit} actualiza el estado seg\'un el resultado de la operaci\'on:
+
+\begin{lstlisting}
+const onSubmit = async (data: RegisterFormData) => {
+  setServerError(null);
+  setSuccessMessage(null);
+
+  const { error } = await signUp(
+    data.email, data.password, data.fullName
+  );
+
+  if (error) {
+    setServerError(error);
+    return;
+  }
+
+  setSuccessMessage(
+    'Cuenta creada. Revisa tu email para confirmar tu cuenta.'
+  );
+
+  setTimeout(() => {
+    router.replace('/auth/login');
+  }, 2500);
+};
+\end{lstlisting}
+
+\subsection{Estados en la pantalla de b\'usqueda}
+
+La pantalla de cat\'alogo gestiona estados locales para los filtros y la
+b\'usqueda, que se actualizan de forma independiente y reactiva:
+
+\begin{lstlisting}
+// Termino de busqueda (se actualiza inmediatamente)
+const [searchQuery, setSearchQuery] = useState('');
+
+// Termino debounced (se actualiza despues de 300ms)
+const [debouncedQuery, setDebouncedQuery] = useState('');
+
+// Filtro por tipo de escenario
+const [selectedType, setSelectedType] = useState<string | null>(null);
+
+// Filtro por deporte
+const [selectedSport, setSelectedSport] = useState<string | null>(null);
+\end{lstlisting}
+
+Los filtros se combinan de forma acumulativa mediante \textit{useMemo},
+lo que permite que m\'ultiples filtros se apliquen simult\'aneamente:
+
+\begin{lstlisting}
+const filteredScenarios = useMemo(() => {
+  if (!scenarios) return [];
+
+  return scenarios.filter((scenario) => {
+    const matchesName = debouncedQuery
+      ? scenario.nombre
+          .toLowerCase()
+          .includes(debouncedQuery.toLowerCase())
+      : true;
+
+    const matchesType = selectedType
+      ? scenario.tipo?.toLowerCase() === selectedType.toLowerCase()
+      : true;
+
+    const matchesSport = selectedSport
+      ? scenario.scenario_sports?.some(
+          (ss) => ss.sports?.nombre?.toLowerCase()
+            === selectedSport.toLowerCase()
+        )
+      : true;
+
+    return matchesName && matchesType && matchesSport;
+  });
+}, [scenarios, debouncedQuery, selectedType, selectedSport]);
+\end{lstlisting}
+
+\subsection{Estado del bot\'on de favorito}
+
+El bot\'on de favorito en la pantalla de detalle utiliza un estado local
+para controlar la animaci\'on de carga mientras se ejecuta la operaci\'on
+de.toggle:
+
+\begin{lstlisting}
+const [imageError, setImageError] = useState(false);
+\end{lstlisting}
+
+Adem\'as, el hook \textit{useToggleFavorite} gestiona un estado interno
+\textit{isToggling} que deshabilita el bot\'on durante la operaci\'on:
+
+\begin{lstlisting}
+const [isToggling, setIsToggling] = useState(false);
+
+const toggleFavorite = async (userId: string, scenarioId: string) => {
+  setIsToggling(true);
+  try {
+    // ... logica de favorito
+  } finally {
+    setIsToggling(false);
+  }
+};
+\end{lstlisting}
+
+\subsection{Ejemplo visual de cambio de estado}
+
+Cuando el usuario presiona el bot\'on de favorito, el estado cambia y
+la interfaz se actualiza visualmente:
+
+\begin{center}
+\begin{tikzpicture}[
+  node distance=1.2cm,
+  btn/.style={rectangle, draw=black!60, rounded corners, minimum width=3cm,
+    minimum height=0.8cm, align=center, font=\small},
+  flecha/.style={-Stealth, thick}
+]
+  \node[btn] (no-fav) {\textit{Guardar} (corazon vacio)};
+  \node[btn, right=of no-fav] (toggling) {Cargando...};
+  \node[btn, right=of toggling] (fav) {\textit{Guardado} (corazon lleno)};
+  \draw[flecha] (no-fav) -- node[above] {onPress} (toggling);
+  \draw[flecha] (toggling) -- node[above] {exito} (fav);
+\end{tikzpicture}
+\end{center}
