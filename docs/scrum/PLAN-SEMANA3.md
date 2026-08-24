@@ -87,9 +87,12 @@ ocultar tab para el resto). FlatList con todos los escenarios (nuevo hook `useAl
 filtre `estado='activo'`). Acciones por fila: Editar -> `/scenario-edit/[id]`, Eliminar (soft:
 estado='inactivo', solo admin). Botón flotante "+" para crear.
 
-**Angel - T-043:** Formulario con TextInput validados (nombre requerido, capacidad numérica).
-Mapa embebido pequeño para elegir/mover marcador (reutilizar config MapLibre de index.tsx).
-Guardar via `supabase.from('scenarios').upsert(...)`. Al guardar, invalidar queries de escenarios.
+**Angel - T-043 (version junior-friendly):** Formulario con TextInput validados (nombre requerido,
+capacidad numérica). Ubicación: dos campos numéricos latitud/longitud + botón "Usar mi ubicación"
+con `expo-location` (ya integrado en la app). Guardar via `supabase.from('scenarios').upsert(...)`;
+la primera escritura se hace en pair programming con David. Al guardar, invalidar queries.
+Mejora opcional post-QA: mapa interactivo embebido para elegir el punto (requeriría pair
+programming con David; NO bloquea el sprint).
 
 **Angel - T-044:** En detalle, sección Eventos con botón "+ Agregar" (roles staff). Formulario
 modal: nombre, fecha, hora, descripción. Eliminar con confirmación. Tabla `events` ya existe.

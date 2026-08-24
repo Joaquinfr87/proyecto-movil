@@ -83,7 +83,7 @@
 ## Angel Gabriel Rojas Hinojosa - Desarrollador Junior / QA
 
 ### Responsabilidades
-- Formularios de creacion/edicion de escenarios y eventos
+- Formularios guiados de escenarios y eventos (con apoyo de David en la parte de datos)
 - Testing final sobre el APK instalado
 - Capturas de pantalla para los capitulos de la tesis
 
@@ -91,16 +91,21 @@
 
 | ID | Tarea | Grupo | Dependencias |
 |----|-------|-------|--------------|
-| **T-043** | Formulario crear/editar escenario con selector de ubicacion en mapa | Contenido | T-042 |
-| **T-044** | CRUD de eventos por escenario desde detalle/gestion | Contenido | T-042 |
+| **T-043** | Formulario crear/editar escenario - version simplificada: campos de texto + latitud/longitud numericos con boton "Usar mi ubicacion" | Contenido | T-042 |
+| **T-044** | CRUD de eventos por escenario (formulario modal, mismo patron que T-043) | Contenido | T-042 |
 | **T-048** | QA final sobre el APK (con Joaquin): checklist MVP completo | Distribucion | T-047 |
 | **T-050** | Capturas de pantalla de todas las pantallas para la tesis | Entrega | T-047 |
 
-### Por que estas tareas para el junior
-- Los formularios reutilizan patrones ya existentes (TextInput validados, chips, modales)
-- El selector de ubicacion reutiliza la config MapLibre que David ya dejo en index.tsx
-- QA sobre checklist cerrado: no requiere decisiones de diseno
-- Las capturas son mecanicas pero necesarias para la entrega academica
+### Por que estas tareas (ajustadas al nivel junior)
+- **T-043 SIN mapa interactivo:** elegir un punto en un mapa embebido (gestos, camara de MapLibre,
+  geocoding inverso) es complejo. Angel solo captura lat/lng como numeros y un boton que usa
+  `expo-location` (ya existe en el proyecto). Si le sobra tiempo, la mejora del mapa se hace
+  despues con David (pair programming), nunca antes del QA.
+- **Patron repetible:** T-044 usa exactamente el mismo molde que T-043 (form -> supabase.insert).
+  La segunda vez ya lo hace solo.
+- **David es su par de datos:** la primera escritura a Supabase (`upsert`) la hacen juntos en una
+  sesion de 30 min; Angel replica el patron para eventos.
+- **QA y capturas** siguen siendo ideales para el: checklist cerrado, sin decisiones de diseno.
 
 ---
 
@@ -133,7 +138,7 @@ Joaquin:  T-049 ──> T-046 ────────────────�
 | T-040 Sync cloud | I | **R** | C | - |
 | T-041 Horarios | C | **R** | - | - |
 | T-042 Pantalla Gestion | C | - | **R** | - |
-| T-043 Form escenario | C | - | C | **R** |
+| T-043 Form escenario (simple) | C | - | **R** (par) | **R** |
 | T-044 CRUD eventos | C | - | C | **R** |
 | T-045 Proximos eventos | - | - | **R** | C |
 | T-046 Permisos + RLS | **R** | C | C | I |
