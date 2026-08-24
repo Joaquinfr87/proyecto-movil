@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '../services/supabase';
 import type { Favorite, Scenario } from '../types';
 import type { ScenarioImage } from './useScenarios';
+import { resolveScenarioImages } from './useScenarios';
 
 export interface FavoriteWithScenario extends Favorite {
   scenarios: Scenario & {
@@ -29,7 +30,10 @@ async function fetchFavorites(userId: string): Promise<FavoriteWithScenario[]> {
     throw new Error(error.message);
   }
 
-  return data as FavoriteWithScenario[];
+  return (data as FavoriteWithScenario[]).map((fav) => ({
+    ...fav,
+    scenarios: resolveScenarioImages(fav.scenarios),
+  }));
 }
 
 async function checkIsFavorite(userId: string, scenarioId: string): Promise<boolean> {

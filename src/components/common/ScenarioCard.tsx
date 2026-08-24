@@ -2,13 +2,7 @@ import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { colors, spacing, borderRadius, fontSize, fontWeight } from '../../theme';
 import type { Scenario } from '../../types';
-
-export interface ScenarioImage {
-  url: string;
-  is_primary: boolean;
-  storage_path: string;
-  display_order: number;
-}
+import type { ScenarioImage } from '../../hooks/useScenarios';
 
 export interface ScenarioCardProps {
   scenario: Scenario & { scenario_images?: ScenarioImage[] };

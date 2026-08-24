@@ -19,6 +19,23 @@ export interface ScenarioWithDetails extends Scenario {
   events: Event[];
 }
 
+// El seed guarda rutas relativas en la columna url (ej: 'scenario-images/{id}/image-1.jpg').
+// Esta funcion las convierte a URL publicas del bucket usando storage_path.
+export function resolveScenarioImages<T extends { scenario_images?: ScenarioImage[] }>(
+  row: T,
+): T {
+  return {
+    ...row,
+    scenario_images:
+      row.scenario_images?.map((img) => {
+        const url = /^https?:\/\//.test(img.url)
+          ? img.url
+          : supabase.storage.from('scenario-images').getPublicUrl(img.storage_path).data.publicUrl;
+        return { ...img, url };
+      }) ?? [],
+  };
+}
+
 async function fetchScenarios(): Promise<ScenarioWithDetails[]> {
   const { data, error } = await supabase
     .from('scenarios')
@@ -36,7 +53,7 @@ async function fetchScenarios(): Promise<ScenarioWithDetails[]> {
     throw new Error(error.message);
   }
 
-  return data as ScenarioWithDetails[];
+  return data.map(resolveScenarioImages);
 }
 
 async function fetchScenarioById(id: string): Promise<ScenarioWithDetails | null> {
@@ -58,7 +75,7 @@ async function fetchScenarioById(id: string): Promise<ScenarioWithDetails | null
     throw new Error(error.message);
   }
 
-  return data as ScenarioWithDetails;
+  return resolveScenarioImages(data);
 }
 
 export function useScenarios() {

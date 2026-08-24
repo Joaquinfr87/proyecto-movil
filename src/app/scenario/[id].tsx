@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -32,15 +32,25 @@ export default function ScenarioDetailScreen() {
 
   const queryClient = useQueryClient();
   const { data: scenario, isLoading, error, refetch } = useScenario(id ?? '');
-  const { data: isFavorite } = useIsFavorite(user?.id ?? '', id ?? '');
+  const { data: favoriteFromDb } = useIsFavorite(user?.id ?? '', id ?? '');
   const { toggleFavorite, isToggling } = useToggleFavorite();
   const { uploadImage, isUploading } = useUploadImage();
 
   const [imageError, setImageError] = useState(false);
+  // T-031: actualizacion optimista - el icono cambia antes de esperar al servidor
+  const [optimisticFavorite, setOptimisticFavorite] = useState<boolean | null>(null);
 
-  // Solo admin y gestor pueden subir imágenes
-  const userRole = user?.user_metadata?.role;
-  const canUpload = userRole === 'admin' || userRole === 'gestor';
+  // Cuando llega el dato fresco del servidor tras la invalidacion, limpiamos el optimista
+  useEffect(() => {
+    if (favoriteFromDb !== undefined && !isToggling) {
+      setOptimisticFavorite(null);
+    }
+  }, [favoriteFromDb, isToggling]);
+
+  const isFavorite = optimisticFavorite ?? favoriteFromDb ?? false;
+
+  // Solo admin puede subir imágenes
+  const canUpload = user?.user_metadata?.role === 'admin';
 
   const primaryImage = scenario?.scenario_images?.find((img) => img.is_primary);
   const imageUrl = !imageError
@@ -49,7 +59,15 @@ export default function ScenarioDetailScreen() {
 
   const handleToggleFavorite = async () => {
     if (!user?.id || !id) return;
-    await toggleFavorite(user.id, id);
+    const next = !isFavorite;
+    setOptimisticFavorite(next);
+    try {
+      await toggleFavorite(user.id, id);
+    } catch {
+      // Revertir si el servidor falla
+      setOptimisticFavorite(!next);
+      Alert.alert('Error', 'No se pudo actualizar el favorito. Intenta de nuevo.');
+    }
   };
 
   const handleUploadImage = async () => {
