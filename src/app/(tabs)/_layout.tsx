@@ -1,8 +1,13 @@
 import { Tabs } from 'expo-router';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { colors } from '../../theme';
+import { useAuth } from '../../context/AuthContext';
 
 export default function TabLayout() {
+  const { user } = useAuth();
+  const userRole = user?.user_metadata?.role;
+  const isStaff = userRole === 'admin' || userRole === 'gestor';
+
   return (
     <Tabs
       screenOptions={{
@@ -35,6 +40,16 @@ export default function TabLayout() {
           title: 'Favoritos',
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="star-outline" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="manage"
+        options={{
+          title: 'Gestión',
+          href: isStaff ? undefined : null,
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="settings-outline" size={size} color={color} />
           ),
         }}
       />

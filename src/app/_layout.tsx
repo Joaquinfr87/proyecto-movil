@@ -18,6 +18,7 @@ export default function RootLayout() {
             <Stack.Screen name="auth/login" />
             <Stack.Screen name="auth/register" />
             <Stack.Screen name="scenario/[id]" />
+            <Stack.Screen name="scenario-form/[id]" />
           </Stack>
         </AuthGuard>
       </AuthProvider>
