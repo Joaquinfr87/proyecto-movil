@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import {
   View,
   Text,
@@ -9,6 +9,9 @@ import {
   Dimensions,
   Alert,
   ActivityIndicator,
+  Modal,
+  TextInput,
+  Platform,
 } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -17,9 +20,9 @@ import { useAuth } from '../../context/AuthContext';
 import { useScenario } from '../../hooks/useScenarios';
 import { useIsFavorite, useToggleFavorite } from '../../hooks/useFavorites';
 import { useUploadImage } from '../../hooks/useUploadImage';
+import { useCreateEvent, useDeleteEvent } from '../../hooks/useEvents';
 import { LoadingSpinner } from '../../components/common/LoadingSpinner';
 import { EmptyState } from '../../components/common/EmptyState';
-import { ErrorState } from '../../components/common/ErrorState';
 import { colors, spacing, borderRadius, fontSize, fontWeight } from '../../theme';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
@@ -31,26 +34,26 @@ export default function ScenarioDetailScreen() {
   const { user } = useAuth();
 
   const queryClient = useQueryClient();
-  const { data: scenario, isLoading, error, refetch } = useScenario(id ?? '');
-  const { data: favoriteFromDb } = useIsFavorite(user?.id ?? '', id ?? '');
+  const { data: scenario, isLoading, error } = useScenario(id ?? '');
+  const { data: isFavorite } = useIsFavorite(user?.id ?? '', id ?? '');
   const { toggleFavorite, isToggling } = useToggleFavorite();
   const { uploadImage, isUploading } = useUploadImage();
+  const { mutateAsync: createEvent, isPending: isCreatingEvent } = useCreateEvent();
+  const { mutateAsync: deleteEvent, isPending: isDeletingEvent } = useDeleteEvent(id ?? '');
 
   const [imageError, setImageError] = useState(false);
-  // T-031: actualizacion optimista - el icono cambia antes de esperar al servidor
-  const [optimisticFavorite, setOptimisticFavorite] = useState<boolean | null>(null);
 
-  // Cuando llega el dato fresco del servidor tras la invalidacion, limpiamos el optimista
-  useEffect(() => {
-    if (favoriteFromDb !== undefined && !isToggling) {
-      setOptimisticFavorite(null);
-    }
-  }, [favoriteFromDb, isToggling]);
+  // Modal para crear evento
+  const [modalVisible, setModalVisible] = useState(false);
+  const [nombre, setNombre] = useState('');
+  const [fecha, setFecha] = useState('');
+  const [hora, setHora] = useState('18:00');
+  const [descripcion, setDescripcion] = useState('');
+  const [eventError, setEventError] = useState<string | null>(null);
 
-  const isFavorite = optimisticFavorite ?? favoriteFromDb ?? false;
-
-  // Solo admin puede subir imágenes
-  const canUpload = user?.user_metadata?.role === 'admin';
+  // Solo admin y gestor pueden administrar (subir fotos, eventos)
+  const userRole = user?.user_metadata?.role;
+  const canManage = userRole === 'admin' || userRole === 'gestor';
 
   const primaryImage = scenario?.scenario_images?.find((img) => img.is_primary);
   const imageUrl = !imageError
@@ -59,24 +62,76 @@ export default function ScenarioDetailScreen() {
 
   const handleToggleFavorite = async () => {
     if (!user?.id || !id) return;
-    const next = !isFavorite;
-    setOptimisticFavorite(next);
-    try {
-      await toggleFavorite(user.id, id);
-    } catch {
-      // Revertir si el servidor falla
-      setOptimisticFavorite(!next);
-      Alert.alert('Error', 'No se pudo actualizar el favorito. Intenta de nuevo.');
-    }
+    await toggleFavorite(user.id, id);
   };
 
   const handleUploadImage = async () => {
     if (!id) return;
     const result = await uploadImage(id);
     if (result) {
-      // Invalidar cache para recargar el escenario con la nueva imagen
       await queryClient.invalidateQueries({ queryKey: ['scenario', id] });
       Alert.alert('Éxito', 'Imagen subida correctamente.');
+    }
+  };
+
+  const handleOpenAddEvent = () => {
+    // Configurar fecha de mañana por defecto (YYYY-MM-DD)
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const dateStr = tomorrow.toISOString().split('T')[0];
+
+    setNombre('');
+    setFecha(dateStr);
+    setHora('18:00');
+    setDescripcion('');
+    setEventError(null);
+    setModalVisible(true);
+  };
+
+  const handleSaveEvent = async () => {
+    if (!nombre.trim()) {
+      setEventError('El nombre del evento es requerido');
+      return;
+    }
+    if (!fecha.trim()) {
+      setEventError('La fecha es requerida (YYYY-MM-DD)');
+      return;
+    }
+
+    try {
+      setEventError(null);
+      await createEvent({
+        scenario_id: id ?? '',
+        nombre: nombre.trim(),
+        fecha: fecha.trim(),
+        hora: hora.trim() || '00:00',
+        descripcion: descripcion.trim(),
+      });
+      setModalVisible(false);
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Error al crear evento';
+      setEventError(msg);
+    }
+  };
+
+  const handleDeleteEvent = (eventId: string, eventName: string) => {
+    if (Platform.OS === 'web') {
+      if (window.confirm(`¿Eliminar el evento "${eventName}"?`)) {
+        deleteEvent(eventId);
+      }
+    } else {
+      Alert.alert(
+        'Eliminar evento',
+        `¿Estás seguro de eliminar "${eventName}"?`,
+        [
+          { text: 'Cancelar', style: 'cancel' },
+          {
+            text: 'Eliminar',
+            style: 'destructive',
+            onPress: () => deleteEvent(eventId),
+          },
+        ],
+      );
     }
   };
 
@@ -84,26 +139,18 @@ export default function ScenarioDetailScreen() {
     return <LoadingSpinner message="Cargando escenario..." />;
   }
 
-  if (error) {
-    return (
-      <ErrorState
-        title="Error al cargar escenario"
-        message="No se pudo obtener la información de este escenario. Toca para reintentar."
-        onRetry={() => refetch()}
-      />
-    );
-  }
-
-  if (!scenario) {
+  if (error || !scenario) {
     return (
       <EmptyState
         icon="alert-circle-outline"
         title="Escenario no encontrado"
-        subtitle="No pudimos encontrar la información de este escenario."
+        subtitle="No pudimos cargar la información de este escenario."
         actionButton={{ label: 'Volver', onPress: () => router.back() }}
       />
     );
   }
+
+  const hasEvents = scenario.events && scenario.events.length > 0;
 
   return (
     <View style={styles.container}>
@@ -129,7 +176,7 @@ export default function ScenarioDetailScreen() {
           </TouchableOpacity>
 
           {/* Botón de subir imagen (solo admin/gestor) */}
-          {canUpload && (
+          {canManage && (
             <TouchableOpacity
               style={styles.uploadButton}
               onPress={handleUploadImage}
@@ -211,30 +258,57 @@ export default function ScenarioDetailScreen() {
             </View>
           ) : null}
 
-          {/* Eventos próximos */}
-          {scenario.events && scenario.events.length > 0 ? (
+          {/* Eventos próximos (T-044) */}
+          {(hasEvents || canManage) && (
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Eventos próximos</Text>
-              {scenario.events.map((event) => (
-                <View key={event.id} style={styles.eventCard}>
-                  <View style={styles.eventDateBadge}>
-                    <Ionicons name="calendar-outline" size={16} color={colors.primary} />
-                  </View>
-                  <View style={styles.eventInfo}>
-                    <Text style={styles.eventName}>{event.nombre}</Text>
-                    <Text style={styles.eventDate}>
-                      {event.fecha} · {event.hora}
-                    </Text>
-                    {event.descripcion ? (
-                      <Text style={styles.eventDesc} numberOfLines={2}>
-                        {event.descripcion}
+              <View style={styles.sectionHeaderRow}>
+                <Text style={styles.sectionTitle}>Eventos próximos</Text>
+                {canManage && (
+                  <TouchableOpacity
+                    style={styles.addEventButton}
+                    onPress={handleOpenAddEvent}
+                    activeOpacity={0.8}
+                  >
+                    <Ionicons name="add-circle-outline" size={18} color={colors.primary} />
+                    <Text style={styles.addEventText}>Agregar</Text>
+                  </TouchableOpacity>
+                )}
+              </View>
+
+              {hasEvents ? (
+                scenario.events.map((event) => (
+                  <View key={event.id} style={styles.eventCard}>
+                    <View style={styles.eventDateBadge}>
+                      <Ionicons name="calendar-outline" size={16} color={colors.primary} />
+                    </View>
+                    <View style={styles.eventInfo}>
+                      <Text style={styles.eventName}>{event.nombre}</Text>
+                      <Text style={styles.eventDate}>
+                        {event.fecha} · {event.hora}
                       </Text>
-                    ) : null}
+                      {event.descripcion ? (
+                        <Text style={styles.eventDesc} numberOfLines={2}>
+                          {event.descripcion}
+                        </Text>
+                      ) : null}
+                    </View>
+                    {canManage && (
+                      <TouchableOpacity
+                        style={styles.deleteEventButton}
+                        onPress={() => handleDeleteEvent(event.id, event.nombre)}
+                        disabled={isDeletingEvent}
+                        activeOpacity={0.7}
+                      >
+                        <Ionicons name="trash-outline" size={18} color={colors.error} />
+                      </TouchableOpacity>
+                    )}
                   </View>
-                </View>
-              ))}
+                ))
+              ) : (
+                <Text style={styles.noEventsText}>No hay eventos próximos registrados.</Text>
+              )}
             </View>
-          ) : null}
+          )}
 
           <View style={styles.bottomSpacer} />
         </View>
@@ -256,6 +330,101 @@ export default function ScenarioDetailScreen() {
           {isFavorite ? 'Guardado' : 'Guardar'}
         </Text>
       </TouchableOpacity>
+
+      {/* Modal para Crear Evento (T-044) */}
+      <Modal visible={modalVisible} animationType="slide" transparent>
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>Nuevo Evento</Text>
+              <TouchableOpacity onPress={() => setModalVisible(false)}>
+                <Ionicons name="close" size={24} color={colors.text} />
+              </TouchableOpacity>
+            </View>
+
+            <ScrollView bounces={false}>
+              <View style={styles.modalBody}>
+                {/* Nombre */}
+                <View style={styles.fieldWrapper}>
+                  <Text style={styles.fieldLabel}>Nombre del evento *</Text>
+                  <TextInput
+                    style={styles.fieldInput}
+                    placeholder="Ej: Torneo de Fútbol Infantil"
+                    placeholderTextColor={colors.textSecondary}
+                    value={nombre}
+                    onChangeText={setNombre}
+                  />
+                </View>
+
+                {/* Fecha */}
+                <View style={styles.fieldWrapper}>
+                  <Text style={styles.fieldLabel}>Fecha (YYYY-MM-DD) *</Text>
+                  <TextInput
+                    style={styles.fieldInput}
+                    placeholder="2026-09-01"
+                    placeholderTextColor={colors.textSecondary}
+                    value={fecha}
+                    onChangeText={setFecha}
+                  />
+                </View>
+
+                {/* Hora */}
+                <View style={styles.fieldWrapper}>
+                  <Text style={styles.fieldLabel}>Hora (HH:MM)</Text>
+                  <TextInput
+                    style={styles.fieldInput}
+                    placeholder="18:00"
+                    placeholderTextColor={colors.textSecondary}
+                    value={hora}
+                    onChangeText={setHora}
+                  />
+                </View>
+
+                {/* Descripción */}
+                <View style={styles.fieldWrapper}>
+                  <Text style={styles.fieldLabel}>Descripción</Text>
+                  <TextInput
+                    style={[styles.fieldInput, styles.fieldInputMultiline]}
+                    placeholder="Detalles sobre el evento..."
+                    placeholderTextColor={colors.textSecondary}
+                    value={descripcion}
+                    onChangeText={setDescripcion}
+                    multiline
+                    numberOfLines={3}
+                  />
+                </View>
+
+                {eventError && (
+                  <View style={styles.errorBox}>
+                    <Text style={styles.errorBoxText}>{eventError}</Text>
+                  </View>
+                )}
+              </View>
+            </ScrollView>
+
+            <View style={styles.modalFooter}>
+              <TouchableOpacity
+                style={styles.cancelModalButton}
+                onPress={() => setModalVisible(false)}
+              >
+                <Text style={styles.cancelModalText}>Cancelar</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[styles.saveModalButton, isCreatingEvent && styles.buttonDisabled]}
+                onPress={handleSaveEvent}
+                disabled={isCreatingEvent}
+              >
+                {isCreatingEvent ? (
+                  <ActivityIndicator color={colors.white} size="small" />
+                ) : (
+                  <Text style={styles.saveModalText}>Guardar evento</Text>
+                )}
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -368,11 +537,30 @@ const styles = StyleSheet.create({
   section: {
     marginBottom: spacing.lg,
   },
+  sectionHeaderRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: spacing.sm,
+  },
   sectionTitle: {
     fontSize: fontSize.md,
     fontWeight: fontWeight.semibold,
     color: colors.text,
-    marginBottom: spacing.sm,
+  },
+  addEventButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: 4,
+    borderRadius: borderRadius.md,
+    backgroundColor: colors.surfaceVariant,
+  },
+  addEventText: {
+    fontSize: fontSize.xs,
+    fontWeight: fontWeight.semibold,
+    color: colors.primary,
   },
   description: {
     fontSize: fontSize.md,
@@ -435,6 +623,7 @@ const styles = StyleSheet.create({
   },
   eventCard: {
     flexDirection: 'row',
+    alignItems: 'center',
     gap: spacing.sm,
     backgroundColor: colors.surface,
     borderRadius: borderRadius.md,
@@ -470,6 +659,15 @@ const styles = StyleSheet.create({
     marginTop: spacing.xs,
     lineHeight: 18,
   },
+  deleteEventButton: {
+    padding: spacing.xs,
+  },
+  noEventsText: {
+    fontSize: fontSize.sm,
+    color: colors.textSecondary,
+    fontStyle: 'italic',
+    marginTop: spacing.xs,
+  },
   bottomSpacer: {
     height: 96,
   },
@@ -504,5 +702,104 @@ const styles = StyleSheet.create({
   },
   favButtonTextActive: {
     color: colors.white,
+  },
+  // Modal styles
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    padding: spacing.md,
+  },
+  modalContent: {
+    backgroundColor: colors.surface,
+    borderRadius: borderRadius.lg,
+    maxHeight: '80%',
+    overflow: 'hidden',
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: spacing.md,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border,
+  },
+  modalTitle: {
+    fontSize: fontSize.lg,
+    fontWeight: fontWeight.bold,
+    color: colors.text,
+  },
+  modalBody: {
+    padding: spacing.md,
+    gap: spacing.sm,
+  },
+  fieldWrapper: {
+    marginBottom: spacing.xs,
+  },
+  fieldLabel: {
+    fontSize: fontSize.sm,
+    fontWeight: fontWeight.medium,
+    color: colors.text,
+    marginBottom: spacing.xs,
+  },
+  fieldInput: {
+    backgroundColor: colors.background,
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: borderRadius.md,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    fontSize: fontSize.md,
+    color: colors.text,
+  },
+  fieldInputMultiline: {
+    minHeight: 60,
+    textAlignVertical: 'top',
+  },
+  errorBox: {
+    backgroundColor: colors.errorLight,
+    borderRadius: borderRadius.md,
+    padding: spacing.sm,
+    marginTop: spacing.xs,
+  },
+  errorBoxText: {
+    fontSize: fontSize.xs,
+    color: colors.error,
+    textAlign: 'center',
+  },
+  modalFooter: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    gap: spacing.sm,
+    padding: spacing.md,
+    borderTopWidth: 1,
+    borderTopColor: colors.border,
+  },
+  cancelModalButton: {
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.md,
+    borderRadius: borderRadius.md,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  cancelModalText: {
+    fontSize: fontSize.sm,
+    color: colors.textSecondary,
+    fontWeight: fontWeight.semibold,
+  },
+  saveModalButton: {
+    backgroundColor: colors.primary,
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.md,
+    borderRadius: borderRadius.md,
+    alignItems: 'center',
+  },
+  saveModalText: {
+    fontSize: fontSize.sm,
+    color: colors.white,
+    fontWeight: fontWeight.semibold,
+  },
+  buttonDisabled: {
+    opacity: 0.6,
   },
 });

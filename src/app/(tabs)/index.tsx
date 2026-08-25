@@ -7,28 +7,67 @@ import {
   Platform,
   FlatList,
   TouchableOpacity,
+  ScrollView,
 } from 'react-native';
-import { Map, Camera, Marker } from '@maplibre/maplibre-react-native';
 import * as Location from 'expo-location';
 import { useRouter } from 'expo-router';
-import { useScenarios } from '../../hooks/useScenarios';
-import { ErrorState } from '../../components/common/ErrorState';
-import { colors, spacing, fontSize, fontWeight } from '../../theme';
+import { useQuery } from '@tanstack/react-query';
+import { Ionicons } from '@expo/vector-icons';
+import { supabase } from '../../services/supabase';
+import { useUpcomingEvents } from '../../hooks/useEvents';
+import { Scenario } from '../../types';
+import { colors, spacing, borderRadius, fontSize, fontWeight } from '../../theme';
 
-const MAPTILER_KEY = process.env.EXPO_PUBLIC_MAPTILER_API_KEY!;
-const MAP_STYLE = `https://api.maptiler.com/maps/streets-v4/style.json?key=${MAPTILER_KEY}`;
+// react-native-maps solo funciona en plataformas nativas (iOS/Android)
+let MapView: any = null;
+let Marker: any = null;
+let PROVIDER_DEFAULT: any = null;
 
-const BOLIVIA_CENTER: [number, number] = [-65.0, -17.0];
+if (Platform.OS !== 'web') {
+  const maps = require('react-native-maps');
+  MapView = maps.default;
+  Marker = maps.Marker;
+  PROVIDER_DEFAULT = maps.PROVIDER_DEFAULT;
+}
+
+// Region inicial: centro de Bolivia
+const BOLIVIA_CENTER = {
+  latitude: -17.0,
+  longitude: -65.0,
+  latitudeDelta: 8,
+  longitudeDelta: 8,
+};
 
 export default function MapScreen() {
   const router = useRouter();
-  const [userLocation, setUserLocation] = useState<[number, number] | null>(
-    null,
-  );
+  const [userLocation, setUserLocation] =
+    useState<Location.LocationObject | null>(null);
+  const [initialRegion, setInitialRegion] = useState(BOLIVIA_CENTER);
   const [locationLoading, setLocationLoading] = useState(true);
 
-  const { data: scenarios, isLoading, error, refetch } = useScenarios();
+  // T-023: Cargar escenarios desde Supabase
+  const {
+    data: scenarios,
+    isLoading,
+    error,
+    refetch,
+  } = useQuery<Scenario[]>({
+    queryKey: ['scenarios'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('scenarios')
+        .select('*')
+        .eq('estado', 'activo');
 
+      if (error) throw error;
+      return data as Scenario[];
+    },
+  });
+
+  // T-045: Próximos eventos
+  const { data: upcomingEvents } = useUpcomingEvents();
+
+  // T-024: Obtener ubicacion del usuario (solo en nativo)
   useEffect(() => {
     if (Platform.OS === 'web') {
       setLocationLoading(false);
@@ -49,7 +88,15 @@ export default function MapScreen() {
           accuracy: Location.Accuracy.Balanced,
         });
 
-        setUserLocation([location.coords.longitude, location.coords.latitude]);
+        setUserLocation(location);
+
+        // Centrar mapa en la ubicacion del usuario
+        setInitialRegion({
+          latitude: location.coords.latitude,
+          longitude: location.coords.longitude,
+          latitudeDelta: 0.05,
+          longitudeDelta: 0.05,
+        });
       } catch {
         // Si falla la ubicacion, usar region por defecto (Bolivia)
       } finally {
@@ -58,9 +105,7 @@ export default function MapScreen() {
     })();
   }, []);
 
-  const cameraCenter = userLocation ?? BOLIVIA_CENTER;
-  const cameraZoom = userLocation ? 14 : 5;
-
+  // Estado de carga
   if (isLoading || locationLoading) {
     return (
       <View style={styles.loadingContainer}>
@@ -70,17 +115,63 @@ export default function MapScreen() {
     );
   }
 
+  // Estado de error
   if (error) {
     return (
-      <ErrorState
-        icon="map-outline"
-        title="Error al cargar el mapa"
-        message="No se pudieron cargar los escenarios deportivos. Toca para reintentar."
-        onRetry={() => refetch()}
-      />
+      <View style={styles.loadingContainer}>
+        <Text style={styles.errorText}>Error al cargar escenarios</Text>
+        <Text style={styles.retryText} onPress={() => refetch()}>
+          Toca para reintentar
+        </Text>
+      </View>
     );
   }
 
+  // Componente de carrusel/lista de próximos eventos (T-045)
+  const renderUpcomingEventsSection = () => {
+    if (!upcomingEvents || upcomingEvents.length === 0) return null;
+
+    return (
+      <View style={styles.eventsOverlay}>
+        <View style={styles.eventsHeaderRow}>
+          <Ionicons name="flash-outline" size={16} color={colors.primary} />
+          <Text style={styles.eventsTitle}>Próximos eventos</Text>
+        </View>
+
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.eventsScrollList}
+        >
+          {upcomingEvents.map((event) => (
+            <TouchableOpacity
+              key={event.id}
+              style={styles.eventCardItem}
+              onPress={() => router.push(`/scenario/${event.scenario_id}`)}
+              activeOpacity={0.85}
+            >
+              <View style={styles.eventBadge}>
+                <Ionicons name="calendar" size={12} color={colors.white} />
+                <Text style={styles.eventBadgeText}>{event.fecha}</Text>
+              </View>
+
+              <Text style={styles.eventCardName} numberOfLines={1}>
+                {event.nombre}
+              </Text>
+
+              {event.scenarios?.nombre ? (
+                <Text style={styles.eventScenarioName} numberOfLines={1}>
+                  📍 {event.scenarios.nombre}
+                </Text>
+              ) : null}
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      </View>
+    );
+  };
+
+  // --- Web fallback: lista de escenarios ---
   if (Platform.OS === 'web') {
     return (
       <View style={styles.webContainer}>
@@ -88,6 +179,10 @@ export default function MapScreen() {
         <Text style={styles.webSubtitle}>
           {scenarios?.length ?? 0} escenarios encontrados
         </Text>
+
+        {/* Seccion Próximos Eventos en Web */}
+        {renderUpcomingEventsSection()}
+
         <FlatList
           data={scenarios}
           keyExtractor={(item) => item.id}
@@ -107,43 +202,50 @@ export default function MapScreen() {
     );
   }
 
+  // --- Native: Mapa real ---
   return (
     <View style={styles.container}>
-      <Map mapStyle={MAP_STYLE} style={styles.map}>
-        <Camera
-          initialViewState={{
-            center: cameraCenter,
-            zoom: cameraZoom,
-          }}
-        />
-
+      <MapView
+        style={styles.map}
+        provider={PROVIDER_DEFAULT}
+        initialRegion={initialRegion}
+        showsUserLocation={false}
+        showsMyLocationButton={false}
+      >
+        {/* Marcadores de escenarios */}
         {scenarios?.map((scenario) => (
           <Marker
             key={scenario.id}
-            id={scenario.id}
-            lngLat={[scenario.longitud, scenario.latitud]}
-            onPress={() => router.push(`/scenario/${scenario.id}`)}
-          >
-            <View style={styles.markerContainer}>
-              <View style={styles.markerDot} />
-            </View>
-          </Marker>
+            coordinate={{
+              latitude: scenario.latitud,
+              longitude: scenario.longitud,
+            }}
+            title={scenario.nombre}
+            description={scenario.tipo}
+            pinColor={colors.primary}
+            onCalloutPress={() =>
+              router.push(`/scenario/${scenario.id}`)
+            }
+          />
         ))}
 
+        {/* T-024: Marcador de ubicacion del usuario */}
         {userLocation && (
           <Marker
-            id="user-location"
-            lngLat={userLocation}
-            anchor="center"
-          >
-            <View style={styles.userMarkerContainer}>
-              <View style={styles.userMarkerDot} />
-              <View style={styles.userMarkerRing} />
-            </View>
-          </Marker>
+            coordinate={{
+              latitude: userLocation.coords.latitude,
+              longitude: userLocation.coords.longitude,
+            }}
+            title="Tu ubicacion"
+            pinColor={colors.secondary}
+          />
         )}
-      </Map>
+      </MapView>
 
+      {/* T-045: Overlay Próximos Eventos */}
+      {renderUpcomingEventsSection()}
+
+      {/* Indicador de cantidad de escenarios */}
       <View style={styles.infoBar}>
         <Text style={styles.infoText}>
           {scenarios?.length ?? 0} escenarios encontrados
@@ -182,45 +284,74 @@ const styles = StyleSheet.create({
     color: colors.primary,
     textDecorationLine: 'underline',
   },
-  markerContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  markerDot: {
-    width: 14,
-    height: 14,
-    borderRadius: 7,
-    backgroundColor: colors.primary,
-    borderWidth: 2,
-    borderColor: colors.white,
+  // T-045: Upcoming Events section overlay
+  eventsOverlay: {
+    position: 'absolute',
+    top: spacing.xl,
+    left: spacing.md,
+    right: spacing.md,
+    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    borderRadius: borderRadius.lg,
+    padding: spacing.sm,
     shadowColor: colors.black,
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-    elevation: 4,
+    shadowOpacity: 0.15,
+    shadowRadius: 6,
+    elevation: 5,
   },
-  userMarkerContainer: {
+  eventsHeaderRow: {
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    width: 30,
-    height: 30,
+    gap: 4,
+    marginBottom: spacing.xs,
+    paddingHorizontal: spacing.xs,
   },
-  userMarkerDot: {
-    width: 14,
-    height: 14,
-    borderRadius: 7,
-    backgroundColor: colors.secondary,
-    borderWidth: 2,
-    borderColor: colors.white,
-    zIndex: 2,
+  eventsTitle: {
+    fontSize: fontSize.xs,
+    fontWeight: fontWeight.bold,
+    color: colors.text,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
   },
-  userMarkerRing: {
-    position: 'absolute',
-    width: 30,
-    height: 30,
-    borderRadius: 15,
-    backgroundColor: `${colors.secondary}30`,
-    zIndex: 1,
+  eventsScrollList: {
+    gap: spacing.xs,
+    paddingVertical: 2,
+  },
+  eventCardItem: {
+    backgroundColor: colors.surfaceVariant,
+    borderRadius: borderRadius.md,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs,
+    borderWidth: 1,
+    borderColor: colors.border,
+    minWidth: 140,
+    maxWidth: 200,
+  },
+  eventBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 3,
+    backgroundColor: colors.primary,
+    alignSelf: 'flex-start',
+    paddingHorizontal: 6,
+    paddingVertical: 1,
+    borderRadius: borderRadius.full,
+    marginBottom: 4,
+  },
+  eventBadgeText: {
+    color: colors.white,
+    fontSize: 10,
+    fontWeight: fontWeight.semibold,
+  },
+  eventCardName: {
+    fontSize: fontSize.sm,
+    fontWeight: fontWeight.semibold,
+    color: colors.text,
+  },
+  eventScenarioName: {
+    fontSize: 11,
+    color: colors.textSecondary,
+    marginTop: 2,
   },
   infoBar: {
     position: 'absolute',
@@ -243,6 +374,7 @@ const styles = StyleSheet.create({
     fontWeight: fontWeight.medium,
     color: colors.text,
   },
+  // Web fallback styles
   webContainer: {
     flex: 1,
     backgroundColor: colors.background,
@@ -261,6 +393,7 @@ const styles = StyleSheet.create({
   },
   webList: {
     paddingBottom: spacing.xl,
+    marginTop: spacing.md,
   },
   webCard: {
     backgroundColor: colors.surface,
