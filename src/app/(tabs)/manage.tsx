@@ -18,6 +18,7 @@ import { LoadingSpinner } from '../../components/common/LoadingSpinner';
 import { EmptyState } from '../../components/common/EmptyState';
 import { colors, spacing, borderRadius, fontSize, fontWeight } from '../../theme';
 import type { ScenarioWithImages } from '../../hooks/useManageScenarios';
+import { getRole, canManageContent, canDeleteScenario } from '../../utils/permissions';
 
 export default function ManageScreen() {
   const router = useRouter();
@@ -31,11 +32,11 @@ export default function ManageScreen() {
   } = useAllScenarios();
   const { mutateAsync: deleteScenario, isPending: isDeleting } = useDeleteScenario();
 
-  const userRole = user?.user_metadata?.role;
-  const isAdmin = userRole === 'admin';
+  const role = getRole(user);
+  const canDelete = canDeleteScenario(role);
 
   // Redirigir si no tiene permisos (doble seguridad, el tab ya se oculta)
-  if (userRole !== 'admin' && userRole !== 'gestor') {
+  if (!canManageContent(role)) {
     return (
       <EmptyState
         icon="lock-closed-outline"
@@ -135,7 +136,7 @@ export default function ManageScreen() {
             <Ionicons name="create-outline" size={20} color={colors.primary} />
           </TouchableOpacity>
 
-          {isAdmin && (
+          {canDelete && (
             <TouchableOpacity
               style={[styles.actionButton, styles.deleteButton]}
               onPress={() => handleDelete(item.id, item.nombre)}

@@ -24,6 +24,7 @@ import { useCreateEvent, useDeleteEvent } from '../../hooks/useEvents';
 import { LoadingSpinner } from '../../components/common/LoadingSpinner';
 import { EmptyState } from '../../components/common/EmptyState';
 import { colors, spacing, borderRadius, fontSize, fontWeight } from '../../theme';
+import { getRole, canManageContent } from '../../utils/permissions';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const IMAGE_HEIGHT = 260;
@@ -52,8 +53,8 @@ export default function ScenarioDetailScreen() {
   const [eventError, setEventError] = useState<string | null>(null);
 
   // Solo admin y gestor pueden administrar (subir fotos, eventos)
-  const userRole = user?.user_metadata?.role;
-  const canManage = userRole === 'admin' || userRole === 'gestor';
+  const role = getRole(user);
+  const canManage = canManageContent(role);
 
   const primaryImage = scenario?.scenario_images?.find((img) => img.is_primary);
   const imageUrl = !imageError
