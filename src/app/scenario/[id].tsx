@@ -187,6 +187,12 @@ export default function ScenarioDetailScreen() {
               <InfoRow icon="people-outline" label="Capacidad" value={`${scenario.capacidad.toLocaleString()} personas`} />
               <View style={styles.divider} />
               <InfoRow icon="location-outline" label="Dirección" value={scenario.direccion} />
+              {scenario.horario ? (
+                <>
+                  <View style={styles.divider} />
+                  <InfoRow icon="time-outline" label="Horario" value={scenario.horario} />
+                </>
+              ) : null}
             </View>
           </View>
 

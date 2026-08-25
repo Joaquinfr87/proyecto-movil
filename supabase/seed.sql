@@ -802,3 +802,28 @@ INSERT INTO public.scenario_images (scenario_id, storage_path, url, is_primary, 
  'e0eebc99-9c0b-4ef8-bb6d-6bb9bd380e20/image-2.jpg',
  'scenario-images/e0eebc99-9c0b-4ef8-bb6d-6bb9bd380e20/image-2.jpg',
  false, 1);
+
+-- ============================================================
+-- HORARIOS DE ATENCION (T-041)
+-- ============================================================
+
+UPDATE public.scenarios SET horario = 'Lun-Dom 08:00-22:00' WHERE id = 'e0eebc99-9c0b-4ef8-bb6d-6bb9bd380e01';
+UPDATE public.scenarios SET horario = 'Lun-Vie 09:00-21:00, Sab 09:00-18:00' WHERE id = 'e0eebc99-9c0b-4ef8-bb6d-6bb9bd380e02';
+UPDATE public.scenarios SET horario = 'Lun-Dom 10:00-22:00' WHERE id = 'e0eebc99-9c0b-4ef8-bb6d-6bb9bd380e03';
+UPDATE public.scenarios SET horario = 'Lun-Dom 07:00-20:00' WHERE id = 'e0eebc99-9c0b-4ef8-bb6d-6bb9bd380e04';
+UPDATE public.scenarios SET horario = 'Lun-Dom 06:00-22:00' WHERE id = 'e0eebc99-9c0b-4ef8-bb6d-6bb9bd380e05';
+UPDATE public.scenarios SET horario = 'Lun-Vie 08:00-22:00, Sab-Dom 09:00-20:00' WHERE id = 'e0eebc99-9c0b-4ef8-bb6d-6bb9bd380e06';
+UPDATE public.scenarios SET horario = 'Lun-Dom 10:00-23:00' WHERE id = 'e0eebc99-9c0b-4ef8-bb6d-6bb9bd380e07';
+UPDATE public.scenarios SET horario = 'Lun-Dom 06:00-21:00' WHERE id = 'e0eebc99-9c0b-4ef8-bb6d-6bb9bd380e08';
+UPDATE public.scenarios SET horario = 'Lun-Vie 08:00-20:00, Sab 09:00-18:00' WHERE id = 'e0eebc99-9c0b-4ef8-bb6d-6bb9bd380e09';
+UPDATE public.scenarios SET horario = 'Lun-Dom 07:00-21:00' WHERE id = 'e0eebc99-9c0b-4ef8-bb6d-6bb9bd380e10';
+UPDATE public.scenarios SET horario = 'Lun-Dom 08:00-20:00' WHERE id = 'e0eebc99-9c0b-4ef8-bb6d-6bb9bd380e11';
+UPDATE public.scenarios SET horario = 'Lun-Dom 08:00-18:00' WHERE id = 'e0eebc99-9c0b-4ef8-bb6d-6bb9bd380e12';
+UPDATE public.scenarios SET horario = 'Lun-Dom 07:00-19:00' WHERE id = 'e0eebc99-9c0b-4ef8-bb6d-6bb9bd380e13';
+UPDATE public.scenarios SET horario = 'Lun-Dom 08:00-20:00' WHERE id = 'e0eebc99-9c0b-4ef8-bb6d-6bb9bd380e14';
+UPDATE public.scenarios SET horario = 'Lun-Dom 06:00-19:00' WHERE id = 'e0eebc99-9c0b-4ef8-bb6d-6bb9bd380e15';
+UPDATE public.scenarios SET horario = 'Lun-Dom 06:00-22:00' WHERE id = 'e0eebc99-9c0b-4ef8-bb6d-6bb9bd380e16';
+UPDATE public.scenarios SET horario = 'Lun-Dom 06:00-22:00' WHERE id = 'e0eebc99-9c0b-4ef8-bb6d-6bb9bd380e17';
+UPDATE public.scenarios SET horario = 'Lun-Vie 07:00-22:00, Sab-Dom 08:00-20:00' WHERE id = 'e0eebc99-9c0b-4ef8-bb6d-6bb9bd380e18';
+UPDATE public.scenarios SET horario = 'Lun-Dom 07:00-21:00' WHERE id = 'e0eebc99-9c0b-4ef8-bb6d-6bb9bd380e19';
+UPDATE public.scenarios SET horario = 'Lun-Vie 08:00-20:00, Sab-Dom 09:00-18:00' WHERE id = 'e0eebc99-9c0b-4ef8-bb6d-6bb9bd380e20';

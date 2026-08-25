@@ -19,6 +19,7 @@ export interface Scenario {
   latitud: number;
   longitud: number;
   estado: string;
+  horario: string | null;
   created_by: string | null;
   created_at: string;
   updated_at: string;
