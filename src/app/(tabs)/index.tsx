@@ -18,17 +18,7 @@ import { useUpcomingEvents } from '../../hooks/useEvents';
 import { Scenario } from '../../types';
 import { colors, spacing, borderRadius, fontSize, fontWeight } from '../../theme';
 
-// react-native-maps solo funciona en plataformas nativas (iOS/Android)
-let MapView: any = null;
-let Marker: any = null;
-let PROVIDER_DEFAULT: any = null;
-
-if (Platform.OS !== 'web') {
-  const maps = require('react-native-maps');
-  MapView = maps.default;
-  Marker = maps.Marker;
-  PROVIDER_DEFAULT = maps.PROVIDER_DEFAULT;
-}
+import { Map, Camera, Marker, Callout } from '@maplibre/maplibre-react-native';
 
 // Region inicial: centro de Bolivia
 const BOLIVIA_CENTER = {
@@ -42,7 +32,10 @@ export default function MapScreen() {
   const router = useRouter();
   const [userLocation, setUserLocation] =
     useState<Location.LocationObject | null>(null);
-  const [initialRegion, setInitialRegion] = useState(BOLIVIA_CENTER);
+  const [cameraState, setCameraState] = useState({
+    centerCoordinate: [BOLIVIA_CENTER.longitude, BOLIVIA_CENTER.latitude] as [number, number],
+    zoomLevel: 5,
+  });
   const [locationLoading, setLocationLoading] = useState(true);
 
   // T-023: Cargar escenarios desde Supabase
@@ -91,11 +84,12 @@ export default function MapScreen() {
         setUserLocation(location);
 
         // Centrar mapa en la ubicacion del usuario
-        setInitialRegion({
-          latitude: location.coords.latitude,
-          longitude: location.coords.longitude,
-          latitudeDelta: 0.05,
-          longitudeDelta: 0.05,
+        setCameraState({
+          centerCoordinate: [
+            location.coords.longitude,
+            location.coords.latitude,
+          ],
+          zoomLevel: 14,
         });
       } catch {
         // Si falla la ubicacion, usar region por defecto (Bolivia)
@@ -205,42 +199,66 @@ export default function MapScreen() {
   // --- Native: Mapa real ---
   return (
     <View style={styles.container}>
-      <MapView
+      <Map
         style={styles.map}
-        provider={PROVIDER_DEFAULT}
-        initialRegion={initialRegion}
-        showsUserLocation={false}
-        showsMyLocationButton={false}
+        mapStyle="https://demotiles.maplibre.org/style.json"
+        logo={false}
       >
+        <Camera
+          initialViewState={{
+            centerCoordinate: cameraState.centerCoordinate,
+            zoomLevel: cameraState.zoomLevel,
+          }}
+        />
+
         {/* Marcadores de escenarios */}
         {scenarios?.map((scenario) => (
           <Marker
             key={scenario.id}
-            coordinate={{
-              latitude: scenario.latitud,
-              longitude: scenario.longitud,
-            }}
-            title={scenario.nombre}
-            description={scenario.tipo}
-            pinColor={colors.primary}
-            onCalloutPress={() =>
-              router.push(`/scenario/${scenario.id}`)
-            }
-          />
+            coordinate={[scenario.longitud, scenario.latitud]}
+          >
+            <View style={{ alignItems: 'center' }}>
+              <View
+                style={{
+                  width: 24,
+                  height: 24,
+                  borderRadius: 12,
+                  backgroundColor: colors.primary,
+                  borderWidth: 2,
+                  borderColor: colors.white,
+                }}
+              />
+            </View>
+            <Callout>
+              <TouchableOpacity onPress={() => router.push(`/scenario/${scenario.id}`)}>
+                <Text style={{ fontWeight: '600' }}>{scenario.nombre}</Text>
+                <Text style={{ fontSize: 12 }}>{scenario.tipo}</Text>
+              </TouchableOpacity>
+            </Callout>
+          </Marker>
         ))}
 
         {/* T-024: Marcador de ubicacion del usuario */}
         {userLocation && (
           <Marker
-            coordinate={{
-              latitude: userLocation.coords.latitude,
-              longitude: userLocation.coords.longitude,
-            }}
-            title="Tu ubicacion"
-            pinColor={colors.secondary}
-          />
+            coordinate={[
+              userLocation.coords.longitude,
+              userLocation.coords.latitude,
+            ]}
+          >
+            <View
+              style={{
+                width: 16,
+                height: 16,
+                borderRadius: 8,
+                backgroundColor: colors.secondary,
+                borderWidth: 2,
+                borderColor: colors.white,
+              }}
+            />
+          </Marker>
         )}
-      </MapView>
+      </Map>
 
       {/* T-045: Overlay Próximos Eventos */}
       {renderUpcomingEventsSection()}
