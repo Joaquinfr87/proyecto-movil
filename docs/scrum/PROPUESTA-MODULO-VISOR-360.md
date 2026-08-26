@@ -1,41 +1,41 @@
-# Propuesta de Módulo Adicional: Visor de Asientos y Escenarios en 360°
+# Propuesta de Módulo Adicional: Mapa Interactivo de Sectores y Visor 360°
 
 ## Proyecto: Lugares Interactivos (DeporteYa)
 
-> **Documento de Propuesta Técnica**: Incorporación del módulo de visualización panorámica 360° de escenarios deportivos y experiencia de asiento como extensión post-MVP (Opción A).
+> **Documento de Propuesta Técnica**: Incorporación del módulo de visualización interactiva por sectores y experiencia panorámica 360° como extensión post-MVP (Opción Intermedia).
 
 ---
 
 ## 1. Resumen Ejecutivo
 
-Para alcanzar una experiencia interactiva avanzada similar a las plataformas globales de ticketing deportivo (*3D Digital Venue*), se propone la incorporación del **Módulo de Visor Panorámico 360°**.
+Para alcanzar una experiencia interactiva avanzada inspirada en plataformas como *3D Digital Venue*, pero manteniendo la viabilidad técnica y optimizando los recursos de modelado, se propone una **Opción Intermedia**.
 
-Basado en el análisis de factibilidad técnica, se ha seleccionado la **Opción A (Fotos Panorámicas Equirectangulares 360° mediante WebView y Pannellum.js)** frente a la reconstrucción en modelos 3D poligonales.
+En lugar de renderizar modelos 3D poligonales pesados con cámaras dinámicas, utilizaremos un **Mapa 2D Interactivo (SVG)** del estadio. Al tocar un sector específico (ej. "Curva Sur", "General", "Cancha"), el usuario abrirá un **Visor Panorámico 360°** con una foto equirectangular real o renderizada desde Blender correspondiente a ese sector.
 
-### Ventajas clave de la Opción A:
-* **Fotorrealismo Real**: Muestra la vista exacta y real desde la tribuna/asiento o centro de la cancha.
-* **Alto Rendimiento en Móviles**: Carga liviana de imágenes equirectangulares sin consumo excesivo de GPU.
-* **Impacto Cero en el Código Base**: Se implementa como un componente modal modular aislado, sin riesgo de alterar las pantallas existentes ni romper el mapa o autenticación del MVP.
-* **Compatibilidad Total**: No requiere dependencias nativas complejas en Expo SDK 57.
+### Ventajas clave de la Opción Intermedia:
+* **Fotorrealismo y Precisión**: Cada sector tiene su propia vista inmersiva 360°.
+* **Alto Rendimiento en Móviles**: Carga liviana de SVGs interactivos e imágenes equirectangulares mediante WebView (Pannellum.js). No satura la GPU.
+* **Viabilidad de Assets**: Renderizar 4-6 fotos 360° en Blender por estadio (ej. Félix Capriles) es mucho más viable en tiempo y costo que exportar y mapear las coordenadas (X, Y, Z) de miles de asientos individuales en WebGL.
+* **Impacto Modular**: Se implementa como un componente aislado, sin riesgo de alterar el MVP actual.
 
 ---
 
 ## 2. Plan de Tareas (Extensión al Sprint Backlog)
 
-Estas tareas están diseñadas para ejecutarse inmediatamente al finalizar el **Sprint Backlog principal (Sprint 3)** o como parte de un **Sprint 4 (Extensión)**:
-
-### Módulo Opcional: Visor 360° de Asientos y Escenarios (Sprint 4 / Post-MVP)
+Estas tareas están diseñadas para ejecutarse como parte de un **Sprint 4 (Post-MVP)**:
 
 | ID | Tarea | Asignado Sugerido | Dependencias | Herramienta IA |
 |---|---|---|---|---|
-| **T-057** | Agregar campo `foto_360_url` en esquema de Supabase (`escenarios`) | Nicolas | T-038 | Supabase Dashboard |
-| **T-058** | Instalar y verificar `react-native-webview` en Expo SDK 57 | Nicolas | T-057 | CLI |
-| **T-059** | Crear componente reutilizable `Visor360Modal.tsx` con Pannellum | Angel / David | T-058 | opencode |
-| **T-060** | Integrar botón "Ver vista 360° del asiento" en `scenario/[id].tsx` | Angel | T-028, T-059 | opencode |
-| **T-061** | Cargar imágenes panorámicas 360° de prueba en Supabase Storage | Nicolas / Angel | T-034, T-057 | Manual |
-| **T-062** | Pruebas de navegación y gestos táctiles (zoom, rotación arrastre) | David + Angel | T-060 | Manual |
+| **T-057** | Crear migración SQL para tabla `scenario_sectors` y políticas RLS | Nicolas | MVP Base | Supabase Dashboard |
+| **T-058** | Instalar `react-native-svg` y `react-native-webview` | Nicolas | T-057 | CLI |
+| **T-059** | Crear componente `InteractiveStadiumMap.tsx` con SVG interactivo | Angel / David | T-058 | opencode |
+| **T-060** | Crear componente reutilizable `Visor360Modal.tsx` con Pannellum | Angel / David | T-058 | opencode |
+| **T-061** | Integrar mapa interactivo y modal en `scenario/[id].tsx` | Angel | T-059, T-060 | opencode |
+| **T-062** | Renderizar fotos 360° en Blender (Félix Capriles) y cargar a Storage | David | T-057 | Manual/Blender |
+| **T-063** | Cargar SVG paths y datos de sectores en BD (Félix Capriles) | David | T-057, T-062 | Manual |
+| **T-064** | QA: Pruebas de navegación, toque en SVG y gestos 360° | David + Angel | T-061, T-063 | Manual |
 
-**Entregable del Módulo:** Experiencia interactiva 360° en la vista de detalle del escenario con vista inmersiva del campo/asiento.
+**Entregable del Módulo:** En el detalle de un escenario (ej. Félix Capriles), el usuario verá un mapa vectorial. Al tocar "Curva Sur", se abrirá una vista 360° inmersiva renderizada desde esa ubicación.
 
 ---
 
@@ -43,21 +43,85 @@ Estas tareas están diseñadas para ejecutarse inmediatamente al finalizar el **
 
 ### 3.1. Extensión de la Base de Datos (Supabase SQL)
 
-Se añade una columna opcional a la tabla `escenarios` (o a una tabla secundaria de sectores):
+Para soportar múltiples sectores por escenario, creamos una tabla dedicada `scenario_sectors`:
 
 ```sql
--- Migración SQL en Supabase
-ALTER TABLE escenarios 
-ADD COLUMN IF NOT EXISTS foto_360_url TEXT;
+-- Migración SQL en Supabase (ej. 008_create_scenario_sectors.sql)
 
-COMMENT ON COLUMN escenarios.foto_360_url IS 'URL pública de la imagen equirectangular 360 en Supabase Storage';
+CREATE TABLE public.scenario_sectors (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  scenario_id UUID REFERENCES public.scenarios(id) ON DELETE CASCADE NOT NULL,
+  nombre TEXT NOT NULL,           -- Ej: "Curva Sur", "Cancha"
+  svg_path TEXT NOT NULL,         -- Atributo 'd' del <path> SVG para dibujar la zona interactiva
+  foto_360_url TEXT,              -- URL de la imagen equirectangular en Supabase Storage
+  color_hex TEXT DEFAULT '#cccccc', -- Color para dibujar el sector en el SVG
+  display_order INTEGER DEFAULT 0,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+ALTER TABLE public.scenario_sectors ENABLE ROW LEVEL SECURITY;
+
+-- Políticas
+CREATE POLICY "Sectores visibles para todos"
+  ON public.scenario_sectors FOR SELECT
+  TO authenticated USING (true);
+
+CREATE POLICY "Gestión de sectores para admin y gestor"
+  ON public.scenario_sectors FOR ALL
+  TO authenticated
+  USING (
+    EXISTS (
+      SELECT 1 FROM public.profiles
+      WHERE id = auth.uid() AND role IN ('gestor', 'admin')
+    )
+  );
 ```
 
-### 3.2. Componente Reutilizable (`src/components/scenario/Visor360Modal.tsx`)
+### 3.2. Frontend: Componente Mapa Interactivo (SVG)
 
-Componente aislado que encapsula el visor 360° usando Pannellum.js embebido:
+Se utilizará `react-native-svg` para renderizar el mapa desde los datos de Supabase:
 
 ```tsx
+// src/components/scenario/InteractiveStadiumMap.tsx
+import React from 'react';
+import { View, Dimensions } from 'react-native';
+import Svg, { Path } from 'react-native-svg';
+import type { ScenarioSector } from '../../types';
+
+interface MapProps {
+  sectors: ScenarioSector[];
+  onSectorPress: (sector: ScenarioSector) => void;
+}
+
+export function InteractiveStadiumMap({ sectors, onSectorPress }: MapProps) {
+  const width = Dimensions.get('window').width - 32;
+  const height = 300; // Aspect ratio ajustado al estadio
+
+  return (
+    <View style={{ width, height, backgroundColor: '#f0f0f0', borderRadius: 8 }}>
+      <Svg width="100%" height="100%" viewBox="0 0 800 600">
+        {sectors.map((sector) => (
+          <Path
+            key={sector.id}
+            d={sector.svg_path}
+            fill={sector.color_hex}
+            stroke="#ffffff"
+            strokeWidth="2"
+            onPress={() => onSectorPress(sector)}
+          />
+        ))}
+      </Svg>
+    </View>
+  );
+}
+```
+
+### 3.3. Frontend: Componente Visor 360° Reutilizable
+
+El visor encapsulado mediante `react-native-webview` y Pannellum.js:
+
+```tsx
+// src/components/scenario/Visor360Modal.tsx
 import React from 'react';
 import { Modal, View, TouchableOpacity, Text, StyleSheet } from 'react-native';
 import { WebView } from 'react-native-webview';
@@ -67,7 +131,7 @@ interface Visor360ModalProps {
   visible: boolean;
   onClose: () => void;
   foto360Url: string;
-  titulo?: string;
+  titulo: string;
 }
 
 export function Visor360Modal({ visible, onClose, foto360Url, titulo }: Visor360ModalProps) {
@@ -78,9 +142,7 @@ export function Visor360Modal({ visible, onClose, foto360Url, titulo }: Visor360
       <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
       <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css"/>
       <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
-      <style>
-        body, html, #panorama { width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden; background: #000; }
-      </style>
+      <style>body, html, #panorama { width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden; background: #000; }</style>
     </head>
     <body>
       <div id="panorama"></div>
@@ -98,65 +160,55 @@ export function Visor360Modal({ visible, onClose, foto360Url, titulo }: Visor360
   `;
 
   return (
-    <Modal visible={visible} animationType="slide" transparent={false}>
-      <View style={styles.container}>
+    <Modal visible={visible} animationType="slide">
+      <View style={{ flex: 1, backgroundColor: '#000' }}>
         <View style={styles.header}>
-          <Text style={styles.title}>{titulo || 'Vista 360° del Escenario'}</Text>
-          <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-            <Ionicons name="close" size={28} color="#fff" />
-          </TouchableOpacity>
+          <Text style={styles.title}>{titulo}</Text>
+          <TouchableOpacity onPress={onClose}><Ionicons name="close" size={28} color="#fff" /></TouchableOpacity>
         </View>
-        <WebView
-          originWhitelist={['*']}
-          source={{ html: htmlContent }}
-          style={{ flex: 1 }}
-          javaScriptEnabled={true}
-          domStorageEnabled={true}
-        />
+        <WebView originWhitelist={['*']} source={{ html: htmlContent }} style={{ flex: 1 }} javaScriptEnabled />
       </View>
     </Modal>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#000' },
-  header: {
-    height: 60,
-    backgroundColor: '#1e293b',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingTop: 10,
-  },
-  title: { color: '#fff', fontSize: 16, fontWeight: 'bold' },
-  closeButton: { padding: 4 },
+  header: { height: 60, backgroundColor: '#1e293b', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingTop: 10 },
+  title: { color: '#fff', fontSize: 16, fontWeight: 'bold' }
 });
 ```
 
-### 3.3. Integración en `src/app/scenario/[id].tsx`
+### 3.4. Integración en el Detalle del Escenario
 
-En la pantalla de detalle del escenario:
+En `src/app/scenario/[id].tsx`, si el escenario cuenta con sectores mapeados, se mostrará el mapa. Al hacer clic en un sector, se almacena el sector activo y se abre el modal:
 
 ```tsx
-// Se agrega un botón condicional
-{scenario?.foto_360_url && (
-  <TouchableOpacity 
-    style={styles.btn360} 
-    onPress={() => setModal360Visible(true)}
-  >
-    <Ionicons name="eye-outline" size={20} color="#fff" />
-    <Text style={styles.btn360Text}>Ver Asiento en 360°</Text>
-  </TouchableOpacity>
+const [selectedSector, setSelectedSector] = useState<ScenarioSector | null>(null);
+
+// Dentro del render principal:
+{scenario.sectors && scenario.sectors.length > 0 && (
+  <View style={styles.section}>
+    <Text style={styles.sectionTitle}>Mapa Interactivo de Sectores</Text>
+    <InteractiveStadiumMap 
+      sectors={scenario.sectors} 
+      onSectorPress={(sector) => {
+        if (sector.foto_360_url) {
+          setSelectedSector(sector);
+        } else {
+          Alert.alert("Aviso", "Este sector aún no tiene vista 360° disponible.");
+        }
+      }} 
+    />
+  </View>
 )}
 
-{/* Modal aislado */}
-{scenario?.foto_360_url && (
+{/* Renderizar Modal si hay un sector seleccionado */}
+{selectedSector && (
   <Visor360Modal
-    visible={modal360Visible}
-    onClose={() => setModal360Visible(false)}
-    foto360Url={scenario.foto_360_url}
-    titulo={scenario.nombre}
+    visible={!!selectedSector}
+    onClose={() => setSelectedSector(null)}
+    foto360Url={selectedSector.foto_360_url!}
+    titulo={`Vista desde ${selectedSector.nombre}`}
   />
 )}
 ```
@@ -165,7 +217,8 @@ En la pantalla de detalle del escenario:
 
 ## 4. Criterios de Aceptación del Módulo
 
-- [ ] Si un escenario posee `foto_360_url` cargado en Supabase, se renderiza el botón **"Ver Asiento en 360°"**.
-- [ ] Si el escenario no cuenta con URL de foto 360°, el botón no se muestra y la interfaz de detalle funciona exactamente igual que en el MVP base.
-- [ ] El modal permite rotar 360° horizontal y verticalmente con gestos táctiles fluidos.
-- [ ] La aplicación no sufre degradación de rendimiento ni caídas de frames en el mapa principal o catálogo.
+- [ ] La base de datos soporta múltiples sectores por escenario asociados a paths SVG y URLs 360°.
+- [ ] La pantalla de detalle renderiza correctamente el SVG vectorial en `react-native-svg` (mapeando correctamente las zonas sobre el `<Svg viewBox="...">`).
+- [ ] Al tocar un `<Path>` SVG, se dispara el modal de Pannellum cargando la imagen equirectangular correspondiente.
+- [ ] El mapa 2D permite identificar qué sectores tienen vista inmersiva.
+- [ ] El escenario "Félix Capriles" sirve como prueba de concepto (PoC) con al menos 4 sectores renderizados desde Blender.
