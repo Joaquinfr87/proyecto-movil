@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import {
   FlatList,
   View,
   Text,
+  TextInput,
   TouchableOpacity,
   RefreshControl,
   StyleSheet,
@@ -13,12 +14,22 @@ import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../../context/AuthContext';
-import { useAllScenarios, useDeleteScenario } from '../../hooks/useManageScenarios';
+import {
+  useAllScenarios,
+  useDeleteScenario,
+  useHardDeleteScenario,
+  useToggleScenarioStatus,
+} from '../../hooks/useManageScenarios';
 import { LoadingSpinner } from '../../components/common/LoadingSpinner';
 import { EmptyState } from '../../components/common/EmptyState';
 import { colors, spacing, borderRadius, fontSize, fontWeight } from '../../theme';
 import type { ScenarioWithImages } from '../../hooks/useManageScenarios';
-import { getRole, canManageContent, canDeleteScenario } from '../../utils/permissions';
+import {
+  getRole,
+  canManageContent,
+  canDeleteScenario,
+  canHardDeleteScenario,
+} from '../../utils/permissions';
 
 export default function ManageScreen() {
   const router = useRouter();
@@ -30,12 +41,29 @@ export default function ManageScreen() {
     refetch,
     isRefetching,
   } = useAllScenarios();
-  const { mutateAsync: deleteScenario, isPending: isDeleting } = useDeleteScenario();
+  const { mutateAsync: softDelete, isPending: isSoftDeleting } = useDeleteScenario();
+  const { mutateAsync: hardDelete, isPending: isHardDeleting } = useHardDeleteScenario();
+  const { mutateAsync: toggleStatus, isPending: isToggling } = useToggleScenarioStatus();
+
+  const [searchQuery, setSearchQuery] = useState('');
 
   const role = getRole(user);
   const canDelete = canDeleteScenario(role);
+  const canHardDel = canHardDeleteScenario(role);
+  const isDeleting = isSoftDeleting || isHardDeleting;
 
-  // Redirigir si no tiene permisos (doble seguridad, el tab ya se oculta)
+  const filteredScenarios = useMemo(() => {
+    if (!scenarios) return [];
+    if (!searchQuery.trim()) return scenarios;
+    const q = searchQuery.toLowerCase().trim();
+    return scenarios.filter(
+      (s) =>
+        s.nombre.toLowerCase().includes(q) ||
+        s.tipo.toLowerCase().includes(q) ||
+        s.direccion?.toLowerCase().includes(q),
+    );
+  }, [scenarios, searchQuery]);
+
   if (!canManageContent(role)) {
     return (
       <EmptyState
@@ -46,24 +74,38 @@ export default function ManageScreen() {
     );
   }
 
-  const handleDelete = (id: string, nombre: string) => {
+  const handleHardDelete = (id: string, nombre: string) => {
+    const msg = `¿Eliminar permanentemente \"${nombre}\"? Esta acción no se puede deshacer.`;
     if (Platform.OS === 'web') {
-      if (window.confirm(`¿Desactivar el escenario "${nombre}"? Se marcará como inactivo.`)) {
-        deleteScenario(id);
+      if (window.confirm(msg)) {
+        hardDelete(id);
       }
     } else {
-      Alert.alert(
-        'Desactivar escenario',
-        `¿Estás seguro de desactivar "${nombre}"? Se marcará como inactivo.`,
-        [
-          { text: 'Cancelar', style: 'cancel' },
-          {
-            text: 'Desactivar',
-            style: 'destructive',
-            onPress: () => deleteScenario(id),
-          },
-        ],
-      );
+      Alert.alert('Eliminar escenario', msg, [
+        { text: 'Cancelar', style: 'cancel' },
+        { text: 'Eliminar', style: 'destructive', onPress: () => hardDelete(id) },
+      ]);
+    }
+  };
+
+  const handleToggleStatus = (id: string, nombre: string, currentStatus: string) => {
+    const activating = currentStatus !== 'activo';
+    const newStatus = activating ? 'activo' : 'inactivo';
+    const label = activating ? 'habilitar' : 'deshabilitar';
+    const msg = `¿${label.charAt(0).toUpperCase() + label.slice(1)} el escenario \"${nombre}\"?`;
+
+    if (Platform.OS === 'web') {
+      if (window.confirm(msg)) {
+        toggleStatus({ id, status: newStatus });
+      }
+    } else {
+      Alert.alert(label.charAt(0).toUpperCase() + label.slice(1), msg, [
+        { text: 'Cancelar', style: 'cancel' },
+        {
+          text: label.charAt(0).toUpperCase() + label.slice(1),
+          onPress: () => toggleStatus({ id, status: newStatus }),
+        },
+      ]);
     }
   };
 
@@ -145,10 +187,25 @@ export default function ManageScreen() {
             <Ionicons name="create-outline" size={20} color={colors.primary} />
           </TouchableOpacity>
 
-          {canDelete && (
+          {/* Habilitar/Deshabilitar - admin y gestor */}
+          <TouchableOpacity
+            style={[styles.actionButton, isActive ? styles.disableButton : styles.enableButton]}
+            onPress={() => handleToggleStatus(item.id, item.nombre, item.estado)}
+            disabled={isToggling}
+            activeOpacity={0.7}
+          >
+            <Ionicons
+              name={isActive ? 'pause-circle-outline' : 'play-circle-outline'}
+              size={20}
+              color={isActive ? colors.warning : colors.success}
+            />
+          </TouchableOpacity>
+
+          {/* Eliminar permanentemente - solo admin */}
+          {canHardDel && (
             <TouchableOpacity
               style={[styles.actionButton, styles.deleteButton]}
-              onPress={() => handleDelete(item.id, item.nombre)}
+              onPress={() => handleHardDelete(item.id, item.nombre)}
               disabled={isDeleting}
               activeOpacity={0.7}
             >
@@ -166,23 +223,50 @@ export default function ManageScreen() {
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Gestión</Text>
         <Text style={styles.headerSubtitle}>
-          {scenarios?.length ?? 0} escenarios registrados
+          {filteredScenarios.length} de {scenarios?.length ?? 0} escenarios
         </Text>
+
+        {/* Barra de búsqueda */}
+        <View style={styles.searchBar}>
+          <Ionicons name="search-outline" size={20} color={colors.textSecondary} style={styles.searchIcon} />
+          <TextInput
+            style={styles.searchInput}
+            placeholder="Buscar escenario..."
+            placeholderTextColor={colors.textSecondary}
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+            returnKeyType="search"
+            autoCapitalize="none"
+            autoCorrect={false}
+          />
+          {searchQuery.length > 0 && (
+            <TouchableOpacity onPress={() => setSearchQuery('')} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
+              <Ionicons name="close-circle" size={20} color={colors.textSecondary} />
+            </TouchableOpacity>
+          )}
+        </View>
       </View>
 
       {/* Lista */}
       <FlatList
-        data={scenarios}
+        data={filteredScenarios}
         keyExtractor={(item) => item.id}
         renderItem={renderItem}
         contentContainerStyle={
-          scenarios && scenarios.length === 0 ? styles.emptyContainer : styles.listContent
+          filteredScenarios.length === 0 ? styles.emptyContainer : styles.listContent
         }
         ListEmptyComponent={
           <EmptyState
-            icon="albums-outline"
-            title="Sin escenarios"
-            subtitle="Crea el primer escenario deportivo tocando el botón +."
+            icon={searchQuery ? 'search-outline' : 'albums-outline'}
+            title={searchQuery ? 'Sin resultados' : 'Sin escenarios'}
+            subtitle={
+              searchQuery
+                ? 'No se encontraron escenarios que coincidan con tu búsqueda.'
+                : 'Crea el primer escenario deportivo tocando el botón +.'
+            }
+            actionButton={
+              searchQuery ? { label: 'Limpiar búsqueda', onPress: () => setSearchQuery('') } : undefined
+            }
           />
         }
         refreshControl={
@@ -218,7 +302,7 @@ const styles = StyleSheet.create({
   header: {
     paddingHorizontal: spacing.md,
     paddingTop: spacing.lg,
-    paddingBottom: spacing.md,
+    paddingBottom: spacing.sm,
     backgroundColor: colors.surface,
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
@@ -232,6 +316,26 @@ const styles = StyleSheet.create({
     fontSize: fontSize.sm,
     color: colors.textSecondary,
     marginTop: spacing.xs,
+    marginBottom: spacing.sm,
+  },
+  searchBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.surfaceVariant,
+    borderRadius: borderRadius.md,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xs,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  searchIcon: {
+    marginRight: spacing.sm,
+  },
+  searchInput: {
+    flex: 1,
+    fontSize: fontSize.md,
+    color: colors.text,
+    paddingVertical: spacing.xs,
   },
   listContent: {
     paddingTop: spacing.md,
@@ -342,6 +446,12 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surfaceVariant,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  disableButton: {
+    backgroundColor: '#FFF3E0',
+  },
+  enableButton: {
+    backgroundColor: '#E8F5E9',
   },
   deleteButton: {
     backgroundColor: colors.errorLight,

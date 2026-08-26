@@ -21,6 +21,7 @@ import * as Location from 'expo-location';
 import { useAuth } from '../../context/AuthContext';
 import { useScenario } from '../../hooks/useScenarios';
 import { useUpsertScenario } from '../../hooks/useManageScenarios';
+import { useUploadImage } from '../../hooks/useUploadImage';
 import { LoadingSpinner } from '../../components/common/LoadingSpinner';
 import { colors, spacing, borderRadius, fontSize, fontWeight } from '../../theme';
 
@@ -62,6 +63,8 @@ export default function ScenarioFormScreen() {
 
   const [locationLoading, setLocationLoading] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
+  const [createdScenarioId, setCreatedScenarioId] = useState<string | null>(null);
+  const { uploadImage, isUploading } = useUploadImage();
 
   const {
     control,
@@ -134,7 +137,7 @@ export default function ScenarioFormScreen() {
     setServerError(null);
 
     try {
-      await upsertScenario({
+      const result = await upsertScenario({
         ...(isEditing && id ? { id } : {}),
         nombre: data.nombre.trim(),
         tipo: data.tipo.trim(),
@@ -146,6 +149,12 @@ export default function ScenarioFormScreen() {
         estado: 'activo',
         created_by: isEditing ? undefined : (user?.id ?? null),
       });
+
+      // Guardar el ID del escenario creado para poder subir imágenes
+      const scenarioId = result?.id ?? id;
+      if (scenarioId) {
+        setCreatedScenarioId(scenarioId);
+      }
 
       router.back();
     } catch (err) {
@@ -354,6 +363,33 @@ export default function ScenarioFormScreen() {
             </View>
           </View>
 
+          {/* Subir imágenes (solo al editar) */}
+          {isEditing && id && (
+            <View style={styles.fieldWrapper}>
+              <Text style={styles.label}>Imágenes</Text>
+              <TouchableOpacity
+                style={styles.uploadButton}
+                onPress={async () => {
+                  const result = await uploadImage(id);
+                  if (result) {
+                    Alert.alert('Éxito', 'Imagen subida correctamente.');
+                  }
+                }}
+                disabled={isUploading}
+                activeOpacity={0.7}
+              >
+                {isUploading ? (
+                  <ActivityIndicator size="small" color={colors.primary} />
+                ) : (
+                  <>
+                    <Ionicons name="camera-outline" size={20} color={colors.primary} />
+                    <Text style={styles.uploadButtonText}>Agregar imagen</Text>
+                  </>
+                )}
+              </TouchableOpacity>
+            </View>
+          )}
+
           {/* Error del servidor */}
           {serverError && (
             <View style={styles.serverErrorBox}>
@@ -511,6 +547,23 @@ const styles = StyleSheet.create({
     borderRadius: borderRadius.md,
     alignItems: 'center',
     marginTop: spacing.sm,
+  },
+  uploadButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: spacing.sm,
+    backgroundColor: colors.surface,
+    borderWidth: 1,
+    borderColor: colors.primaryLight,
+    borderStyle: 'dashed',
+    borderRadius: borderRadius.md,
+    paddingVertical: spacing.md,
+  },
+  uploadButtonText: {
+    fontSize: fontSize.sm,
+    color: colors.primary,
+    fontWeight: fontWeight.medium,
   },
   buttonDisabled: {
     opacity: 0.6,

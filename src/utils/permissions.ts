@@ -12,6 +12,10 @@ export function canDeleteScenario(role: UserRole): boolean {
   return role === 'admin';
 }
 
+export function canHardDeleteScenario(role: UserRole): boolean {
+  return role === 'admin';
+}
+
 export function canUploadImages(role: UserRole): boolean {
   return role === 'admin';
 }

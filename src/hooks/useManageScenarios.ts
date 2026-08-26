@@ -77,6 +77,40 @@ async function softDeleteScenario(id: string): Promise<void> {
   }
 }
 
+async function hardDeleteScenario(id: string): Promise<void> {
+  // Eliminar imágenes del storage primero
+  const { data: images } = await supabase
+    .from('scenario_images')
+    .select('storage_path')
+    .eq('scenario_id', id);
+
+  if (images && images.length > 0) {
+    await supabase.storage
+      .from('scenario-images')
+      .remove(images.map((img) => img.storage_path));
+  }
+
+  const { error } = await supabase
+    .from('scenarios')
+    .delete()
+    .eq('id', id);
+
+  if (error) {
+    throw new Error(error.message);
+  }
+}
+
+async function toggleScenarioStatus(id: string, newStatus: string): Promise<void> {
+  const { error } = await supabase
+    .from('scenarios')
+    .update({ estado: newStatus, updated_at: new Date().toISOString() })
+    .eq('id', id);
+
+  if (error) {
+    throw new Error(error.message);
+  }
+}
+
 // ─── Hooks ───────────────────────────────────────────────────────────────────
 
 export function useAllScenarios() {
@@ -104,6 +138,31 @@ export function useDeleteScenario() {
 
   return useMutation({
     mutationFn: softDeleteScenario,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['all-scenarios'] });
+      queryClient.invalidateQueries({ queryKey: ['scenarios'] });
+    },
+  });
+}
+
+export function useHardDeleteScenario() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: hardDeleteScenario,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['all-scenarios'] });
+      queryClient.invalidateQueries({ queryKey: ['scenarios'] });
+    },
+  });
+}
+
+export function useToggleScenarioStatus() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, status }: { id: string; status: string }) =>
+      toggleScenarioStatus(id, status),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['all-scenarios'] });
       queryClient.invalidateQueries({ queryKey: ['scenarios'] });
