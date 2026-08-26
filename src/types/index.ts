@@ -57,3 +57,15 @@ export interface ScenarioImage {
   display_order: number;
   created_at: string;
 }
+
+export interface ScenarioSector {
+  id: string;
+  scenario_id: string;
+  nombre: string;
+  svg_path: string;
+  foto_360_url: string | null;
+  color_hex: string;
+  display_order: number;
+  created_at?: string;
+}
+

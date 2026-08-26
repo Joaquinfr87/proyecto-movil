@@ -30,20 +30,20 @@ import { colors, spacing, borderRadius, fontSize, fontWeight } from '../../theme
 const scenarioSchema = z.object({
   nombre: z.string().min(1, 'El nombre es obligatorio').min(3, 'Mínimo 3 caracteres'),
   tipo: z.string().min(1, 'El tipo es obligatorio'),
-  descripcion: z.string().optional().default(''),
+  descripcion: z.string(),
   capacidad: z.string().min(1, 'La capacidad es obligatoria').refine(
     (val) => !isNaN(Number(val)) && Number(val) > 0,
     'Debe ser un número mayor a 0',
   ),
-  direccion: z.string().optional().default(''),
+  direccion: z.string(),
   latitud: z.string().refine(
     (val) => val === '' || (!isNaN(Number(val)) && Number(val) >= -90 && Number(val) <= 90),
     'Latitud inválida (-90 a 90)',
-  ).optional().default(''),
+  ),
   longitud: z.string().refine(
     (val) => val === '' || (!isNaN(Number(val)) && Number(val) >= -180 && Number(val) <= 180),
     'Longitud inválida (-180 a 180)',
-  ).optional().default(''),
+  ),
 });
 
 type ScenarioFormData = z.infer<typeof scenarioSchema>;

@@ -23,7 +23,7 @@ import {
   Camera,
   type CameraRef,
   Marker,
-} from '@maplibre/maplibre-react-native';
+} from '../../components/map/MapLibreView';
 
 const MAP_STYLE_URL = `https://api.maptiler.com/maps/streets-v2/style.json?key=${process.env.EXPO_PUBLIC_MAPTILER_API_KEY}`;
 

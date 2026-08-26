@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '../services/supabase';
-import type { Scenario, Event } from '../types';
+import type { Scenario, Event, ScenarioSector } from '../types';
 
 export interface ScenarioImage {
   url: string;
@@ -17,6 +17,7 @@ export interface ScenarioWithDetails extends Scenario {
   scenario_images: ScenarioImage[];
   scenario_sports: ScenarioSport[];
   events: Event[];
+  scenario_sectors?: ScenarioSector[];
 }
 
 // El seed guarda rutas relativas en la columna url (ej: 'scenario-images/{id}/image-1.jpg').
@@ -74,12 +75,31 @@ async function fetchScenarioById(id: string): Promise<ScenarioWithDetails | null
     .eq('id', id)
     .single();
 
-  if (error) {
-    if (error.code === 'PGRST116') return null;
-    throw new Error(error.message);
+  if (error || !data) {
+    if (error && error.code !== 'PGRST116') throw new Error(error.message);
+    return null;
   }
 
-  return resolveScenarioImages(data);
+  // Intentar cargar sectores si la tabla existe en Supabase
+  let scenario_sectors: ScenarioSector[] = [];
+  try {
+    const { data: sectorsData, error: sectorsError } = await supabase
+      .from('scenario_sectors')
+      .select('*')
+      .eq('scenario_id', id)
+      .order('display_order');
+    if (!sectorsError && sectorsData) {
+      scenario_sectors = sectorsData;
+    }
+  } catch {
+    // Silenciar si la tabla aún no existe en Supabase Cloud
+  }
+
+  const resolved = resolveScenarioImages(data as ScenarioWithDetails);
+  return {
+    ...resolved,
+    scenario_sectors,
+  };
 }
 
 export function useScenarios() {
