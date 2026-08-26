@@ -1,4 +1,6 @@
-import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { useState, useRef } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, NativeSyntheticEvent, NativeScrollEvent } from 'react-native';
+import { Image } from 'expo-image';
 import { Ionicons } from '@expo/vector-icons';
 import { colors, spacing, borderRadius, fontSize, fontWeight } from '../../theme';
 import type { Scenario } from '../../types';
@@ -10,8 +12,18 @@ export interface ScenarioCardProps {
 }
 
 export function ScenarioCard({ scenario, onPress }: ScenarioCardProps) {
-  const primaryImage = scenario.scenario_images?.find((img) => img.is_primary);
-  const imageUrl = primaryImage?.url ?? scenario.scenario_images?.[0]?.url ?? null;
+  const images = (scenario.scenario_images ?? [])
+    .filter((img) => img.url)
+    .sort((a, b) => a.display_order - b.display_order);
+  const hasMultipleImages = (images?.length ?? 0) > 1;
+
+  const [activeIndex, setActiveIndex] = useState(0);
+  const scrollRef = useRef<any>(null);
+
+  const handleScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+    const index = Math.round(e.nativeEvent.contentOffset.x / e.nativeEvent.layoutMeasurement.width);
+    setActiveIndex(index);
+  };
 
   return (
     <TouchableOpacity
@@ -19,10 +31,35 @@ export function ScenarioCard({ scenario, onPress }: ScenarioCardProps) {
       onPress={() => onPress(scenario.id)}
       activeOpacity={0.85}
     >
-      {/* Imagen */}
+      {/* Imagen / Carrusel */}
       <View style={styles.imageContainer}>
-        {imageUrl ? (
-          <Image source={{ uri: imageUrl }} style={styles.image} resizeMode="cover" />
+        {images && images.length > 0 ? (
+          <>
+            <Image
+              source={{ uri: images[activeIndex]?.url ?? images[0].url }}
+              style={styles.image}
+              contentFit="cover"
+              transition={200}
+            />
+
+            {hasMultipleImages && (
+              <View style={styles.imageCountBadge}>
+                <Ionicons name="images-outline" size={12} color={colors.white} />
+                <Text style={styles.imageCountText}>{images.length}</Text>
+              </View>
+            )}
+
+            {hasMultipleImages && (
+              <View style={styles.dotsContainer}>
+                {images.map((_, index) => (
+                  <View
+                    key={index}
+                    style={[styles.dot, index === activeIndex && styles.dotActive]}
+                  />
+                ))}
+              </View>
+            )}
+          </>
         ) : (
           <View style={styles.imagePlaceholder}>
             <Ionicons name="image-outline" size={40} color={colors.textSecondary} />
@@ -43,7 +80,7 @@ export function ScenarioCard({ scenario, onPress }: ScenarioCardProps) {
 
         <View style={styles.infoRow}>
           <Ionicons name="people-outline" size={14} color={colors.textSecondary} />
-          <Text style={styles.infoText}>{scenario.capacidad.toLocaleString()} personas</Text>
+          <Text style={styles.infoText}>{scenario.capacidad?.toLocaleString() ?? '—'} personas</Text>
         </View>
 
         <View style={styles.infoRow}>
@@ -100,6 +137,42 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surfaceVariant,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  imageCountBadge: {
+    position: 'absolute',
+    top: spacing.sm,
+    left: spacing.sm,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 3,
+    backgroundColor: 'rgba(0,0,0,0.55)',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: borderRadius.full,
+  },
+  imageCountText: {
+    color: colors.white,
+    fontSize: 11,
+    fontWeight: fontWeight.semibold,
+  },
+  dotsContainer: {
+    position: 'absolute',
+    bottom: spacing.sm,
+    flexDirection: 'row',
+    alignSelf: 'center',
+    gap: 4,
+  },
+  dot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: 'rgba(255,255,255,0.5)',
+  },
+  dotActive: {
+    backgroundColor: colors.white,
+    width: 8,
+    height: 8,
+    borderRadius: 4,
   },
   badge: {
     position: 'absolute',

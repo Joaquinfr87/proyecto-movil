@@ -27,12 +27,16 @@ export function resolveScenarioImages<T extends { scenario_images?: ScenarioImag
   return {
     ...row,
     scenario_images:
-      row.scenario_images?.map((img) => {
-        const url = /^https?:\/\//.test(img.url)
-          ? img.url
-          : supabase.storage.from('scenario-images').getPublicUrl(img.storage_path).data.publicUrl;
-        return { ...img, url };
-      }) ?? [],
+      (row.scenario_images ?? [])
+        .filter((img) => img.url || img.storage_path)
+        .map((img) => {
+          const url = /^https?:\/\//.test(img.url)
+            ? img.url
+            : supabase.storage
+                .from('scenario-images')
+                .getPublicUrl(img.storage_path).data.publicUrl;
+          return { ...img, url };
+        }),
   };
 }
 
@@ -53,7 +57,7 @@ async function fetchScenarios(): Promise<ScenarioWithDetails[]> {
     throw new Error(error.message);
   }
 
-  return data.map(resolveScenarioImages);
+  return (data ?? []).map(resolveScenarioImages);
 }
 
 async function fetchScenarioById(id: string): Promise<ScenarioWithDetails | null> {

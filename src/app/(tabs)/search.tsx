@@ -245,6 +245,10 @@ export default function SearchScreen() {
             tintColor={colors.primary}
           />
         }
+        removeClippedSubviews={false}
+        initialNumToRender={8}
+        maxToRenderPerBatch={8}
+        windowSize={11}
         showsVerticalScrollIndicator={false}
       />
     </View>

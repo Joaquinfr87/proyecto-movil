@@ -6,10 +6,10 @@ import {
   TouchableOpacity,
   RefreshControl,
   StyleSheet,
-  Image,
   Alert,
   Platform,
 } from 'react-native';
+import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../../context/AuthContext';
@@ -83,8 +83,11 @@ export default function ManageScreen() {
   }
 
   const renderItem = ({ item }: { item: ScenarioWithImages }) => {
-    const primaryImage = item.scenario_images?.find((img) => img.is_primary);
-    const imageUrl = primaryImage?.url ?? item.scenario_images?.[0]?.url ?? null;
+    const images = (item.scenario_images ?? [])
+      .filter((img) => img.url)
+      .sort((a, b) => a.display_order - b.display_order);
+    const primaryImage = images?.find((img) => img.is_primary);
+    const imageUrl = primaryImage?.url ?? images?.[0]?.url ?? null;
     const isActive = item.estado === 'activo';
 
     return (
@@ -92,10 +95,16 @@ export default function ManageScreen() {
         {/* Thumbnail */}
         <View style={styles.thumbnail}>
           {imageUrl ? (
-            <Image source={{ uri: imageUrl }} style={styles.thumbnailImage} resizeMode="cover" />
+            <Image source={{ uri: imageUrl }} style={styles.thumbnailImage} contentFit="cover" transition={200} />
           ) : (
             <View style={styles.thumbnailPlaceholder}>
               <Ionicons name="image-outline" size={24} color={colors.textSecondary} />
+            </View>
+          )}
+          {(images?.length ?? 0) > 1 && (
+            <View style={styles.imageCountBadge}>
+              <Ionicons name="images-outline" size={10} color={colors.white} />
+              <Text style={styles.imageCountText}>{images!.length}</Text>
             </View>
           )}
         </View>
@@ -262,6 +271,23 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surfaceVariant,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  imageCountBadge: {
+    position: 'absolute',
+    bottom: 2,
+    right: 2,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 2,
+    backgroundColor: 'rgba(0,0,0,0.55)',
+    paddingHorizontal: 4,
+    paddingVertical: 1,
+    borderRadius: borderRadius.full,
+  },
+  imageCountText: {
+    color: colors.white,
+    fontSize: 9,
+    fontWeight: fontWeight.semibold,
   },
   cardInfo: {
     flex: 1,

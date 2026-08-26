@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '../services/supabase';
 import type { Scenario } from '../types';
+import { resolveScenarioImages } from './useScenarios';
 
 // ─── Tipos ───────────────────────────────────────────────────────────────────
 
@@ -45,7 +46,7 @@ async function fetchAllScenarios(): Promise<ScenarioWithImages[]> {
     throw new Error(error.message);
   }
 
-  return data as ScenarioWithImages[];
+  return (data ?? []).map((row) => resolveScenarioImages(row as ScenarioWithImages));
 }
 
 async function upsertScenario(scenario: UpsertScenarioData): Promise<Scenario> {

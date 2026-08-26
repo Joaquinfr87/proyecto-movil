@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, memo, useMemo } from 'react';
 import {
   View,
   Text,
@@ -20,7 +20,107 @@ import { colors, spacing, borderRadius, fontSize, fontWeight } from '../../theme
 
 import { Map, Camera, Marker, Callout } from '@maplibre/maplibre-react-native';
 
-// Region inicial: centro de Bolivia
+const ScenarioMarker = memo(function ScenarioMarker({
+  scenario,
+  onPress,
+}: {
+  scenario: Scenario;
+  onPress: (id: string) => void;
+}) {
+  return (
+    <Marker
+      coordinate={[scenario.longitud, scenario.latitud]}
+      key={scenario.id}
+    >
+      <View style={{ alignItems: 'center' }}>
+        <View
+          style={{
+            width: 24,
+            height: 24,
+            borderRadius: 12,
+            backgroundColor: colors.primary,
+            borderWidth: 2,
+            borderColor: colors.white,
+          }}
+        />
+      </View>
+      <Callout>
+        <TouchableOpacity onPress={() => onPress(scenario.id)}>
+          <Text style={{ fontWeight: '600' }}>{scenario.nombre}</Text>
+          <Text style={{ fontSize: 12 }}>{scenario.tipo}</Text>
+        </TouchableOpacity>
+      </Callout>
+    </Marker>
+  );
+});
+
+const ScenarioMap = memo(function ScenarioMap({
+  scenarios,
+  cameraCenter,
+  cameraZoom,
+  userLocation,
+  onPressScenario,
+}: {
+  scenarios: Scenario[];
+  cameraCenter: [number, number];
+  cameraZoom: number;
+  userLocation: Location.LocationObject | null;
+  onPressScenario: (id: string) => void;
+}) {
+  const initialViewState = useMemo(
+    () => ({
+      centerCoordinate: cameraCenter,
+      zoomLevel: cameraZoom,
+    }),
+    [cameraCenter[0], cameraCenter[1], cameraZoom],
+  );
+
+  return (
+    <View style={styles.container}>
+      <Map
+        style={styles.map}
+        mapStyle="https://demotiles.maplibre.org/style.json"
+        logo={false}
+      >
+        <Camera initialViewState={initialViewState} />
+
+        {scenarios.map((scenario) => (
+          <ScenarioMarker
+            key={scenario.id}
+            scenario={scenario}
+            onPress={onPressScenario}
+          />
+        ))}
+
+        {userLocation && (
+          <Marker
+            coordinate={[
+              userLocation.coords.longitude,
+              userLocation.coords.latitude,
+            ]}
+          >
+            <View
+              style={{
+                width: 16,
+                height: 16,
+                borderRadius: 8,
+                backgroundColor: colors.secondary,
+                borderWidth: 2,
+                borderColor: colors.white,
+              }}
+            />
+          </Marker>
+        )}
+      </Map>
+
+      <View style={styles.infoBar}>
+        <Text style={styles.infoText}>
+          {scenarios.length} escenarios encontrados
+        </Text>
+      </View>
+    </View>
+  );
+});
 const BOLIVIA_CENTER = {
   latitude: -17.0,
   longitude: -65.0,
@@ -198,77 +298,15 @@ export default function MapScreen() {
 
   // --- Native: Mapa real ---
   return (
-    <View style={styles.container}>
-      <Map
-        style={styles.map}
-        mapStyle="https://demotiles.maplibre.org/style.json"
-        logo={false}
-      >
-        <Camera
-          initialViewState={{
-            centerCoordinate: cameraState.centerCoordinate,
-            zoomLevel: cameraState.zoomLevel,
-          }}
-        />
-
-        {/* Marcadores de escenarios */}
-        {scenarios?.map((scenario) => (
-          <Marker
-            key={scenario.id}
-            coordinate={[scenario.longitud, scenario.latitud]}
-          >
-            <View style={{ alignItems: 'center' }}>
-              <View
-                style={{
-                  width: 24,
-                  height: 24,
-                  borderRadius: 12,
-                  backgroundColor: colors.primary,
-                  borderWidth: 2,
-                  borderColor: colors.white,
-                }}
-              />
-            </View>
-            <Callout>
-              <TouchableOpacity onPress={() => router.push(`/scenario/${scenario.id}`)}>
-                <Text style={{ fontWeight: '600' }}>{scenario.nombre}</Text>
-                <Text style={{ fontSize: 12 }}>{scenario.tipo}</Text>
-              </TouchableOpacity>
-            </Callout>
-          </Marker>
-        ))}
-
-        {/* T-024: Marcador de ubicacion del usuario */}
-        {userLocation && (
-          <Marker
-            coordinate={[
-              userLocation.coords.longitude,
-              userLocation.coords.latitude,
-            ]}
-          >
-            <View
-              style={{
-                width: 16,
-                height: 16,
-                borderRadius: 8,
-                backgroundColor: colors.secondary,
-                borderWidth: 2,
-                borderColor: colors.white,
-              }}
-            />
-          </Marker>
-        )}
-      </Map>
-
-      {/* T-045: Overlay Próximos Eventos */}
+    <View style={{ flex: 1 }}>
+      <ScenarioMap
+        scenarios={scenarios!}
+        cameraCenter={cameraState.centerCoordinate}
+        cameraZoom={cameraState.zoomLevel}
+        userLocation={userLocation}
+        onPressScenario={(id) => router.push(`/scenario/${id}`)}
+      />
       {renderUpcomingEventsSection()}
-
-      {/* Indicador de cantidad de escenarios */}
-      <View style={styles.infoBar}>
-        <Text style={styles.infoText}>
-          {scenarios?.length ?? 0} escenarios encontrados
-        </Text>
-      </View>
     </View>
   );
 }

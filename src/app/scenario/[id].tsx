@@ -1,9 +1,8 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import {
   View,
   Text,
   ScrollView,
-  Image,
   TouchableOpacity,
   StyleSheet,
   Dimensions,
@@ -12,7 +11,10 @@ import {
   Modal,
   TextInput,
   Platform,
+  NativeSyntheticEvent,
+  NativeScrollEvent,
 } from 'react-native';
+import { Image } from 'expo-image';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useQueryClient } from '@tanstack/react-query';
@@ -30,7 +32,8 @@ const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const IMAGE_HEIGHT = 260;
 
 export default function ScenarioDetailScreen() {
-  const { id } = useLocalSearchParams<{ id: string }>();
+  const rawId = useLocalSearchParams<{ id: string }>().id;
+  const id = Array.isArray(rawId) ? rawId[0] : rawId;
   const router = useRouter();
   const { user } = useAuth();
 
@@ -43,6 +46,19 @@ export default function ScenarioDetailScreen() {
   const { mutateAsync: deleteEvent, isPending: isDeletingEvent } = useDeleteEvent(id ?? '');
 
   const [imageError, setImageError] = useState(false);
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const imageScrollRef = useRef<ScrollView>(null);
+
+  const sortedImages = (scenario?.scenario_images ?? [])
+    .filter((img) => img.url)
+    .sort((a, b) => a.display_order - b.display_order);
+
+  const hasMultipleImages = (sortedImages?.length ?? 0) > 1;
+
+  const handleImageScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+    const index = Math.round(e.nativeEvent.contentOffset.x / e.nativeEvent.layoutMeasurement.width);
+    setActiveImageIndex(index);
+  };
 
   // Modal para crear evento
   const [modalVisible, setModalVisible] = useState(false);
@@ -56,9 +72,9 @@ export default function ScenarioDetailScreen() {
   const role = getRole(user);
   const canManage = canManageContent(role);
 
-  const primaryImage = scenario?.scenario_images?.find((img) => img.is_primary);
+  const primaryImage = sortedImages?.find((img) => img.is_primary);
   const imageUrl = !imageError
-    ? (primaryImage?.url ?? scenario?.scenario_images?.[0]?.url ?? null)
+    ? (primaryImage?.url ?? sortedImages?.[0]?.url ?? null)
     : null;
 
   const handleToggleFavorite = async () => {
@@ -156,15 +172,50 @@ export default function ScenarioDetailScreen() {
   return (
     <View style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false} bounces>
-        {/* Imagen principal */}
+        {/* Imagen principal / Carrusel */}
         <View style={styles.imageContainer}>
-          {imageUrl ? (
-            <Image
-              source={{ uri: imageUrl }}
-              style={styles.image}
-              resizeMode="cover"
-              onError={() => setImageError(true)}
-            />
+          {sortedImages && sortedImages.length > 0 ? (
+            <>
+              <ScrollView
+                ref={imageScrollRef}
+                horizontal
+                pagingEnabled
+                showsHorizontalScrollIndicator={false}
+                onMomentumScrollEnd={handleImageScroll}
+                scrollEventThrottle={16}
+              >
+                {sortedImages.map((img, index) => (
+                  <View key={img.storage_path ?? index} style={{ width: SCREEN_WIDTH, height: IMAGE_HEIGHT }}>
+                    <Image
+                      source={{ uri: img.url }}
+                      style={styles.image}
+                      contentFit="cover"
+                      transition={200}
+                    />
+                  </View>
+                ))}
+              </ScrollView>
+
+              {hasMultipleImages && (
+                <View style={styles.detailDotsContainer}>
+                  {sortedImages.map((_, index) => (
+                    <View
+                      key={index}
+                      style={[styles.detailDot, index === activeImageIndex && styles.detailDotActive]}
+                    />
+                  ))}
+                </View>
+              )}
+
+              {hasMultipleImages && (
+                <View style={styles.imageCounterBadge}>
+                  <Ionicons name="images-outline" size={12} color={colors.white} />
+                  <Text style={styles.imageCounterText}>
+                    {activeImageIndex + 1}/{sortedImages.length}
+                  </Text>
+                </View>
+              )}
+            </>
           ) : (
             <View style={styles.imagePlaceholder}>
               <Ionicons name="image-outline" size={64} color={colors.textSecondary} />
@@ -468,6 +519,42 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surfaceVariant,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  detailDotsContainer: {
+    position: 'absolute',
+    bottom: spacing.md,
+    alignSelf: 'center',
+    flexDirection: 'row',
+    gap: 6,
+  },
+  detailDot: {
+    width: 7,
+    height: 7,
+    borderRadius: 4,
+    backgroundColor: 'rgba(255,255,255,0.45)',
+  },
+  detailDotActive: {
+    backgroundColor: colors.white,
+    width: 9,
+    height: 9,
+    borderRadius: 5,
+  },
+  imageCounterBadge: {
+    position: 'absolute',
+    bottom: spacing.md,
+    right: spacing.md,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: 'rgba(0,0,0,0.55)',
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: borderRadius.full,
+  },
+  imageCounterText: {
+    color: colors.white,
+    fontSize: 12,
+    fontWeight: fontWeight.semibold,
   },
   backButton: {
     position: 'absolute',
