@@ -1,4 +1,4 @@
-import React, { useEffect, useState, memo, useMemo } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -18,109 +18,16 @@ import { useUpcomingEvents } from '../../hooks/useEvents';
 import { Scenario } from '../../types';
 import { colors, spacing, borderRadius, fontSize, fontWeight } from '../../theme';
 
-import { Map, Camera, Marker, Callout } from '@maplibre/maplibre-react-native';
+import {
+  Map,
+  Camera,
+  type CameraRef,
+  Marker,
+} from '@maplibre/maplibre-react-native';
 
-const ScenarioMarker = memo(function ScenarioMarker({
-  scenario,
-  onPress,
-}: {
-  scenario: Scenario;
-  onPress: (id: string) => void;
-}) {
-  return (
-    <Marker
-      coordinate={[scenario.longitud, scenario.latitud]}
-      key={scenario.id}
-    >
-      <View style={{ alignItems: 'center' }}>
-        <View
-          style={{
-            width: 24,
-            height: 24,
-            borderRadius: 12,
-            backgroundColor: colors.primary,
-            borderWidth: 2,
-            borderColor: colors.white,
-          }}
-        />
-      </View>
-      <Callout>
-        <TouchableOpacity onPress={() => onPress(scenario.id)}>
-          <Text style={{ fontWeight: '600' }}>{scenario.nombre}</Text>
-          <Text style={{ fontSize: 12 }}>{scenario.tipo}</Text>
-        </TouchableOpacity>
-      </Callout>
-    </Marker>
-  );
-});
+const MAP_STYLE_URL = `https://api.maptiler.com/maps/streets-v2/style.json?key=${process.env.EXPO_PUBLIC_MAPTILER_API_KEY}`;
 
-const ScenarioMap = memo(function ScenarioMap({
-  scenarios,
-  cameraCenter,
-  cameraZoom,
-  userLocation,
-  onPressScenario,
-}: {
-  scenarios: Scenario[];
-  cameraCenter: [number, number];
-  cameraZoom: number;
-  userLocation: Location.LocationObject | null;
-  onPressScenario: (id: string) => void;
-}) {
-  const initialViewState = useMemo(
-    () => ({
-      centerCoordinate: cameraCenter,
-      zoomLevel: cameraZoom,
-    }),
-    [cameraCenter[0], cameraCenter[1], cameraZoom],
-  );
 
-  return (
-    <View style={styles.container}>
-      <Map
-        style={styles.map}
-        mapStyle="https://demotiles.maplibre.org/style.json"
-        logo={false}
-      >
-        <Camera initialViewState={initialViewState} />
-
-        {scenarios.map((scenario) => (
-          <ScenarioMarker
-            key={scenario.id}
-            scenario={scenario}
-            onPress={onPressScenario}
-          />
-        ))}
-
-        {userLocation && (
-          <Marker
-            coordinate={[
-              userLocation.coords.longitude,
-              userLocation.coords.latitude,
-            ]}
-          >
-            <View
-              style={{
-                width: 16,
-                height: 16,
-                borderRadius: 8,
-                backgroundColor: colors.secondary,
-                borderWidth: 2,
-                borderColor: colors.white,
-              }}
-            />
-          </Marker>
-        )}
-      </Map>
-
-      <View style={styles.infoBar}>
-        <Text style={styles.infoText}>
-          {scenarios.length} escenarios encontrados
-        </Text>
-      </View>
-    </View>
-  );
-});
 const BOLIVIA_CENTER = {
   latitude: -17.0,
   longitude: -65.0,
@@ -130,13 +37,12 @@ const BOLIVIA_CENTER = {
 
 export default function MapScreen() {
   const router = useRouter();
+  const cameraRef = useRef<CameraRef>(null);
   const [userLocation, setUserLocation] =
     useState<Location.LocationObject | null>(null);
-  const [cameraState, setCameraState] = useState({
-    centerCoordinate: [BOLIVIA_CENTER.longitude, BOLIVIA_CENTER.latitude] as [number, number],
-    zoomLevel: 5,
-  });
   const [locationLoading, setLocationLoading] = useState(true);
+  const [locationRequesting, setLocationRequesting] = useState(false);
+  const [selectedScenario, setSelectedScenario] = useState<Scenario | null>(null);
 
   // T-023: Cargar escenarios desde Supabase
   const {
@@ -182,15 +88,6 @@ export default function MapScreen() {
         });
 
         setUserLocation(location);
-
-        // Centrar mapa en la ubicacion del usuario
-        setCameraState({
-          centerCoordinate: [
-            location.coords.longitude,
-            location.coords.latitude,
-          ],
-          zoomLevel: 14,
-        });
       } catch {
         // Si falla la ubicacion, usar region por defecto (Bolivia)
       } finally {
@@ -199,17 +96,72 @@ export default function MapScreen() {
     })();
   }, []);
 
-  // Estado de carga
-  if (isLoading || locationLoading) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={colors.primary} />
-        <Text style={styles.loadingText}>Cargando mapa...</Text>
-      </View>
-    );
-  }
+  // Centrar mapa en la ubicacion del usuario cuando se obtiene
+  useEffect(() => {
+    if (userLocation && cameraRef.current) {
+      cameraRef.current.flyTo({
+        center: [
+          userLocation.coords.longitude,
+          userLocation.coords.latitude,
+        ],
+        zoom: 14,
+        duration: 1500,
+      });
+    }
+  }, [userLocation, locationLoading]);
 
-  // Estado de error
+  // Si no hay ubicacion pero hay escenarios, ajustar camara a todos los marcadores
+  useEffect(() => {
+    if (!userLocation && !locationLoading && scenarios && scenarios.length > 0 && cameraRef.current) {
+      const lons = scenarios.map((s) => s.longitud);
+      const lats = scenarios.map((s) => s.latitud);
+      const bounds: [[number, number], [number, number]] = [
+        [Math.min(...lons), Math.min(...lats)],
+        [Math.max(...lons), Math.max(...lats)],
+      ];
+      cameraRef.current.fitBounds(bounds, [60, 60, 60, 60], 1000);
+    }
+  }, [locationLoading, scenarios]);
+
+  // Funcion para centrar mapa en ubicacion del usuario (boton)
+  const requestAndCenterLocation = async () => {
+    if (locationRequesting) return;
+    setLocationRequesting(true);
+    try {
+      const { status } =
+        await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') return;
+
+      const location = await Location.getCurrentPositionAsync({
+        accuracy: Location.Accuracy.Balanced,
+      });
+      setUserLocation(location);
+      if (cameraRef.current) {
+        cameraRef.current.flyTo({
+          center: [location.coords.longitude, location.coords.latitude],
+          zoom: 14,
+          duration: 1500,
+        });
+      }
+    } catch {
+      // Silenciar error
+    } finally {
+      setLocationRequesting(false);
+    }
+  };
+
+  // Centrar camara en escenario seleccionado
+  useEffect(() => {
+    if (selectedScenario && cameraRef.current) {
+      cameraRef.current.flyTo({
+        center: [selectedScenario.longitud, selectedScenario.latitud],
+        zoom: 15,
+        duration: 800,
+      });
+    }
+  }, [selectedScenario]);
+
+  // Solo bloquear si la query de escenarios fallo
   if (error) {
     return (
       <View style={styles.loadingContainer}>
@@ -298,15 +250,119 @@ export default function MapScreen() {
 
   // --- Native: Mapa real ---
   return (
-    <View style={{ flex: 1 }}>
-      <ScenarioMap
-        scenarios={scenarios!}
-        cameraCenter={cameraState.centerCoordinate}
-        cameraZoom={cameraState.zoomLevel}
-        userLocation={userLocation}
-        onPressScenario={(id) => router.push(`/scenario/${id}`)}
-      />
+    <View style={styles.container}>
+      <Map
+        style={styles.map}
+        mapStyle={MAP_STYLE_URL}
+        compass
+        compassPosition={{ top: 120, right: spacing.md }}
+      >
+        <Camera
+          ref={cameraRef}
+          initialViewState={{
+            centerCoordinate: [
+              BOLIVIA_CENTER.longitude,
+              BOLIVIA_CENTER.latitude,
+            ],
+            zoomLevel: 5,
+          }}
+        />
+
+        {/* Marcadores de escenarios */}
+        {scenarios?.map((scenario) => (
+          <Marker
+            key={scenario.id}
+            id={scenario.id}
+            lngLat={[scenario.longitud, scenario.latitud]}
+            onPress={() => setSelectedScenario(scenario)}
+          >
+            <View style={styles.markerWrapper}>
+              <View style={styles.markerPin}>
+                <Ionicons name="location" size={18} color={colors.white} />
+              </View>
+              <View style={styles.markerArrow} />
+            </View>
+          </Marker>
+        ))}
+
+        {/* T-024: Marcador de ubicacion del usuario */}
+        {userLocation && (
+          <Marker
+            lngLat={[
+              userLocation.coords.longitude,
+              userLocation.coords.latitude,
+            ]}
+          >
+            <View style={styles.userMarker}>
+              <View style={styles.userMarkerInner} />
+            </View>
+          </Marker>
+        )}
+      </Map>
+
+      {/* Card de escenario seleccionado */}
+      {selectedScenario && (
+        <TouchableOpacity
+          style={styles.scenarioCard}
+          activeOpacity={0.95}
+          onPress={() => router.push(`/scenario/${selectedScenario.id}`)}
+        >
+          <View style={styles.scenarioCardContent}>
+            <View style={styles.scenarioCardInfo}>
+              <Text style={styles.scenarioCardTitle}>
+                {selectedScenario.nombre}
+              </Text>
+              <Text style={styles.scenarioCardType}>
+                {selectedScenario.tipo}
+              </Text>
+            </View>
+            <View style={styles.scenarioCardButton}>
+              <Text style={styles.scenarioCardButtonText}>Ir</Text>
+              <Ionicons name="arrow-forward" size={16} color={colors.white} />
+            </View>
+          </View>
+          <TouchableOpacity
+            style={styles.scenarioCardClose}
+            onPress={() => setSelectedScenario(null)}
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+          >
+            <Ionicons name="close" size={16} color={colors.textSecondary} />
+          </TouchableOpacity>
+        </TouchableOpacity>
+      )}
+
+      {/* Boton de ubicacion estilo Google Maps */}
+      <TouchableOpacity
+        style={styles.locationButton}
+        onPress={requestAndCenterLocation}
+        activeOpacity={0.8}
+      >
+        {locationRequesting ? (
+          <ActivityIndicator size="small" color={colors.primary} />
+        ) : (
+          <Ionicons name="locate" size={22} color={colors.primary} />
+        )}
+      </TouchableOpacity>
+
+      {/* T-045: Overlay Próximos Eventos */}
       {renderUpcomingEventsSection()}
+
+      {/* Indicador de cantidad de escenarios */}
+      <View style={styles.infoBar}>
+        <Text style={styles.infoText}>
+          {scenarios?.length ?? 0} escenarios encontrados
+        </Text>
+      </View>
+
+      {/* Overlay de carga (ubicacion o escenarios) */}
+      {(isLoading || locationLoading) && (
+        <View style={styles.loadingOverlay}>
+          <ActivityIndicator size="large" color={colors.primary} />
+          <Text style={styles.loadingOverlayText}>
+            {locationLoading ? 'Obteniendo ubicación...' : 'Cargando mapa...'}
+          </Text>
+        </View>
+      )}
     </View>
   );
 }
@@ -318,6 +374,51 @@ const styles = StyleSheet.create({
   map: {
     flex: 1,
   },
+  markerWrapper: {
+    alignItems: 'center',
+  },
+  markerPin: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: colors.primary,
+    borderWidth: 2,
+    borderColor: colors.white,
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 4,
+    shadowColor: colors.black,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+  },
+  markerArrow: {
+    width: 0,
+    height: 0,
+    borderLeftWidth: 6,
+    borderRightWidth: 6,
+    borderTopWidth: 8,
+    borderLeftColor: 'transparent',
+    borderRightColor: 'transparent',
+    borderTopColor: colors.primary,
+    marginTop: -2,
+  },
+  userMarker: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: 'rgba(33, 150, 243, 0.3)',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  userMarkerInner: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    backgroundColor: '#2196F3',
+    borderWidth: 2,
+    borderColor: colors.white,
+  },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -325,6 +426,22 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background,
   },
   loadingText: {
+    marginTop: spacing.md,
+    fontSize: fontSize.md,
+    color: colors.textSecondary,
+  },
+  loadingOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(255, 255, 255, 0.85)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 999,
+  },
+  loadingOverlayText: {
     marginTop: spacing.md,
     fontSize: fontSize.md,
     color: colors.textSecondary,
@@ -429,6 +546,76 @@ const styles = StyleSheet.create({
     fontSize: fontSize.sm,
     fontWeight: fontWeight.medium,
     color: colors.text,
+  },
+  locationButton: {
+    position: 'absolute',
+    bottom: 96,
+    right: spacing.md,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: colors.surface,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: colors.black,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 6,
+    elevation: 4,
+  },
+  scenarioCard: {
+    position: 'absolute',
+    bottom: 80,
+    left: spacing.md,
+    right: 68,
+    backgroundColor: colors.surface,
+    borderRadius: borderRadius.lg,
+    padding: spacing.md,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    shadowColor: colors.black,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 6,
+  },
+  scenarioCardContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+    gap: spacing.md,
+  },
+  scenarioCardInfo: {
+    flex: 1,
+  },
+  scenarioCardTitle: {
+    fontSize: fontSize.md,
+    fontWeight: fontWeight.semibold,
+    color: colors.text,
+  },
+  scenarioCardType: {
+    fontSize: fontSize.sm,
+    color: colors.textSecondary,
+    marginTop: 2,
+  },
+  scenarioCardButton: {
+    backgroundColor: colors.primary,
+    borderRadius: borderRadius.md,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
+  },
+  scenarioCardButtonText: {
+    color: colors.white,
+    fontWeight: fontWeight.semibold,
+    fontSize: fontSize.sm,
+  },
+  scenarioCardClose: {
+    marginLeft: spacing.sm,
+    padding: spacing.xs,
   },
   // Web fallback styles
   webContainer: {
