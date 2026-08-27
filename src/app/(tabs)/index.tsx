@@ -228,17 +228,57 @@ export default function MapScreen() {
           scenarios={scenarios ?? []}
           apiKey={mapTilerKey}
           onScenarioSelect={(scenario) => router.push(`/scenario/${scenario.id}`)}
+          onMarkerClick={(scenario) => setSelectedScenario(scenario)}
         />
 
-        {/* Seccion Próximos Eventos en Web */}
+        {/* Card flotante de escenario seleccionado (idéntico a Android) */}
+        {selectedScenario && (
+          <TouchableOpacity
+            style={styles.scenarioCard}
+            activeOpacity={0.95}
+            onPress={() => router.push(`/scenario/${selectedScenario.id}`)}
+          >
+            <View style={styles.scenarioCardContent}>
+              <View style={styles.scenarioCardInfo}>
+                <Text style={styles.scenarioCardTitle}>
+                  {selectedScenario.nombre}
+                </Text>
+                <Text style={styles.scenarioCardType}>
+                  {selectedScenario.tipo}
+                </Text>
+              </View>
+              <View style={styles.scenarioCardButton}>
+                <Text style={styles.scenarioCardButtonText}>Ir</Text>
+                <Ionicons name="arrow-forward" size={16} color={colors.white} />
+              </View>
+            </View>
+            <TouchableOpacity
+              style={styles.scenarioCardClose}
+              onPress={() => setSelectedScenario(null)}
+              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+            >
+              <Ionicons name="close" size={16} color={colors.textSecondary} />
+            </TouchableOpacity>
+          </TouchableOpacity>
+        )}
+
+        {/* Seccion Próximos Eventos */}
         {renderUpcomingEventsSection()}
 
-        {/* Barra informativa inferior */}
+        {/* Indicador de cantidad de escenarios */}
         <View style={styles.infoBar}>
           <Text style={styles.infoText}>
-            {scenarios?.length ?? 0} escenarios encontrados en Bolivia
+            {scenarios?.length ?? 0} escenarios encontrados
           </Text>
         </View>
+
+        {/* Overlay de carga */}
+        {isLoading && (
+          <View style={styles.loadingOverlay}>
+            <ActivityIndicator size="large" color={colors.primary} />
+            <Text style={styles.loadingOverlayText}>Cargando mapa...</Text>
+          </View>
+        )}
       </View>
     );
   }
