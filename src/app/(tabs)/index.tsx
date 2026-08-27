@@ -24,6 +24,7 @@ import {
   type CameraRef,
   Marker,
 } from '../../components/map/MapLibreView';
+import { WebMapLibre } from '../../components/map/WebMapLibre';
 
 const MAP_STYLE_URL = `https://api.maptiler.com/maps/streets-v2/style.json?key=${process.env.EXPO_PUBLIC_MAPTILER_API_KEY}`;
 
@@ -217,33 +218,27 @@ export default function MapScreen() {
     );
   };
 
-  // --- Web fallback: lista de escenarios ---
+  // --- Web: Mapa interactivo MapTiler con MapLibre GL ---
   if (Platform.OS === 'web') {
+    const mapTilerKey = process.env.EXPO_PUBLIC_MAPTILER_API_KEY || '8flXCTBAstP9upY4EPP0';
+
     return (
-      <View style={styles.webContainer}>
-        <Text style={styles.webTitle}>Escenarios deportivos</Text>
-        <Text style={styles.webSubtitle}>
-          {scenarios?.length ?? 0} escenarios encontrados
-        </Text>
+      <View style={styles.container}>
+        <WebMapLibre
+          scenarios={scenarios ?? []}
+          apiKey={mapTilerKey}
+          onScenarioSelect={(scenario) => router.push(`/scenario/${scenario.id}`)}
+        />
 
         {/* Seccion Próximos Eventos en Web */}
         {renderUpcomingEventsSection()}
 
-        <FlatList
-          data={scenarios}
-          keyExtractor={(item) => item.id}
-          contentContainerStyle={styles.webList}
-          renderItem={({ item }) => (
-            <TouchableOpacity
-              style={styles.webCard}
-              onPress={() => router.push(`/scenario/${item.id}`)}
-            >
-              <Text style={styles.webCardTitle}>{item.nombre}</Text>
-              <Text style={styles.webCardType}>{item.tipo}</Text>
-              <Text style={styles.webCardDir}>{item.direccion}</Text>
-            </TouchableOpacity>
-          )}
-        />
+        {/* Barra informativa inferior */}
+        <View style={styles.infoBar}>
+          <Text style={styles.infoText}>
+            {scenarios?.length ?? 0} escenarios encontrados en Bolivia
+          </Text>
+        </View>
       </View>
     );
   }

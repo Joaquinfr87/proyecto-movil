@@ -827,3 +827,52 @@ UPDATE public.scenarios SET horario = 'Lun-Dom 06:00-22:00' WHERE id = 'e0eebc99
 UPDATE public.scenarios SET horario = 'Lun-Vie 07:00-22:00, Sab-Dom 08:00-20:00' WHERE id = 'e0eebc99-9c0b-4ef8-bb6d-6bb9bd380e18';
 UPDATE public.scenarios SET horario = 'Lun-Dom 07:00-21:00' WHERE id = 'e0eebc99-9c0b-4ef8-bb6d-6bb9bd380e19';
 UPDATE public.scenarios SET horario = 'Lun-Vie 08:00-20:00, Sab-Dom 09:00-18:00' WHERE id = 'e0eebc99-9c0b-4ef8-bb6d-6bb9bd380e20';
+
+-- ============================================================
+-- SECTORES INTERACTIVOS Y FOTOS 360° (T-057, T-063)
+-- ============================================================
+
+INSERT INTO public.scenario_sectors (scenario_id, nombre, svg_path, foto_360_url, color_hex, display_order)
+VALUES
+  (
+    'e0eebc99-9c0b-4ef8-bb6d-6bb9bd380e01',
+    'Cancha Central',
+    'M 300 200 L 500 200 L 500 400 L 300 400 Z',
+    'https://pannellum.org/images/alma.jpg',
+    '#22c55e',
+    1
+  ),
+  (
+    'e0eebc99-9c0b-4ef8-bb6d-6bb9bd380e01',
+    'Curva Norte',
+    'M 260 80 Q 400 30 540 80 L 510 180 Q 400 140 290 180 Z',
+    'https://pannellum.org/images/cerro-toco-0.jpg',
+    '#3b82f6',
+    2
+  ),
+  (
+    'e0eebc99-9c0b-4ef8-bb6d-6bb9bd380e01',
+    'Curva Sur',
+    'M 290 420 Q 400 460 510 420 L 540 520 Q 400 570 260 520 Z',
+    'https://pannellum.org/images/bma-0.jpg',
+    '#ef4444',
+    3
+  ),
+  (
+    'e0eebc99-9c0b-4ef8-bb6d-6bb9bd380e01',
+    'Tribuna Preferencia',
+    'M 120 120 L 260 190 L 260 410 L 120 480 Z',
+    'https://pannellum.org/images/jfk.jpg',
+    '#f59e0b',
+    4
+  ),
+  (
+    'e0eebc99-9c0b-4ef8-bb6d-6bb9bd380e01',
+    'Tribuna General',
+    'M 540 190 L 680 120 L 680 480 L 540 410 Z',
+    'https://pannellum.org/images/milan.jpg',
+    '#8b5cf6',
+    5
+  )
+ON CONFLICT DO NOTHING;
+
