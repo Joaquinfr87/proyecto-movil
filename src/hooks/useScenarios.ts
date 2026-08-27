@@ -3,6 +3,7 @@ import { supabase } from '../services/supabase';
 import type { Scenario, Event, ScenarioSector } from '../types';
 
 export interface ScenarioImage {
+  id?: string;
   url: string;
   is_primary: boolean;
   storage_path: string;
@@ -47,7 +48,7 @@ async function fetchScenarios(): Promise<ScenarioWithDetails[]> {
     .select(
       `
       *,
-      scenario_images(url, is_primary, storage_path, display_order),
+      scenario_images(id, url, is_primary, storage_path, display_order),
       scenario_sports(sports(id, nombre))
     `,
     )
@@ -67,7 +68,7 @@ async function fetchScenarioById(id: string): Promise<ScenarioWithDetails | null
     .select(
       `
       *,
-      scenario_images(url, is_primary, storage_path, display_order),
+      scenario_images(id, url, is_primary, storage_path, display_order),
       scenario_sports(sports(id, nombre)),
       events(*)
     `,

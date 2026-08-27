@@ -228,15 +228,16 @@ export default function ScenarioFormScreen() {
     if (!imageId && !storagePath) return;
 
     const performDelete = async () => {
-      if (imageId && storagePath) {
-        await deleteScenarioImage(imageId, storagePath);
-      }
+      await deleteScenarioImage(storagePath, imageId);
       setCurrentImages((prev) =>
-        prev.filter((img) => (imageId ? img.id !== imageId : img.storage_path !== storagePath)),
+        prev.filter((img) => (storagePath ? img.storage_path !== storagePath : img.id !== imageId)),
       );
-      if (id) {
-        queryClient.invalidateQueries({ queryKey: ['scenario', id] });
-        queryClient.invalidateQueries({ queryKey: ['scenarios'] });
+      if (id && id !== 'new') {
+        await Promise.all([
+          queryClient.invalidateQueries({ queryKey: ['scenario', id] }),
+          queryClient.invalidateQueries({ queryKey: ['scenarios'] }),
+          queryClient.invalidateQueries({ queryKey: ['all-scenarios'] }),
+        ]);
       }
     };
 

@@ -13,7 +13,7 @@ export interface UseUploadImageReturn {
   pickImage: () => Promise<string | null>;
   uploadImageUri: (scenarioId: string, fileUri: string) => Promise<UploadResult | null>;
   uploadImage: (scenarioId: string) => Promise<UploadResult | null>;
-  deleteScenarioImage: (imageId: string, storagePath: string) => Promise<boolean>;
+  deleteScenarioImage: (storagePath?: string, imageId?: string) => Promise<boolean>;
   isUploading: boolean;
   error: string | null;
 }
@@ -142,17 +142,24 @@ export function useUploadImage(): UseUploadImageReturn {
   };
 
   const deleteScenarioImage = async (
-    imageId: string,
-    storagePath: string,
+    storagePath?: string,
+    imageId?: string,
   ): Promise<boolean> => {
     try {
       if (storagePath) {
         await supabase.storage.from('scenario-images').remove([storagePath]);
       }
-      const { error: delError } = await supabase
-        .from('scenario_images')
-        .delete()
-        .eq('id', imageId);
+
+      let query = supabase.from('scenario_images').delete();
+      if (imageId) {
+        query = query.eq('id', imageId);
+      } else if (storagePath) {
+        query = query.eq('storage_path', storagePath);
+      } else {
+        return false;
+      }
+
+      const { error: delError } = await query;
 
       if (delError) {
         setError(delError.message);
