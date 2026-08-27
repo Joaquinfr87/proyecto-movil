@@ -11,6 +11,15 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { colors, fontSize, fontWeight, spacing } from '../../theme';
 
+let NativeWebView: any = null;
+if (Platform.OS !== 'web') {
+  try {
+    NativeWebView = require('react-native-webview').WebView;
+  } catch (e) {
+    console.warn('react-native-webview not loaded:', e);
+  }
+}
+
 interface Visor360ModalProps {
   visible: boolean;
   onClose: () => void;
@@ -115,7 +124,7 @@ export function Visor360Modal({
           </TouchableOpacity>
         </View>
 
-        {/* Visor 360 (Web / Iframe) */}
+        {/* Visor 360: iframe en Web, WebView nativo en Android/iOS */}
         <View style={styles.viewerContainer}>
           {Platform.OS === 'web' ? (
             <iframe
@@ -128,18 +137,19 @@ export function Visor360Modal({
               }}
               title={titulo}
             />
+          ) : NativeWebView ? (
+            <NativeWebView
+              source={{ html: htmlContent }}
+              javaScriptEnabled={true}
+              domStorageEnabled={true}
+              originWhitelist={['*']}
+              allowsInlineMediaPlayback={true}
+              style={{ flex: 1, backgroundColor: '#000000' }}
+            />
           ) : (
-            // Fallback nativo
             <View style={styles.nativeFallback}>
-              <iframe
-                srcDoc={htmlContent}
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  border: 'none',
-                  backgroundColor: '#000',
-                }}
-              />
+              <ActivityIndicator size="large" color={colors.primary} />
+              <Text style={styles.fallbackText}>Cargando visor 360°...</Text>
             </View>
           )}
         </View>
@@ -187,5 +197,12 @@ const styles = StyleSheet.create({
   },
   nativeFallback: {
     flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 12,
+  },
+  fallbackText: {
+    color: colors.white,
+    fontSize: fontSize.sm,
   },
 });
