@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Platform } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
+import * as FileSystem from 'expo-file-system/legacy';
 import { supabase } from '../services/supabase';
 
 export interface UploadResult {
@@ -64,11 +65,25 @@ export function useUploadImage(): UseUploadImageReturn {
       const contentType = `image/${cleanExt === 'jpg' ? 'jpeg' : cleanExt}`;
       const storagePath = `${scenarioId}/image-${Date.now()}-${Math.floor(Math.random() * 1000)}.${cleanExt}`;
 
-      // Leer archivo como ArrayBuffer (compatible con React Native, Expo y Web sin deprecation)
-      const response = await fetch(fileUri);
-      const fileData = await response.arrayBuffer();
+      let fileData: Uint8Array | Blob | ArrayBuffer;
 
-      // Subir a Supabase Storage
+      if (Platform.OS === 'web') {
+        const response = await fetch(fileUri);
+        fileData = await response.blob();
+      } else {
+        // En Android / iOS: Leer Base64 desde el sistema de archivos real y convertir a Uint8Array
+        const fileBase64 = await FileSystem.readAsStringAsync(fileUri, {
+          encoding: FileSystem.EncodingType.Base64,
+        });
+        const binaryString = atob(fileBase64);
+        const bytes = new Uint8Array(binaryString.length);
+        for (let i = 0; i < binaryString.length; i++) {
+          bytes[i] = binaryString.charCodeAt(i);
+        }
+        fileData = bytes;
+      }
+
+      // Subir a Supabase Storage con los bytes reales
       const { error: uploadError } = await supabase.storage
         .from('scenario-images')
         .upload(storagePath, fileData, {
