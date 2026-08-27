@@ -1,15 +1,19 @@
 import { useState } from 'react';
+import { Platform } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import * as FileSystem from 'expo-file-system';
 import { supabase } from '../services/supabase';
 
-interface UploadResult {
+export interface UploadResult {
   url: string;
   storage_path: string;
 }
 
-interface UseUploadImageReturn {
+export interface UseUploadImageReturn {
+  pickImage: () => Promise<string | null>;
+  uploadImageUri: (scenarioId: string, fileUri: string) => Promise<UploadResult | null>;
   uploadImage: (scenarioId: string) => Promise<UploadResult | null>;
+  deleteScenarioImage: (imageId: string, storagePath: string) => Promise<boolean>;
   isUploading: boolean;
   error: string | null;
 }
@@ -18,12 +22,9 @@ export function useUploadImage(): UseUploadImageReturn {
   const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const uploadImage = async (scenarioId: string): Promise<UploadResult | null> => {
-    setIsUploading(true);
+  const pickImage = async (): Promise<string | null> => {
     setError(null);
-
     try {
-      // 1. Seleccionar imagen
       const permissionResult =
         await ImagePicker.requestMediaLibraryPermissionsAsync();
 
@@ -43,29 +44,48 @@ export function useUploadImage(): UseUploadImageReturn {
         return null;
       }
 
-      const asset = result.assets[0];
+      return result.assets[0].uri;
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Error al seleccionar imagen';
+      setError(message);
+      return null;
+    }
+  };
 
-      // 2. Leer el archivo como base64
-      const fileUri = asset.uri;
-      const fileBase64 = await FileSystem.readAsStringAsync(fileUri, {
-        encoding: FileSystem.EncodingType.Base64,
-      });
+  const uploadImageUri = async (
+    scenarioId: string,
+    fileUri: string,
+  ): Promise<UploadResult | null> => {
+    setIsUploading(true);
+    setError(null);
 
-      // 3. Determinar extensión y content type
-      const ext = fileUri.split('.').pop()?.toLowerCase() ?? 'jpg';
-      const contentType = `image/${ext === 'jpg' ? 'jpeg' : ext}`;
-      const storagePath = `${scenarioId}/image-${Date.now()}.${ext}`;
+    try {
+      const ext = fileUri.split('.').pop()?.toLowerCase().split('?')[0] ?? 'jpg';
+      const cleanExt = ['png', 'jpg', 'jpeg', 'webp'].includes(ext) ? ext : 'jpg';
+      const contentType = `image/${cleanExt === 'jpg' ? 'jpeg' : cleanExt}`;
+      const storagePath = `${scenarioId}/image-${Date.now()}-${Math.floor(Math.random() * 1000)}.${cleanExt}`;
 
-      // 4. Subir a Supabase Storage
-      const binaryString = atob(fileBase64);
-      const bytes = new Uint8Array(binaryString.length);
-      for (let i = 0; i < binaryString.length; i++) {
-        bytes[i] = binaryString.charCodeAt(i);
+      let fileData: ArrayBuffer | Uint8Array;
+
+      if (Platform.OS === 'web' || fileUri.startsWith('blob:') || fileUri.startsWith('data:')) {
+        const response = await fetch(fileUri);
+        fileData = await response.arrayBuffer();
+      } else {
+        const fileBase64 = await FileSystem.readAsStringAsync(fileUri, {
+          encoding: FileSystem.EncodingType.Base64,
+        });
+        const binaryString = atob(fileBase64);
+        const bytes = new Uint8Array(binaryString.length);
+        for (let i = 0; i < binaryString.length; i++) {
+          bytes[i] = binaryString.charCodeAt(i);
+        }
+        fileData = bytes;
       }
 
+      // Subir a Supabase Storage
       const { error: uploadError } = await supabase.storage
         .from('scenario-images')
-        .upload(storagePath, bytes, {
+        .upload(storagePath, fileData, {
           contentType,
           upsert: false,
         });
@@ -75,14 +95,14 @@ export function useUploadImage(): UseUploadImageReturn {
         return null;
       }
 
-      // 5. Obtener URL pública
+      // Obtener URL pública
       const { data: urlData } = supabase.storage
         .from('scenario-images')
         .getPublicUrl(storagePath);
 
       const publicUrl = urlData.publicUrl;
 
-      // 6. Determinar orden (contar imágenes existentes)
+      // Determinar orden
       const { count } = await supabase
         .from('scenario_images')
         .select('*', { count: 'exact', head: true })
@@ -90,7 +110,7 @@ export function useUploadImage(): UseUploadImageReturn {
 
       const displayOrder = count ?? 0;
 
-      // 7. Insertar registro en scenario_images
+      // Insertar registro en scenario_images
       const { error: dbError } = await supabase.from('scenario_images').insert({
         scenario_id: scenarioId,
         storage_path: storagePath,
@@ -106,7 +126,7 @@ export function useUploadImage(): UseUploadImageReturn {
 
       return { url: publicUrl, storage_path: storagePath };
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Error desconocido';
+      const message = err instanceof Error ? err.message : 'Error desconocido al subir imagen';
       setError(message);
       return null;
     } finally {
@@ -114,5 +134,43 @@ export function useUploadImage(): UseUploadImageReturn {
     }
   };
 
-  return { uploadImage, isUploading, error };
+  const uploadImage = async (scenarioId: string): Promise<UploadResult | null> => {
+    const uri = await pickImage();
+    if (!uri) return null;
+    return uploadImageUri(scenarioId, uri);
+  };
+
+  const deleteScenarioImage = async (
+    imageId: string,
+    storagePath: string,
+  ): Promise<boolean> => {
+    try {
+      if (storagePath) {
+        await supabase.storage.from('scenario-images').remove([storagePath]);
+      }
+      const { error: delError } = await supabase
+        .from('scenario_images')
+        .delete()
+        .eq('id', imageId);
+
+      if (delError) {
+        setError(delError.message);
+        return false;
+      }
+      return true;
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Error al eliminar imagen';
+      setError(message);
+      return false;
+    }
+  };
+
+  return {
+    pickImage,
+    uploadImageUri,
+    uploadImage,
+    deleteScenarioImage,
+    isUploading,
+    error,
+  };
 }

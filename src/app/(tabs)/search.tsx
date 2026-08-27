@@ -12,6 +12,7 @@ import {
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useScenarios, ScenarioWithDetails } from '../../hooks/useScenarios';
+import { useSports } from '../../hooks/useSports';
 import { ScenarioCard } from '../../components/common/ScenarioCard';
 import { LoadingSpinner } from '../../components/common/LoadingSpinner';
 import { EmptyState } from '../../components/common/EmptyState';
@@ -21,6 +22,7 @@ import { colors, spacing, borderRadius, fontSize, fontWeight } from '../../theme
 export default function SearchScreen() {
   const router = useRouter();
   const { data: scenarios, isLoading, error, refetch, isRefetching } = useScenarios();
+  const { data: sportsList } = useSports();
 
   // Estados locales para filtros y búsqueda
   const [searchQuery, setSearchQuery] = useState('');
@@ -37,26 +39,32 @@ export default function SearchScreen() {
     return () => clearTimeout(timer);
   }, [searchQuery]);
 
-  // T-030: Extraer listas dinámicas de tipos y deportes disponibles
+  // Extraer listas dinámicas de tipos y deportes disponibles
   const availableTypes = useMemo(() => {
     if (!scenarios) return [];
     const typesSet = new Set<string>();
     scenarios.forEach((s) => {
-      if (s.tipo) typesSet.add(s.tipo);
+      if (s.tipo && s.tipo.trim()) {
+        typesSet.add(s.tipo.trim());
+      }
     });
     return Array.from(typesSet).sort();
   }, [scenarios]);
 
   const availableSports = useMemo(() => {
-    if (!scenarios) return [];
     const sportsSet = new Set<string>();
-    scenarios.forEach((s) => {
+    // Agregar deportes de los escenarios cargados
+    scenarios?.forEach((s) => {
       s.scenario_sports?.forEach((ss) => {
-        if (ss.sports?.nombre) sportsSet.add(ss.sports.nombre);
+        if (ss.sports?.nombre) sportsSet.add(ss.sports.nombre.trim());
       });
     });
+    // Agregar deportes registrados en DB
+    sportsList?.forEach((sp) => {
+      if (sp.nombre) sportsSet.add(sp.nombre.trim());
+    });
     return Array.from(sportsSet).sort();
-  }, [scenarios]);
+  }, [scenarios, sportsList]);
 
   // T-029 + T-030: Filtros acumulativos en memoria
   const filteredScenarios = useMemo(() => {

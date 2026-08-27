@@ -195,6 +195,39 @@ export interface Database {
         };
         Relationships: [];
       };
+      scenario_sectors: {
+        Row: {
+          id: string;
+          scenario_id: string;
+          nombre: string;
+          svg_path: string;
+          foto_360_url: string | null;
+          color_hex: string;
+          display_order: number;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          scenario_id: string;
+          nombre: string;
+          svg_path: string;
+          foto_360_url?: string | null;
+          color_hex?: string;
+          display_order?: number;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          scenario_id?: string;
+          nombre?: string;
+          svg_path?: string;
+          foto_360_url?: string | null;
+          color_hex?: string;
+          display_order?: number;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: Record<string, never>;

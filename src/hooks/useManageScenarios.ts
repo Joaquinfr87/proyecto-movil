@@ -126,9 +126,13 @@ export function useUpsertScenario() {
 
   return useMutation({
     mutationFn: upsertScenario,
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['all-scenarios'] });
       queryClient.invalidateQueries({ queryKey: ['scenarios'] });
+      queryClient.invalidateQueries({ queryKey: ['favorites'] });
+      if (data?.id) {
+        queryClient.invalidateQueries({ queryKey: ['scenario', data.id] });
+      }
     },
   });
 }
@@ -141,6 +145,8 @@ export function useDeleteScenario() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['all-scenarios'] });
       queryClient.invalidateQueries({ queryKey: ['scenarios'] });
+      queryClient.invalidateQueries({ queryKey: ['favorites'] });
+      queryClient.invalidateQueries({ queryKey: ['scenario'] });
     },
   });
 }
@@ -153,6 +159,8 @@ export function useHardDeleteScenario() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['all-scenarios'] });
       queryClient.invalidateQueries({ queryKey: ['scenarios'] });
+      queryClient.invalidateQueries({ queryKey: ['favorites'] });
+      queryClient.invalidateQueries({ queryKey: ['scenario'] });
     },
   });
 }
@@ -163,9 +171,13 @@ export function useToggleScenarioStatus() {
   return useMutation({
     mutationFn: ({ id, status }: { id: string; status: string }) =>
       toggleScenarioStatus(id, status),
-    onSuccess: () => {
+    onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['all-scenarios'] });
       queryClient.invalidateQueries({ queryKey: ['scenarios'] });
+      queryClient.invalidateQueries({ queryKey: ['favorites'] });
+      if (variables?.id) {
+        queryClient.invalidateQueries({ queryKey: ['scenario', variables.id] });
+      }
     },
   });
 }

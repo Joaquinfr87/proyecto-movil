@@ -45,7 +45,7 @@ export default function FavoritesScreen() {
 
       {/* Lista */}
       <FlatList
-        data={favorites}
+        data={favorites?.filter((item) => Boolean(item.scenarios))}
         keyExtractor={(item) => item.scenario_id}
         renderItem={({ item }) => (
           <ScenarioCard

@@ -10,7 +10,7 @@ export interface ScenarioImage {
 }
 
 export interface ScenarioSport {
-  sports: { nombre: string };
+  sports: { id?: string; nombre: string };
 }
 
 export interface ScenarioWithDetails extends Scenario {
@@ -48,7 +48,7 @@ async function fetchScenarios(): Promise<ScenarioWithDetails[]> {
       `
       *,
       scenario_images(url, is_primary, storage_path, display_order),
-      scenario_sports(sports(nombre))
+      scenario_sports(sports(id, nombre))
     `,
     )
     .eq('estado', 'activo')
@@ -68,7 +68,7 @@ async function fetchScenarioById(id: string): Promise<ScenarioWithDetails | null
       `
       *,
       scenario_images(url, is_primary, storage_path, display_order),
-      scenario_sports(sports(nombre)),
+      scenario_sports(sports(id, nombre)),
       events(*)
     `,
     )

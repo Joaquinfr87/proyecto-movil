@@ -30,10 +30,12 @@ async function fetchFavorites(userId: string): Promise<FavoriteWithScenario[]> {
     throw new Error(error.message);
   }
 
-  return (data as FavoriteWithScenario[]).map((fav) => ({
-    ...fav,
-    scenarios: resolveScenarioImages(fav.scenarios),
-  }));
+  return (data as FavoriteWithScenario[])
+    .filter((fav) => fav.scenarios && fav.scenarios.estado === 'activo')
+    .map((fav) => ({
+      ...fav,
+      scenarios: resolveScenarioImages(fav.scenarios),
+    }));
 }
 
 async function checkIsFavorite(userId: string, scenarioId: string): Promise<boolean> {
