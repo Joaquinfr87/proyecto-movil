@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="assets/banner.svg" alt="Lugares Interactivos Banner" width="100%" />
+<img src="assets/banner.png" alt="Lugares Interactivos Banner" width="100%" />
 
 <br />
 
@@ -337,7 +337,7 @@ Este proyecto está bajo la licencia MIT. Ver [LICENSE](LICENSE) para más detal
 
 <div align="center">
 
-<img src="assets/logo.svg" alt="Lugares Interactivos Logo" width="120" />
+<img src="assets/icon.png" alt="Lugares Interactivos Logo" width="120" />
 
 **Equipo Sudoers** — Aplicaciones Móviles I
 
