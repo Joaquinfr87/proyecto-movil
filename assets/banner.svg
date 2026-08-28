@@ -1,145 +1,101 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 500" width="1200" height="500">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 400" width="1200" height="400">
   <defs>
-    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" style="stop-color:#0F172A;stop-opacity:1" />
-      <stop offset="50%" style="stop-color:#1E293B;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#0F172A;stop-opacity:1" />
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0F172A"/>
+      <stop offset="50%" style="stop-color:#1E293B"/>
+      <stop offset="100%" style="stop-color:#0F172A"/>
     </linearGradient>
-    <linearGradient id="accentGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" style="stop-color:#2563EB;stop-opacity:1" />
-      <stop offset="50%" style="stop-color:#10B981;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#2563EB;stop-opacity:1" />
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#2563EB"/>
+      <stop offset="50%" style="stop-color:#10B981"/>
+      <stop offset="100%" style="stop-color:#2563EB"/>
     </linearGradient>
-    <linearGradient id="blueGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" style="stop-color:#2563EB;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#1D4ED8;stop-opacity:1" />
+    <linearGradient id="blue" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#2563EB"/>
+      <stop offset="100%" style="stop-color:#1D4ED8"/>
     </linearGradient>
-    <linearGradient id="greenGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" style="stop-color:#10B981;stop-opacity:1" />
-      <stop offset="100%" style="stop-color:#059669;stop-opacity:1" />
+    <linearGradient id="green" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#10B981"/>
+      <stop offset="100%" style="stop-color:#059669"/>
     </linearGradient>
-    <filter id="glow">
-      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
-      <feMerge>
-        <feMergeNode in="coloredBlur"/>
-        <feMergeNode in="SourceGraphic"/>
-      </feMerge>
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#1D4ED8" flood-opacity="0.35"/>
     </filter>
-    <clipPath id="bannerClip">
-      <rect x="0" y="0" width="1200" height="500" rx="16"/>
-    </clipPath>
+    <clipPath id="clip"><rect width="1200" height="400" rx="16"/></clipPath>
   </defs>
   
-  <g clip-path="url(#bannerClip)">
+  <g clip-path="url(#clip)">
     <!-- Background -->
-    <rect width="1200" height="500" fill="url(#bgGrad)" rx="16"/>
+    <rect width="1200" height="400" fill="url(#bg)"/>
     
-    <!-- Decorative grid pattern -->
-    <g opacity="0.04" stroke="#FFFFFF" stroke-width="1">
-      <line x1="0" y1="60" x2="1200" y2="60"/>
-      <line x1="0" y1="120" x2="1200" y2="120"/>
-      <line x1="0" y1="180" x2="1200" y2="180"/>
-      <line x1="0" y1="240" x2="1200" y2="240"/>
-      <line x1="0" y1="300" x2="1200" y2="300"/>
-      <line x1="0" y1="360" x2="1200" y2="360"/>
-      <line x1="0" y1="420" x2="1200" y2="420"/>
-      <line x1="0" y1="480" x2="1200" y2="480"/>
-      <line x1="120" y1="0" x2="120" y2="500"/>
-      <line x1="240" y1="0" x2="240" y2="500"/>
-      <line x1="360" y1="0" x2="360" y2="500"/>
-      <line x1="480" y1="0" x2="480" y2="500"/>
-      <line x1="600" y1="0" x2="600" y2="500"/>
-      <line x1="720" y1="0" x2="720" y2="500"/>
-      <line x1="840" y1="0" x2="840" y2="500"/>
-      <line x1="960" y1="0" x2="960" y2="500"/>
-      <line x1="1080" y1="0" x2="1080" y2="500"/>
+    <!-- Grid -->
+    <g opacity="0.04" stroke="#FFF" stroke-width="1">
+      <line x1="0" y1="80" x2="1200" y2="80"/><line x1="0" y1="160" x2="1200" y2="160"/>
+      <line x1="0" y1="240" x2="1200" y2="240"/><line x1="0" y1="320" x2="1200" y2="320"/>
+      <line x1="200" y1="0" x2="200" y2="400"/><line x1="400" y1="0" x2="400" y2="400"/>
+      <line x1="600" y1="0" x2="600" y2="400"/><line x1="800" y1="0" x2="800" y2="400"/>
+      <line x1="1000" y1="0" x2="1000" y2="400"/>
     </g>
     
-    <!-- Decorative map pins (background, very subtle) -->
-    <g opacity="0.06">
-      <path d="M180 100 C168 100 158 110 158 122 C158 130 163 137 169 142 L180 155 L191 142 C197 137 202 130 202 122 C202 110 192 100 180 100Z" fill="#2563EB"/>
-      <path d="M1020 70 C1008 70 998 80 998 92 C998 100 1003 107 1009 112 L1020 125 L1031 112 C1037 107 1042 100 1042 92 C1042 80 1032 70 1020 70Z" fill="#10B981"/>
-      <path d="M880 420 C868 420 858 430 858 442 C858 450 863 457 869 462 L880 475 L891 462 C897 457 902 450 902 442 C902 430 892 420 880 420Z" fill="#2563EB"/>
-      <path d="M280 440 C268 440 258 450 258 462 C258 470 263 477 269 482 L280 495 L291 482 C297 477 302 470 302 462 C302 450 292 440 280 440Z" fill="#10B981"/>
+    <!-- Subtle pins -->
+    <g opacity="0.05">
+      <path d="M150 80 C140 80 132 88 132 98 C132 105 136 111 141 115 L150 126 L159 115 C164 111 168 105 168 98 C168 88 160 80 150 80Z" fill="#2563EB"/>
+      <path d="M1050 60 C1040 60 1032 68 1032 78 C1032 85 1036 91 1041 95 L1050 106 L1059 95 C1064 91 1068 85 1068 78 C1068 68 1060 60 1050 60Z" fill="#10B981"/>
+      <path d="M900 340 C890 340 882 348 882 358 C882 365 886 371 891 375 L900 386 L909 375 C914 371 918 365 918 358 C918 348 910 340 900 340Z" fill="#2563EB"/>
+      <path d="M250 330 C240 330 232 338 232 348 C232 355 236 361 241 365 L250 376 L259 365 C264 361 268 355 268 348 C268 338 260 330 250 330Z" fill="#10B981"/>
     </g>
     
-    <!-- Accent line top -->
-    <rect x="80" y="50" width="1040" height="3" fill="url(#accentGrad)" rx="1.5" opacity="0.5"/>
+    <!-- Accent lines -->
+    <rect x="80" y="30" width="1040" height="3" fill="url(#accent)" rx="1.5" opacity="0.4"/>
+    <rect x="80" y="367" width="1040" height="3" fill="url(#accent)" rx="1.5" opacity="0.4"/>
     
-    <!-- ====== LOGO (top-left) ====== -->
-    <g transform="translate(100, 90)">
-      <path d="M50 0 C29 0 12 18 12 38 C12 52 20 63 32 73 L50 96 L68 73 C80 63 88 52 88 38 C88 18 71 0 50 0Z" 
-            fill="url(#blueGrad)" filter="url(#glow)"/>
-      <circle cx="50" cy="36" r="18" fill="url(#greenGrad)"/>
-      <circle cx="50" cy="36" r="7" fill="none" stroke="#FFFFFF" stroke-width="1.5" opacity="0.9"/>
-      <circle cx="50" cy="36" r="2" fill="#FFFFFF" opacity="0.9"/>
-      <line x1="50" y1="18" x2="50" y2="54" stroke="#FFFFFF" stroke-width="1" opacity="0.6"/>
-      <rect x="35" y="21" width="30" height="30" rx="1" fill="none" stroke="#FFFFFF" stroke-width="1" opacity="0.6"/>
+    <!-- ====== MAIN LOGO (centered) ====== -->
+    <g transform="translate(540, 60)">
+      <path d="M60 0 C35 0 14 21 14 46 C14 62 24 76 38 88 L60 116 L82 88 C96 76 106 62 106 46 C106 21 85 0 60 0Z" 
+            fill="url(#blue)" filter="url(#shadow)"/>
+      <circle cx="60" cy="44" r="22" fill="url(#green)"/>
+      <circle cx="60" cy="44" r="8" fill="none" stroke="#FFF" stroke-width="1.5" opacity="0.9"/>
+      <circle cx="60" cy="44" r="2" fill="#FFF" opacity="0.9"/>
+      <line x1="60" y1="22" x2="60" y2="66" stroke="#FFF" stroke-width="1" opacity="0.6"/>
+      <rect x="42" y="26" width="36" height="36" rx="1" fill="none" stroke="#FFF" stroke-width="1" opacity="0.6"/>
     </g>
     
-    <!-- ====== TITLE (left-aligned, below logo) ====== -->
-    <text x="100" y="230" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="52" font-weight="800" fill="#FFFFFF" letter-spacing="-1">Lugares</text>
-    <text x="100" y="280" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="52" font-weight="800" fill="#10B981" letter-spacing="-1">Interactivos</text>
+    <!-- Arcs -->
+    <circle cx="600" cy="130" r="80" fill="none" stroke="#2563EB" stroke-width="1" opacity="0.1"/>
+    <circle cx="600" cy="130" r="110" fill="none" stroke="#10B981" stroke-width="1" opacity="0.08"/>
+    <circle cx="600" cy="130" r="140" fill="none" stroke="#2563EB" stroke-width="1" opacity="0.05"/>
     
-    <!-- Subtitle -->
-    <text x="100" y="315" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#94A3B8" font-weight="400" letter-spacing="3">VISUALIZACIÓN INTERACTIVA DE ESCENARIOS DEPORTIVOS</text>
-    
-    <!-- ====== PLATFORM BADGES (right side, stacked vertically) ====== -->
-    <g transform="translate(900, 85)">
-      <!-- iOS -->
-      <rect x="0" y="0" width="210" height="44" rx="10" fill="#1E293B" stroke="#334155" stroke-width="1"/>
-      <text x="20" y="28" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#94A3B8" font-weight="600">🍎 iOS</text>
-      <text x="190" y="28" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#64748B" text-anchor="end">Expo 57</text>
+    <!-- Feature pills -->
+    <g transform="translate(150, 230)">
+      <rect x="0" y="0" width="140" height="42" rx="21" fill="#2563EB" fill-opacity="0.1" stroke="#2563EB" stroke-width="1.5" stroke-opacity="0.3"/>
+      <text x="70" y="27" font-family="DejaVu Sans, sans-serif" font-size="14" fill="#93C5FD" text-anchor="middle" font-weight="500">Mapa</text>
       
-      <!-- Android -->
-      <rect x="0" y="54" width="210" height="44" rx="10" fill="#1E293B" stroke="#334155" stroke-width="1"/>
-      <text x="20" y="82" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#94A3B8" font-weight="600">🤖 Android</text>
-      <text x="190" y="82" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#64748B" text-anchor="end">Expo 57</text>
+      <rect x="160" y="0" width="140" height="42" rx="21" fill="#10B981" fill-opacity="0.1" stroke="#10B981" stroke-width="1.5" stroke-opacity="0.3"/>
+      <text x="230" y="27" font-family="DejaVu Sans, sans-serif" font-size="14" fill="#6EE7B7" text-anchor="middle" font-weight="500">Favoritos</text>
       
-      <!-- Supabase -->
-      <rect x="0" y="108" width="210" height="44" rx="10" fill="#1E293B" stroke="#334155" stroke-width="1"/>
-      <text x="20" y="136" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#3FCF8E" font-weight="600">⚡ Supabase</text>
-      <text x="190" y="136" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#64748B" text-anchor="end">BaaS</text>
+      <rect x="320" y="0" width="160" height="42" rx="21" fill="#2563EB" fill-opacity="0.1" stroke="#2563EB" stroke-width="1.5" stroke-opacity="0.3"/>
+      <text x="400" y="27" font-family="DejaVu Sans, sans-serif" font-size="14" fill="#93C5FD" text-anchor="middle" font-weight="500">Visor 360</text>
       
-      <!-- TypeScript -->
-      <rect x="0" y="162" width="210" height="44" rx="10" fill="#1E293B" stroke="#334155" stroke-width="1"/>
-      <text x="20" y="190" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#3178C6" font-weight="600">🔷 TypeScript</text>
-      <text x="190" y="190" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#64748B" text-anchor="end">6.0</text>
+      <rect x="500" y="0" width="140" height="42" rx="21" fill="#10B981" fill-opacity="0.1" stroke="#10B981" stroke-width="1.5" stroke-opacity="0.3"/>
+      <text x="570" y="27" font-family="DejaVu Sans, sans-serif" font-size="14" fill="#6EE7B7" text-anchor="middle" font-weight="500">Busqueda</text>
     </g>
     
-    <!-- ====== FEATURE BADGES (bottom-left row) ====== -->
-    <g transform="translate(100, 355)">
-      <!-- Mapa -->
-      <rect x="0" y="0" width="130" height="38" rx="19" fill="#2563EB" opacity="0.12"/>
-      <rect x="0" y="0" width="130" height="38" rx="19" fill="none" stroke="#2563EB" stroke-width="1.5" opacity="0.3"/>
-      <text x="65" y="25" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="13" fill="#93C5FD" text-anchor="middle" font-weight="500">📍 Mapa</text>
+    <!-- Platform chips -->
+    <g transform="translate(980, 200)">
+      <rect x="0" y="0" width="140" height="32" rx="8" fill="#1E293B" stroke="#334155" stroke-width="1"/>
+      <text x="70" y="21" font-family="DejaVu Sans, sans-serif" font-size="12" fill="#94A3B8" text-anchor="middle" font-weight="500">iOS + Android</text>
       
-      <!-- Favoritos -->
-      <rect x="145" y="0" width="140" height="38" rx="19" fill="#10B981" opacity="0.12"/>
-      <rect x="145" y="0" width="140" height="38" rx="19" fill="none" stroke="#10B981" stroke-width="1.5" opacity="0.3"/>
-      <text x="215" y="25" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="13" fill="#6EE7B7" text-anchor="middle" font-weight="500">⭐ Favoritos</text>
+      <rect x="0" y="40" width="140" height="32" rx="8" fill="#1E293B" stroke="#334155" stroke-width="1"/>
+      <text x="70" y="61" font-family="DejaVu Sans, sans-serif" font-size="12" fill="#3FCF8E" text-anchor="middle" font-weight="500">Supabase</text>
       
-      <!-- Visor 360° -->
-      <rect x="300" y="0" width="150" height="38" rx="19" fill="#2563EB" opacity="0.12"/>
-      <rect x="300" y="0" width="150" height="38" rx="19" fill="none" stroke="#2563EB" stroke-width="1.5" opacity="0.3"/>
-      <text x="375" y="25" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="13" fill="#93C5FD" text-anchor="middle" font-weight="500">🌐 Visor 360°</text>
-      
-      <!-- Búsqueda -->
-      <rect x="465" y="0" width="140" height="38" rx="19" fill="#10B981" opacity="0.12"/>
-      <rect x="465" y="0" width="140" height="38" rx="19" fill="none" stroke="#10B981" stroke-width="1.5" opacity="0.3"/>
-      <text x="535" y="25" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="13" fill="#6EE7B7" text-anchor="middle" font-weight="500">🔍 Búsqueda</text>
+      <rect x="0" y="80" width="140" height="32" rx="8" fill="#1E293B" stroke="#334155" stroke-width="1"/>
+      <text x="70" y="101" font-family="DejaVu Sans, sans-serif" font-size="12" fill="#3178C6" text-anchor="middle" font-weight="500">TypeScript</text>
     </g>
     
-    <!-- Bottom accent line -->
-    <rect x="80" y="445" width="1040" height="3" fill="url(#accentGrad)" rx="1.5" opacity="0.5"/>
-    
-    <!-- Bottom text -->
-    <text x="600" y="478" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="13" fill="#475569" text-anchor="middle" font-weight="500" letter-spacing="2">EQUIPO SUDOERS · APLICACIONES MÓVILES I</text>
-    
-    <!-- Decorative dots -->
+    <!-- Dots -->
     <circle cx="50" cy="50" r="4" fill="#2563EB" opacity="0.25"/>
     <circle cx="1150" cy="50" r="4" fill="#10B981" opacity="0.25"/>
-    <circle cx="50" cy="450" r="4" fill="#10B981" opacity="0.25"/>
-    <circle cx="1150" cy="450" r="4" fill="#2563EB" opacity="0.25"/>
+    <circle cx="50" cy="350" r="4" fill="#10B981" opacity="0.25"/>
+    <circle cx="1150" cy="350" r="4" fill="#2563EB" opacity="0.25"/>
   </g>
 </svg>
