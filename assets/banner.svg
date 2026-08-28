@@ -66,91 +66,68 @@
     <!-- Accent line top -->
     <rect x="80" y="50" width="1040" height="3" fill="url(#accentGrad)" rx="1.5" opacity="0.5"/>
     
-    <!-- ====== LEFT SECTION: Logo + Title + Subtitle ====== -->
-    
-    <!-- Logo mark -->
-    <g transform="translate(100, 100)">
-      <!-- Pin -->
-      <path d="M60 0 C35 0 14 21 14 46 C14 62 24 76 38 88 L60 116 L82 88 C96 76 106 62 106 46 C106 21 85 0 60 0Z" 
+    <!-- ====== LOGO (top-left) ====== -->
+    <g transform="translate(100, 90)">
+      <path d="M50 0 C29 0 12 18 12 38 C12 52 20 63 32 73 L50 96 L68 73 C80 63 88 52 88 38 C88 18 71 0 50 0Z" 
             fill="url(#blueGrad)" filter="url(#glow)"/>
-      <!-- Inner circle -->
-      <circle cx="60" cy="44" r="22" fill="url(#greenGrad)"/>
-      <!-- Field lines -->
-      <circle cx="60" cy="44" r="8" fill="none" stroke="#FFFFFF" stroke-width="1.5" opacity="0.9"/>
-      <circle cx="60" cy="44" r="2" fill="#FFFFFF" opacity="0.9"/>
-      <line x1="60" y1="22" x2="60" y2="66" stroke="#FFFFFF" stroke-width="1" opacity="0.6"/>
-      <rect x="42" y="26" width="36" height="36" rx="1" fill="none" stroke="#FFFFFF" stroke-width="1" opacity="0.6"/>
+      <circle cx="50" cy="36" r="18" fill="url(#greenGrad)"/>
+      <circle cx="50" cy="36" r="7" fill="none" stroke="#FFFFFF" stroke-width="1.5" opacity="0.9"/>
+      <circle cx="50" cy="36" r="2" fill="#FFFFFF" opacity="0.9"/>
+      <line x1="50" y1="18" x2="50" y2="54" stroke="#FFFFFF" stroke-width="1" opacity="0.6"/>
+      <rect x="35" y="21" width="30" height="30" rx="1" fill="none" stroke="#FFFFFF" stroke-width="1" opacity="0.6"/>
     </g>
     
-    <!-- Title -->
-    <text x="250" y="155" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="58" font-weight="800" fill="#FFFFFF" letter-spacing="-1">Lugares</text>
-    <text x="515" y="155" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="58" font-weight="800" fill="#10B981" letter-spacing="-1">Interactivos</text>
+    <!-- ====== TITLE (left-aligned, below logo) ====== -->
+    <text x="100" y="230" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="52" font-weight="800" fill="#FFFFFF" letter-spacing="-1">Lugares</text>
+    <text x="100" y="280" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="52" font-weight="800" fill="#10B981" letter-spacing="-1">Interactivos</text>
     
     <!-- Subtitle -->
-    <text x="250" y="200" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="18" fill="#94A3B8" font-weight="400" letter-spacing="4">VISUALIZACIÓN INTERACTIVA DE ESCENARIOS DEPORTIVOS</text>
+    <text x="100" y="315" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="16" fill="#94A3B8" font-weight="400" letter-spacing="3">VISUALIZACIÓN INTERACTIVA DE ESCENARIOS DEPORTIVOS</text>
     
-    <!-- ====== FEATURE BADGES (centered row) ====== -->
-    <g transform="translate(250, 250)">
-      <!-- Badge 1: Mapa -->
-      <rect x="0" y="0" width="130" height="40" rx="20" fill="#2563EB" opacity="0.12"/>
-      <rect x="0" y="0" width="130" height="40" rx="20" fill="none" stroke="#2563EB" stroke-width="1.5" opacity="0.3"/>
-      <text x="65" y="26" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#93C5FD" text-anchor="middle" font-weight="500">📍 Mapa</text>
+    <!-- ====== PLATFORM BADGES (right side, stacked vertically) ====== -->
+    <g transform="translate(900, 85)">
+      <!-- iOS -->
+      <rect x="0" y="0" width="210" height="44" rx="10" fill="#1E293B" stroke="#334155" stroke-width="1"/>
+      <text x="20" y="28" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#94A3B8" font-weight="600">🍎 iOS</text>
+      <text x="190" y="28" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#64748B" text-anchor="end">Expo 57</text>
       
-      <!-- Badge 2: Favoritos -->
-      <rect x="145" y="0" width="140" height="40" rx="20" fill="#10B981" opacity="0.12"/>
-      <rect x="145" y="0" width="140" height="40" rx="20" fill="none" stroke="#10B981" stroke-width="1.5" opacity="0.3"/>
-      <text x="215" y="26" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#6EE7B7" text-anchor="middle" font-weight="500">⭐ Favoritos</text>
+      <!-- Android -->
+      <rect x="0" y="54" width="210" height="44" rx="10" fill="#1E293B" stroke="#334155" stroke-width="1"/>
+      <text x="20" y="82" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#94A3B8" font-weight="600">🤖 Android</text>
+      <text x="190" y="82" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#64748B" text-anchor="end">Expo 57</text>
       
-      <!-- Badge 3: Visor 360° -->
-      <rect x="300" y="0" width="150" height="40" rx="20" fill="#2563EB" opacity="0.12"/>
-      <rect x="300" y="0" width="150" height="40" rx="20" fill="none" stroke="#2563EB" stroke-width="1.5" opacity="0.3"/>
-      <text x="375" y="26" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#93C5FD" text-anchor="middle" font-weight="500">🌐 Visor 360°</text>
+      <!-- Supabase -->
+      <rect x="0" y="108" width="210" height="44" rx="10" fill="#1E293B" stroke="#334155" stroke-width="1"/>
+      <text x="20" y="136" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#3FCF8E" font-weight="600">⚡ Supabase</text>
+      <text x="190" y="136" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#64748B" text-anchor="end">BaaS</text>
       
-      <!-- Badge 4: Búsqueda -->
-      <rect x="465" y="0" width="150" height="40" rx="20" fill="#10B981" opacity="0.12"/>
-      <rect x="465" y="0" width="150" height="40" rx="20" fill="none" stroke="#10B981" stroke-width="1.5" opacity="0.3"/>
-      <text x="540" y="26" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#6EE7B7" text-anchor="middle" font-weight="500">🔍 Búsqueda</text>
+      <!-- TypeScript -->
+      <rect x="0" y="162" width="210" height="44" rx="10" fill="#1E293B" stroke="#334155" stroke-width="1"/>
+      <text x="20" y="190" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" fill="#3178C6" font-weight="600">🔷 TypeScript</text>
+      <text x="190" y="190" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#64748B" text-anchor="end">6.0</text>
     </g>
     
-    <!-- ====== PLATFORM BADGES (right side, stacked) ====== -->
-    <g transform="translate(870, 110)">
-      <!-- Row 1 -->
-      <rect x="0" y="0" width="120" height="48" rx="10" fill="#1E293B" stroke="#334155" stroke-width="1"/>
-      <text x="60" y="21" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#94A3B8" text-anchor="middle" font-weight="600">🍎 iOS</text>
-      <text x="60" y="38" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="10" fill="#64748B" text-anchor="middle">Expo 57</text>
+    <!-- ====== FEATURE BADGES (bottom-left row) ====== -->
+    <g transform="translate(100, 355)">
+      <!-- Mapa -->
+      <rect x="0" y="0" width="130" height="38" rx="19" fill="#2563EB" opacity="0.12"/>
+      <rect x="0" y="0" width="130" height="38" rx="19" fill="none" stroke="#2563EB" stroke-width="1.5" opacity="0.3"/>
+      <text x="65" y="25" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="13" fill="#93C5FD" text-anchor="middle" font-weight="500">📍 Mapa</text>
       
-      <rect x="130" y="0" width="120" height="48" rx="10" fill="#1E293B" stroke="#334155" stroke-width="1"/>
-      <text x="190" y="21" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#94A3B8" text-anchor="middle" font-weight="600">🤖 Android</text>
-      <text x="190" y="38" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="10" fill="#64748B" text-anchor="middle">Expo 57</text>
+      <!-- Favoritos -->
+      <rect x="145" y="0" width="140" height="38" rx="19" fill="#10B981" opacity="0.12"/>
+      <rect x="145" y="0" width="140" height="38" rx="19" fill="none" stroke="#10B981" stroke-width="1.5" opacity="0.3"/>
+      <text x="215" y="25" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="13" fill="#6EE7B7" text-anchor="middle" font-weight="500">⭐ Favoritos</text>
       
-      <!-- Row 2 -->
-      <rect x="0" y="58" width="120" height="48" rx="10" fill="#1E293B" stroke="#334155" stroke-width="1"/>
-      <text x="60" y="79" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#3FCF8E" text-anchor="middle" font-weight="600">⚡ Supabase</text>
-      <text x="60" y="96" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="10" fill="#64748B" text-anchor="middle">BaaS</text>
+      <!-- Visor 360° -->
+      <rect x="300" y="0" width="150" height="38" rx="19" fill="#2563EB" opacity="0.12"/>
+      <rect x="300" y="0" width="150" height="38" rx="19" fill="none" stroke="#2563EB" stroke-width="1.5" opacity="0.3"/>
+      <text x="375" y="25" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="13" fill="#93C5FD" text-anchor="middle" font-weight="500">🌐 Visor 360°</text>
       
-      <rect x="130" y="58" width="120" height="48" rx="10" fill="#1E293B" stroke="#334155" stroke-width="1"/>
-      <text x="190" y="79" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="12" fill="#3178C6" text-anchor="middle" font-weight="600">🔷 TypeScript</text>
-      <text x="190" y="96" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="10" fill="#64748B" text-anchor="middle">6.0</text>
-    </g>
-    
-    <!-- ====== ARCHITECTURE DIAGRAM (bottom section) ====== -->
-    <g transform="translate(80, 330)">
-      <!-- Frontend box -->
-      <rect x="0" y="0" width="340" height="90" rx="12" fill="#1E293B" stroke="#334155" stroke-width="1"/>
-      <text x="170" y="25" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="13" fill="#93C5FD" text-anchor="middle" font-weight="600">FRONTEND</text>
-      <text x="170" y="45" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11" fill="#64748B" text-anchor="middle">React Native + Expo Router</text>
-      <text x="170" y="62" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11" fill="#64748B" text-anchor="middle">MapLibre · Reanimated · TanStack Query</text>
-      <text x="170" y="79" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11" fill="#64748B" text-anchor="middle">React Hook Form + Zod</text>
-      
-      <!-- Arrow -->
-      <text x="420" y="55" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="24" fill="#334155" text-anchor="middle">→</text>
-      
-      <!-- Backend box -->
-      <rect x="480" y="0" width="340" height="90" rx="12" fill="#1E293B" stroke="#334155" stroke-width="1"/>
-      <text x="650" y="25" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="13" fill="#3FCF8E" text-anchor="middle" font-weight="600">BACKEND</text>
-      <text x="650" y="45" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11" fill="#64748B" text-anchor="middle">Supabase (Local / Cloud)</text>
-      <text x="650" y="62" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11" fill="#64748B" text-anchor="middle">Auth · PostgreSQL · Storage</text>
-      <text x="650" y="79" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="11" fill="#64748B" text-anchor="middle">Realtime · Edge Functions</text>
+      <!-- Búsqueda -->
+      <rect x="465" y="0" width="140" height="38" rx="19" fill="#10B981" opacity="0.12"/>
+      <rect x="465" y="0" width="140" height="38" rx="19" fill="none" stroke="#10B981" stroke-width="1.5" opacity="0.3"/>
+      <text x="535" y="25" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="13" fill="#6EE7B7" text-anchor="middle" font-weight="500">🔍 Búsqueda</text>
     </g>
     
     <!-- Bottom accent line -->
