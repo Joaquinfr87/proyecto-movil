@@ -188,23 +188,23 @@ módulos de la aplicación:
   \contenidoConFuente{%
   \begin{tikzpicture}[
       modulo/.style={rectangle, draw=black!60, rounded corners=2pt,
-                     align=center, fill=blue!8, font=\scriptsize,
-                     text width=3.2cm, minimum height=1.0cm},
+                     align=center, fill=blue!8, font=\tiny,
+                     text width=2.8cm, minimum height=0.7cm},
       historia/.style={rectangle, draw=black!40, rounded corners=1pt,
                        align=left, fill=green!5, font=\tiny,
-                       text width=2.8cm, minimum height=0.5cm},
+                       text width=2.4cm, minimum height=0.4cm},
       flecha/.style={-{Stealth[length=1.5mm]}, thick, draw=black!40}
     ]
-    \node[modulo] (auth) at (0,3) {Autenticación\\(HU-01 a HU-04)};
-    \node[modulo] (expl) at (-4.5,1) {Exploración\\(HU-05 a HU-11)};
-    \node[modulo] (fav) at (4.5,1) {Favoritos\\(HU-12 a HU-14)};
-    \node[modulo] (gest) at (-4.5,-1.5) {Gestión\\(HU-15 a HU-17)};
-    \node[modulo] (ui) at (4.5,-1.5) {Interfaz\\(HU-18 a HU-22)};
+    \node[modulo] (auth) at (0,3.2) {Autenticación\\(HU-01 a HU-04)};
+    \node[modulo] (expl) at (-5.0,1.0) {Exploración\\(HU-05 a HU-11)};
+    \node[modulo] (fav) at (5.0,1.0) {Favoritos\\(HU-12 a HU-14)};
+    \node[modulo] (gest) at (-5.0,-1.2) {Gestión\\(HU-15 a HU-17)};
+    \node[modulo] (ui) at (5.0,-1.2) {Interfaz\\(HU-18 a HU-22)};
 
-    \draw[flecha] (auth) -- (-1.5,2);
-    \draw[flecha] (auth) -- (1.5,2);
-    \draw[flecha] (expl) -- (-1.5,0.5);
-    \draw[flecha] (fav) -- (1.5,0.5);
+    \draw[flecha] (auth) -- (expl);
+    \draw[flecha] (auth) -- (fav);
+    \draw[flecha] (expl) -- (gest);
+    \draw[flecha] (fav) -- (ui);
   \end{tikzpicture}%
   }{Elaboración propia.}
 \end{figure}

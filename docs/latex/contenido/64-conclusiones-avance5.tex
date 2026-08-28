@@ -1,0 +1,60 @@
+
+En el presente avance (PDF~5), la aplicaci\'on m\'ovil \nombreApp{} ha
+alcanzado un nivel de madurez significativo en t\'erminos de persistencia
+de datos y operaciones CRUD. Las principales conclusiones del avance son
+las siguientes:
+
+\begin{enumerate}
+  \item \textbf{An\'alisis completo de datos cr\'iticos.} Se identificaron
+    seis conjuntos de datos que requieren persistencia (sesi\'on,
+    favoritos, escenarios, eventos, perfil e im\'agenes) y se clasificaron
+    por criticidad, ciclo de vida y nivel de sensibilidad.
+
+  \item \textbf{Mecanismos de persistencia seleccionados.} Se adopt\'o una
+    arquitectura de tres niveles: AsyncStorage para la sesi\'on de usuario,
+    Supabase (PostgreSQL) para los datos de dominio, y React Query para
+    el cach\'e en memoria. Esta combinaci\'on cubre las necesidades de
+    persistencia local, remota y de rendimiento.
+
+  \item \textbf{Estructura de base de datos dise~nada.} Se documentaron
+    las siete tablas principales del sistema (profiles, scenarios,
+    scenario\_images, sports, scenario\_sports, events, favorites), sus
+    relaciones y las pol\'iticas RLS que garantizan la seguridad de los
+    datos a nivel de fila.
+
+  \item \textbf{CRUD completo implementado.} Se implementaron las 13
+    operaciones CRUD para las tres entidades principales (escenarios,
+    eventos y favoritos), incluyendo operaciones de soft delete, hard
+    delete y upsert. Todas las operaciones se sincronizan mediante
+    invalidaci\'on de cach\'e de React Query.
+
+  \item \textbf{Persistencia tras el cierre verificada.} Se verific\'o
+    que la sesi\'on del usuario se conserva mediante AsyncStorage, que
+    los favoritos persisten en Supabase y que los escenarios y eventos
+    se recuperan autom\'aticamente al reabrir la aplicaci\'on.
+
+  \item \textbf{Optimizaci\'on del rendimiento.} Se crearon \'indices
+    en las columnas m\'as consultadas de la base de datos, reduciendo
+    el tiempo de respuesta de las consultas principales. El cach\'e de
+    React Query con staleTime de 5 minutos evita consultas redundantes.
+
+  \item \textbf{Seguridad reforzada.} Las pol\'iticas RLS garantizan
+    que cada usuario solo pueda acceder a sus propios datos. La
+    eliminaci\'on de escenarios y eventos est\'a restringida al rol
+    de administrador, y la subida de im\'agenes tambi\'en requiere
+    permisos de administrador.
+
+  \item \textbf{Gesti\'on de escenarios completa.} La nueva pantalla
+    de gesti\'on (\textit{manage.tsx}) permite a los administradores y
+    gestores crear, editar y eliminar escenarios deportivos, incluyendo
+    la subida de im\'agenes y la gesti\'on de eventos asociados.
+\end{enumerate}
+
+La aplicaci\'on ahora cuenta con una capa de persistencia robusta que
+garantiza la conservaci\'on de los datos cr\'iticos del usuario y del
+sistema. Los datos se almacenan de forma segura tanto en el dispositivo
+(AsyncStorage) como en el servidor (Supabase), y se sincronizan de
+forma autom\'atica a trav\'es de React Query. El CRUD completo permite
+la gesti\'on integral de escenarios, eventos y favoritos, estableciendo
+las bases para funcionalidades futuras como la gesti\'on de usuarios y
+los reportes estad\'isticos.

@@ -1,0 +1,152 @@
+% ============================================================================
+%  SECCIÓN 5.3: SELECCIÓN DEL MECANISMO DE PERSISTENCIA
+% ============================================================================
+
+\section{Selecci\'on del mecanismo de persistencia}
+
+Para garantizar que los datos cr\'iticos de la aplicaci\'on se conserven
+m\'as all\'a del ciclo de vida de la sesi\'on, se evaluaron diferentes
+mecanismos de persistencia disponibles en el ecosistema de React Native
+y se seleccionaron los m\'as adecuados para cada tipo de dato.
+
+\subsection{Evaluaci\'on de alternativas}
+
+A continuaci\'on se presentan las alternativas evaluadas para la
+persistencia en React Native:
+
+\begin{table}[H]
+  \centering
+  \caption{Alternativas de persistencia evaluadas}
+  \contenidoConFuente{%
+    \begin{tablaAPA}
+      \begin{tabular}{@{}p{2.6cm}p{2.8cm}p{2.2cm}p{2.0cm}p{4.8cm}@{}}
+        \toprule
+        \textbf{Mecanismo} & \textbf{Tipo} & \textbf{Duraci\'on} &
+        \textbf{Complejidad} & \textbf{Uso en el proyecto} \\
+        \midrule
+        AsyncStorage & Key-value local & Persistente & Baja & Sesi\'on
+        de usuario (tokens JWT). \\
+        \addlinespace
+        Supabase (PostgreSQL) & Base de datos relacional &
+        Persistente & Media & Datos de dominio y favoritos. \\
+        \addlinespace
+        React Query & Cach\'e en memoria & Semi-permanente & Baja &
+        Consultas y mutaciones de datos. \\
+        \addlinespace
+        useState & Estado local & Temporal & Muy baja & Formularios,
+        filtros, UI. \\
+        \addlinespace
+        SQLite local & Base de datos local & Persistente & Alta &
+        No utilizado (innecesario con backend). \\
+        \addlinespace
+        MMKV & Key-value local & Persistente & Media & No utilizado
+        ( AsyncStorage suficiente). \\
+        \bottomrule
+      \end{tabular}
+    \end{tablaAPA}%
+  }{Elaboraci\'on propia.}
+\end{table}
+
+\subsection{Mecanismos seleccionados}
+
+\subsubsection{AsyncStorage para la sesi\'on de usuario}
+
+\textit{AsyncStorage} es el mecanismo de persistencia local recomendado
+por React Native. Almacena datos en formato clave-valor de forma
+as\'incrona y persiste entre sesiones. Se utiliza para almacenar el
+token JWT y el refresh token de Supabase Auth:
+
+\begin{lstlisting}
+// Configuraci\'on del cliente Supabase
+export const supabase = createClient(
+  supabaseUrl, supabaseAnonKey, {
+  auth: {
+    storage: AsyncStorage,
+    autoRefreshToken: true,
+    persistSession: true,
+  },
+});
+\end{lstlisting}
+
+Las ventajas de AsyncStorage para este caso son:
+
+\begin{itemize}
+  \item Integraci\'on nativa con Supabase Auth.
+  \item Persistencia autom\'atica de la sesi\'on.
+  \item Soporte para renovaci\'on autom\'atica de tokens.
+  \item Bajo consumo de recursos del dispositivo.
+\end{itemize}
+
+\subsubsection{Supabase (PostgreSQL) para datos de dominio}
+
+Supabase proporciona una base de datos PostgreSQL gestionada con
+una API REST autom\'atica (PostgREST) y pol\'iticas de seguridad
+a nivel de fila (RLS). Se utiliza para almacenar todos los datos
+de dominio de la aplicaci\'on:
+
+\begin{lstlisting}
+// Consulta de escenarios con relaciones
+const { data, error } = await supabase
+  .from('scenarios')
+  .select(`
+    *,
+    scenario_images(url, is_primary),
+    scenario_sports(sports(nombre))
+  `)
+  .eq('estado', 'activo')
+  .order('nombre');
+\end{lstlisting}
+
+Las ventajas de Supabase para este caso son:
+
+\begin{itemize}
+  \item Base de datos relacional con soporte para consultas
+    complejas y relaciones.
+  \item Pol\'iticas RLS que garantizan la seguridad de los datos
+    a nivel de fila.
+  \item Tiempo real para actualizaciones instant\'aneas.
+  \item Almacenamiento de archivos (im\'agenes) integrado.
+  \item Autenticaci\'on gestionada con m\'ultiples m\'etodos.
+\end{itemize}
+
+\subsubsection{React Query para el cach\'e en memoria}
+
+React Query gestiona el cach\'e de datos en memoria y sincroniza
+autom\'aticamente el estado de la interfaz con el servidor. Se
+utiliza para cachear las consultas a Supabase y gestionar las
+mutaciones:
+
+\begin{lstlisting}
+// Hook con cach\'e de 5 minutos
+export function useScenarios() {
+  return useQuery({
+    queryKey: ['scenarios'],
+    queryFn: fetchScenarios,
+    staleTime: 1000 * 60 * 5,
+  });
+}
+
+// Invalidaci\'on tras mutaci\'on
+await queryClient.invalidateQueries({
+  queryKey: ['favorites', userId]
+});
+\end{lstlisting}
+
+\subsection{Justificaci\'on de la combinaci\'on}
+
+La combinaci\'on de AsyncStorage + Supabase + React Query cubre
+los tres niveles de persistencia necesarios:
+
+\begin{enumerate}
+  \item \textbf{Persistencia local:} AsyncStorage conserva la
+    sesi\'on del usuario entre aperturas de la aplicaci\'on,
+    evitando que el usuario deba iniciar sesi\'on cada vez.
+
+  \item \textbf{Persistencia en servidor:} Supabase almacena
+    todos los datos de dominio de forma centralizada, permitiendo
+    la sincronizaci\'on entre m\'ultiples dispositivos.
+
+  \item \textbf{Cach\'e en memoria:} React Query reduce las
+    consultas al servidor y mejora el rendimiento de la
+    aplicaci\'on al cachear los datos m\'as utilizados.
+\end{enumerate}

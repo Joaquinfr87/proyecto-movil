@@ -1,0 +1,341 @@
+% ============================================================================
+%  SECCIÓN 5.5: IMPLEMENTACIÓN DEL CRUD PERSISTENTE
+% ============================================================================
+
+\section{Implementaci\'on del CRUD persistente}
+
+En este avance se completa la implementaci\'on de las operaciones CRUD
+(Create, Read, Update, Delete) con persistencia en Supabase. A diferencia
+del avance anterior, donde la operaci\'on de actualizaci\'on estaba
+pendiente, ahora se implementan las cinco operaciones b\'asicas
+para las entidades principales del sistema.
+
+\subsection{CRUD de escenarios}
+
+La entidad \textit{scenarios} es la m\'as completa del sistema,
+implementando todas las operaciones CRUD a trav\'es del hook
+\textit{useManageScenarios}:
+
+\subsubsection{Read: consulta de escenarios}
+
+La operaci\'on de lectura se implementa en dos variantes: una para
+el cat\'alogo p\'ublico y otra para la gesti\'on administrativa.
+
+\begin{lstlisting}
+// Cat\'alogo: solo escenarios activos
+async function fetchScenarios():
+  Promise<ScenarioWithDetails[]> {
+  const { data, error } = await supabase
+    .from('scenarios')
+    .select(`
+      *,
+      scenario_images(url, is_primary,
+        storage_path, display_order),
+      scenario_sports(sports(nombre))
+    `)
+    .eq('estado', 'activo')
+    .order('nombre');
+
+  if (error) throw new Error(error.message);
+  return (data ?? []).map(resolveScenarioImages);
+}
+
+// Gesti\'on: todos los escenarios (admin/gestor)
+async function fetchAllScenarios():
+  Promise<ScenarioWithImages[]> {
+  const { data, error } = await supabase
+    .from('scenarios')
+    .select(`
+      *,
+      scenario_images(url, is_primary,
+        storage_path, display_order)
+    `)
+    .order('nombre');
+
+  if (error) throw new Error(error.message);
+  return (data ?? []).map(resolveScenarioImages);
+}
+\end{lstlisting}
+
+\subsubsection{Create/Update: upsert de escenario}
+
+La operaci\'on de creaci\'on y actualizaci\'on se unifica mediante
+\textit{upsert}, que inserta un nuevo registro si no existe o
+actualiza el existente:
+
+\begin{lstlisting}
+async function upsertScenario(
+  scenario: UpsertScenarioData
+): Promise<Scenario> {
+  const { data, error } = await supabase
+    .from('scenarios')
+    .upsert({
+      ...scenario,
+      updated_at: new Date().toISOString(),
+    })
+    .select()
+    .single();
+
+  if (error) throw new Error(error.message);
+  return data as Scenario;
+}
+\end{lstlisting}
+
+\subsubsection{Delete: eliminaci\'on de escenario}
+
+La eliminaci\'on se implementa en dos variantes: una suave
+(\textit{soft delete}) que cambia el estado a inactivo, y una
+completa (\textit{hard delete}) que elimina el registro y sus
+im\'agenes del almacenamiento:
+
+\begin{lstlisting}
+// Soft delete: cambia estado a inactivo
+async function softDeleteScenario(
+  id: string
+): Promise<void> {
+  const { error } = await supabase
+    .from('scenarios')
+    .update({
+      estado: 'inactivo',
+      updated_at: new Date().toISOString(),
+    })
+    .eq('id', id);
+
+  if (error) throw new Error(error.message);
+}
+
+// Hard delete: elimina registro e im\'agenes
+async function hardDeleteScenario(
+  id: string
+): Promise<void> {
+  // Eliminar im\'agenes del storage primero
+  const { data: images } = await supabase
+    .from('scenario_images')
+    .select('storage_path')
+    .eq('scenario_id', id);
+
+  if (images && images.length > 0) {
+    await supabase.storage
+      .from('scenario-images')
+      .remove(
+        images.map((img) => img.storage_path)
+      );
+  }
+
+  const { error } = await supabase
+    .from('scenarios')
+    .delete()
+    .eq('id', id);
+
+  if (error) throw new Error(error.message);
+}
+\end{lstlisting}
+
+\subsection{CRUD de eventos}
+
+La entidad \textit{events} implementa las operaciones Create, Read
+y Delete. La actualizaci\'on se gestiona mediante la interfaz de
+edici\'on del escenario:
+
+\begin{lstlisting}
+// Create: crear evento
+async function createEvent(
+  eventData: CreateEventData
+): Promise<Event> {
+  const { data, error } = await supabase
+    .from('events')
+    .insert({
+      scenario_id: eventData.scenario_id,
+      nombre: eventData.nombre,
+      fecha: eventData.fecha,
+      hora: eventData.hora || '00:00',
+      descripcion: eventData.descripcion || '',
+    })
+    .select()
+    .single();
+
+  if (error) throw new Error(error.message);
+  return data as Event;
+}
+
+// Read: eventos pr\'oximos
+async function fetchUpcomingEvents():
+  Promise<EventWithScenario[]> {
+  const today = new Date()
+    .toISOString().split('T')[0];
+
+  const { data, error } = await supabase
+    .from('events')
+    .select(`*, scenarios(*)`)
+    .gte('fecha', today)
+    .order('fecha', { ascending: true })
+    .order('hora', { ascending: true })
+    .limit(5);
+
+  if (error) throw new Error(error.message);
+  return data as EventWithScenario[];
+}
+
+// Delete: eliminar evento
+async function deleteEvent(
+  eventId: string
+): Promise<void> {
+  const { error } = await supabase
+    .from('events')
+    .delete()
+    .eq('id', eventId);
+
+  if (error) throw new Error(error.message);
+}
+\end{lstlisting}
+
+\subsection{CRUD de favoritos}
+
+La funcionalidad de favoritos implementa las operaciones Read,
+Create y Delete. La actualizaci\'on no es necesaria porque un
+favorito solo se agrega o elimina:
+
+\begin{lstlisting}
+// Read: listar favoritos del usuario
+async function fetchFavorites(
+  userId: string
+): Promise<FavoriteWithScenario[]> {
+  const { data, error } = await supabase
+    .from('favorites')
+    .select(`
+      *,
+      scenarios(
+        *,
+        scenario_images(url, is_primary,
+          storage_path)
+      )
+    `)
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false });
+
+  if (error) throw new Error(error.message);
+  return (data as FavoriteWithScenario[])
+    .map((fav) => ({
+      ...fav,
+      scenarios: resolveScenarioImages(
+        fav.scenarios
+      ),
+    }));
+}
+
+// Create: a~nadir favorito
+async function addFavorite(
+  userId: string, scenarioId: string
+): Promise<void> {
+  const { error } = await supabase
+    .from('favorites')
+    .insert({
+      user_id: userId,
+      scenario_id: scenarioId,
+    });
+
+  if (error) throw new Error(error.message);
+}
+
+// Delete: eliminar favorito
+async function removeFavorite(
+  userId: string, scenarioId: string
+): Promise<void> {
+  const { error } = await supabase
+    .from('favorites')
+    .delete()
+    .eq('user_id', userId)
+    .eq('scenario_id', scenarioId);
+
+  if (error) throw new Error(error.message);
+}
+\end{lstlisting}
+
+\subsection{Sincronizaci\'on del cach\'e}
+
+Despu\'es de cada mutaci\'on (Create, Update o Delete), se
+invalidan las consultas de React Query asociadas para forzar la
+recarga de datos en la interfaz:
+
+\begin{lstlisting}
+// Tras upsert de escenario
+queryClient.invalidateQueries({
+  queryKey: ['all-scenarios']
+});
+queryClient.invalidateQueries({
+  queryKey: ['scenarios']
+});
+
+// Tras agregar/eliminar favorito
+queryClient.invalidateQueries({
+  queryKey: ['favorites', userId]
+});
+queryClient.invalidateQueries({
+  queryKey: ['favorite', userId, scenarioId]
+});
+
+// Tras crear/eliminar evento
+queryClient.invalidateQueries({
+  queryKey: ['scenario', variables.scenario_id]
+});
+queryClient.invalidateQueries({
+  queryKey: ['upcoming-events']
+});
+\end{lstlisting}
+
+\subsection{Resumen de operaciones CRUD}
+
+\begin{table}[H]
+  \small
+  \centering
+  \caption{Operaciones CRUD implementadas en el avance 5}
+  \contenidoConFuente{%
+    \begin{tablaAPA}
+      \begin{tabular}{@{}p{1.2cm}p{2.0cm}p{4.6cm}p{5.2cm}p{1.8cm}@{}}
+        \toprule
+        \textbf{Op.} & \textbf{Entidad} & \textbf{Funci\'on} &
+        \textbf{Hook} & \textbf{Estado} \\
+        \midrule
+        Read & Escenarios & {\footnotesize\ttfamily fetchScenarios} &
+        {\footnotesize\ttfamily useScenarios} & OK \\
+        \addlinespace
+        Read & Escenarios & {\footnotesize\ttfamily fetchAllScenarios} &
+        {\footnotesize\ttfamily useAllScenarios} & OK \\
+        \addlinespace
+        Read & Eventos & {\footnotesize\ttfamily fetchUpcomingEvents} &
+        {\footnotesize\ttfamily useUpcomingEvents} & OK \\
+        \addlinespace
+        Read & Favoritos & {\footnotesize\ttfamily fetchFavorites} &
+        {\footnotesize\ttfamily useFavorites} & OK \\
+        \addlinespace
+        Create & Escenario & {\footnotesize\ttfamily upsertScenario} &
+        {\footnotesize\ttfamily useUpsertScenario} & OK \\
+        \addlinespace
+        Create & Evento & {\footnotesize\ttfamily createEvent} &
+        {\footnotesize\ttfamily useCreateEvent} & OK \\
+        \addlinespace
+        Create & Favorito & {\footnotesize\ttfamily addFavorite} &
+        {\footnotesize\ttfamily useToggleFavorite} & OK \\
+        \addlinespace
+        Update & Escenario & {\footnotesize\ttfamily upsertScenario} &
+        {\footnotesize\ttfamily useUpsertScenario} & OK \\
+        \addlinespace
+        Update & Escenario & {\footnotesize\ttfamily toggleScenarioStatus} &
+        {\footnotesize\ttfamily useToggleScenarioStatus} & OK \\
+        \addlinespace
+        Delete & Escenario & {\footnotesize\ttfamily softDeleteScenario} &
+        {\footnotesize\ttfamily useDeleteScenario} & OK \\
+        \addlinespace
+        Delete & Escenario & {\footnotesize\ttfamily hardDeleteScenario} &
+        {\footnotesize\ttfamily useHardDeleteScenario} & OK \\
+        \addlinespace
+        Delete & Evento & {\footnotesize\ttfamily deleteEvent} &
+        {\footnotesize\ttfamily useDeleteEvent} & OK \\
+        \addlinespace
+        Delete & Favorito & {\footnotesize\ttfamily removeFavorite} &
+        {\footnotesize\ttfamily useToggleFavorite} & OK \\
+        \bottomrule
+      \end{tabular}
+    \end{tablaAPA}%
+  }{Elaboraci\'on propia en base al c\'odigo fuente del proyecto.}
+\end{table}

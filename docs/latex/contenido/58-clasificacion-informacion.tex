@@ -1,0 +1,138 @@
+% ============================================================================
+%  SECCIÓN 5.2: CLASIFICACIÓN DE LA INFORMACIÓN
+% ============================================================================
+
+\section{Clasificaci\'on de la informaci\'on}
+
+La informaci\'on que maneja la aplicaci\'on \nombreApp{} se clasifica
+seg\'un su naturaleza, su ciclo de vida y el mecanismo de almacenamiento
+requerido. Esta clasificaci\'on permite determinar qu\'e datos se
+almacenan en el servidor, cu\'ales en el dispositivo y cu\'ales se
+mantienen \'unicamente en memoria.
+
+\subsection{Clasificaci\'on por naturaleza}
+
+\begin{table}[H]
+  \centering
+  \caption{Clasificaci\'on de la informaci\'on por naturaleza}
+  \contenidoConFuente{%
+    \begin{tablaAPA}
+      \begin{tabular}{@{}p{2.8cm}p{3.4cm}p{3.0cm}p{5.4cm}@{}}
+        \toprule
+        \textbf{Categor\'ia} & \textbf{Datos} &
+        \textbf{Almacenamiento} & \textbf{Justificaci\'on} \\
+        \midrule
+        Autenticaci\'on & Token JWT, refresh token,
+        datos del usuario & AsyncStorage (local) &
+        Deben persistir entre sesiones para evitar
+        re-login. \\
+        \addlinespace
+        Dominio & Escenarios, im\'agenes, deportes,
+        eventos & Supabase (servidor) &
+        Datos compartidos entre usuarios, requieren
+        base de datos centralizada. \\
+        \addlinespace
+        Interacci\'on del usuario & Favoritos, perfil &
+        Supabase (servidor) &
+        Datos personales que deben sincronizarse
+        entre dispositivos. \\
+        \addlinespace
+        UI & Filtros, b\'usqueda, estado de carga &
+        Memoria (React Query / useState) &
+        Datos temporales de la interfaz, se regeneran
+        en cada sesi\'on. \\
+        \bottomrule
+      \end{tabular}
+    \end{tablaAPA}%
+  }{Elaboraci\'on propia en base al an\'alisis del c\'odigo fuente.}
+\end{table}
+
+\subsection{Clasificaci\'on por ciclo de vida}
+
+La informaci\'on se clasifica tambi\'en por su duraci\'on en el tiempo:
+
+\begin{enumerate}
+  \item \textbf{Permanente:} datos que deben sobrevivir al cierre de la
+    aplicaci\'on y al reinicio del dispositivo. Incluyen la sesi\'on del
+    usuario (\textit{JWT} y \textit{refresh token}), los favoritos y el
+    perfil. Estos datos se almacenan en AsyncStorage (local) o en Supabase
+    (servidor).
+
+  \item \textbf{Semi-permanente:} datos que se mantienen mientras la
+    aplicaci\'on est\'a activa pero se regeneran al iniciar una nueva
+    sesi\'on. Incluyen el cat\'alogo de escenarios, los eventos pr\'oximos
+    y las im\'agenes. Se almacenan en el cach\'e de React Query con un
+    tiempo de validez de 5 minutos.
+
+  \item \textbf{Temporal:} datos que existen \'unicamente durante una
+    interacci\'on espec\'ifica. Incluyen los t\'erminos de b\'usqueda,
+    los filtros seleccionados y los estados de carga. Se almacenan en
+    el estado local de React (\textit{useState}) y se eliminan al
+    cambiar de pantalla.
+\end{enumerate}
+
+\subsection{Clasificaci\'on por sensitividad}
+
+Los datos tambi\'en se clasifican por su nivel de sensibilidad:
+
+\begin{table}[H]
+  \centering
+  \caption{Clasificaci\'on por nivel de sensibilidad}
+  \contenidoConFuente{%
+    \begin{tablaAPA}
+      \begin{tabular}{@{}p{3.0cm}p{5.0cm}p{7.6cm}@{}}
+        \toprule
+        \textbf{Nivel} & \textbf{Datos} &
+        \textbf{Mecanismo de protecci\'on} \\
+        \midrule
+        Alto & Token JWT, contrase~na, email &
+        Cifrado en tr\'ansito (HTTPS), almacenamiento
+        seguro en AsyncStorage, tokens de renovaci\'on
+        autom\'atica. \\
+        \addlinespace
+        Medio & Nombre completo, rol, favoritos &
+        Acceso restringido por RLS (Row Level Security)
+        en Supabase, pol\'iticas por rol. \\
+        \addlinespace
+        Bajo & Escenarios p\'ublicos, eventos,
+        im\'agenes & Datos p\'ublicos, acceso sin
+        autenticaci\'on para lectura. \\
+        \bottomrule
+      \end{tabular}
+    \end{tablaAPA}%
+  }{Elaboraci\'on propia.}
+\end{table}
+
+\subsection{Resumen de la clasificaci\'on}
+
+La siguiente figura resume la clasificaci\'on de la informaci\'on
+seg\'un su naturaleza y mecanismo de almacenamiento:
+
+\begin{figure}[H]
+  \centering
+  \caption{Clasificaci\'on de la informaci\'on por almacenamiento}
+  \label{fig:clasificacion-informacion}
+  \contenidoConFuente{%
+  \begin{tikzpicture}[
+    node distance=0.8cm,
+    caja/.style={rectangle, draw=black!60, rounded corners,
+      minimum width=3.5cm, minimum height=0.7cm, align=center,
+      font=\small},
+    flecha/.style={-Stealth, thick}
+  ]
+    \node[caja] (datos) {Datos de la app};
+    \node[caja, below left=of datos] (servidor)
+      {Servidor (Supabase)};
+    \node[caja, below right=of datos] (local)
+      {Local (AsyncStorage)};
+    \node[caja, below=of servidor] (dominio)
+      {Escenarios, eventos};
+    \node[caja, below=of local] (auth)
+      {Sesi\'on, tokens};
+    \draw[flecha] (datos) -- (servidor);
+    \draw[flecha] (datos) -- (local);
+    \draw[flecha] (servidor) -- (dominio);
+    \draw[flecha] (local) -- (auth);
+  \end{tikzpicture}
+  }{Elaboraci\'on propia.}
+\end{figure}

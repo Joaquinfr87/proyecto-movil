@@ -1,0 +1,156 @@
+% ============================================================================
+%  SECCIÓN 5.1: ANÁLISIS DE LOS DATOS QUE NECESITAN PERSISTENCIA
+% ============================================================================
+
+\section{An\'alisis de los datos que necesitan persistencia}
+
+En el avance anterior (PDF~4), la aplicaci\'on procesaba datos y respond\'ia a
+las acciones del usuario, pero la informaci\'on cr\'itica se conservaba
+\'unicamente en memoria: al cerrar la aplicaci\'on o reiniciar el dispositivo,
+se perd\'ia la sesi\'on del usuario, los favoritos guardados y los escenarios
+creados. En este avance se identifican los datos que requieren persistencia y
+se implementan los mecanismos necesarios para conservarlos m\'as all\'a del
+ciclo de vida de la aplicaci\'on.
+
+\subsection{Identificaci\'on de datos cr\'iticos}
+
+A partir del an\'alisis del c\'odigo fuente y de las funcionalidades
+implementadas, se identificaron los siguientes conjuntos de datos que
+requieren persistencia:
+
+\begin{table}[H]
+  \centering
+  \caption{Datos que requieren persistencia}
+  \contenidoConFuente{%
+    \begin{tablaAPA}
+      \begin{tabular}{@{}p{3.0cm}p{4.0cm}p{3.5cm}p{4.0cm}@{}}
+        \toprule
+        \textbf{Dato} & \textbf{Descripci\'on} & \textbf{Frecuencia de uso} &
+        \textbf{Consecuencia de p\'erdida} \\
+        \midrule
+        Sesi\'on del usuario & Token JWT y datos del usuario autenticado &
+        Continua & El usuario debe iniciar sesi\'on nuevamente. \\
+        \addlinespace
+        Favoritos del usuario & Lista de escenarios guardados por el usuario &
+        Peri\'odica & El usuario pierde sus escenarios favoritos. \\
+        \addlinespace
+        Escenarios deportivos & Cat\'alogo de escenarios con sus detalles,
+        im\'agenes y deportes & Lectura frecuente &
+        La app no muestra datos sin conexi\'on. \\
+        \addlinespace
+        Eventos pr\'oximos & Actividades programadas en cada escenario &
+        Consulta espor\'adica & No se muestran eventos futuros. \\
+        \addlinespace
+        Perfil del usuario & Nombre, email y rol del usuario &
+        Consulta peri\'odica & No se muestra la informaci\'on del perfil. \\
+        \bottomrule
+      \end{tabular}
+    \end{tablaAPA}%
+  }{Elaboraci\'on propia en base al an\'alisis del c\'odigo fuente del
+  proyecto.}
+\end{table}
+
+\subsection{Clasificaci\'on por criticidad}
+
+Los datos identificados se clasifican en tres niveles de criticidad:
+
+\begin{enumerate}
+  \item \textbf{Cr\'iticos (alta criticidad):} datos cuya p\'erdida afecta
+    directamente la experiencia del usuario. Incluyen la sesi\'on del usuario
+    y los favoritos. Sin estos datos, la aplicaci\'on pierde funcionalidad
+    esencial.
+
+  \item \textbf{Importantes (media criticidad):} datos que mejoran la
+    experiencia pero cuya ausencia es manejable. Incluyen el perfil del
+    usuario y los eventos pr\'oximos. La aplicaci\'on puede funcionar sin
+    ellos, aunque con informaci\'on incompleta.
+
+  \item \textbf{De referencia (baja criticidad):} datos que se consultan
+    frecuentemente pero que se obtienen del servidor. Incluyen el cat\'alogo
+    de escenarios y sus relaciones. La aplicaci\'on puede mostrar datos
+    parciales o un estado vac\'io mientras se recuperan del servidor.
+\end{enumerate}
+
+\subsection{An\'alisis de persistencia por componente}
+
+A continuaci\'on se describe qu\'e datos persiste cada componente de la
+aplicaci\'on y por qu\'e raz\'on:
+
+\subsubsection{Servicio de Supabase (\textit{supabase.ts})}
+
+El servicio de Supabase es el punto de entrada principal para todas las
+operaciones de persistencia. Configura el cliente con las opciones de
+persistencia de la sesi\'on:
+
+\begin{lstlisting}
+import AsyncStorage from
+  '@react-native-async-storage/async-storage';
+import { createClient } from '@supabase/supabase-js';
+
+export const supabase = createClient(
+  supabaseUrl, supabaseAnonKey, {
+  auth: {
+    storage: AsyncStorage,
+    autoRefreshToken: true,
+    persistSession: true,
+  },
+});
+\end{lstlisting}
+
+Las opciones configuradas son:
+
+\begin{itemize}
+  \item \texttt{storage: AsyncStorage} -- motor de persistencia local
+    para los tokens de autenticaci\'on.
+  \item \texttt{autoRefreshToken: true} -- renueva autom\'aticamente
+    el token antes de que expire.
+  \item \texttt{persistSession: true} -- guarda la sesi\'on en el
+    almacenamiento local para sobrevivir cierres de la app.
+\end{itemize}
+
+\subsubsection{Contexto de autenticaci\'on (\textit{AuthContext.tsx})}
+
+El contexto de autenticaci\'on gestiona la sesi\'on del usuario. Al
+inicializarse, recupera la sesi\'on almacenada localmente y escucha
+cambios de autenticaci\'on en tiempo real:
+
+\begin{lstlisting}
+useEffect(() => {
+  supabase.auth.getSession()
+    .then(({ data: { session } }) => {
+      setSession(session);
+      setLoading(false);
+    });
+
+  const { data: { subscription } } =
+    supabase.auth.onAuthStateChange(
+      (event, session) => {
+        if (event === 'SIGNED_IN'
+            || event === 'SIGNED_OUT') {
+          queryClient.clear();
+        }
+        setSession(session);
+      }
+    );
+
+  return () => subscription.unsubscribe();
+}, []);
+\end{lstlisting}
+
+\subsubsection{Hooks de datos (\textit{useScenarios.ts},
+\textit{useFavorites.ts}, \textit{useEvents.ts})}
+
+Cada hook de datos consulta Supabase y almacena el resultado en el
+cach\'e de React Query con un tiempo de validez de 5 minutos:
+
+\begin{lstlisting}
+return useQuery({
+  queryKey: ['scenarios'],
+  queryFn: fetchScenarios,
+  staleTime: 1000 * 60 * 5, // 5 minutos
+});
+\end{lstlisting}
+
+Este cach\'e en memoria permite que las consultas repetitivas no
+realicen llamadas redundantes al servidor, mejorando el rendimiento
+y reduciendo el consumo de datos m\'oviles.

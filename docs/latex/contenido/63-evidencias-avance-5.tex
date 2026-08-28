@@ -1,0 +1,176 @@
+% ============================================================================
+%  SECCIÓN 5.7: EVIDENCIAS DEL AVANCE 5
+% ============================================================================
+
+\section{Evidencias del avance}
+
+A continuaci\'on se presentan las evidencias del avance correspondiente al
+PDF~5, organizadas seg\'un la gu\'ia: CRUD implementado, persistencia de
+datos, capturas de pantalla de las mejoras y verificaci\'on tras cierre.
+
+% --- EVIDENCIA 1 ---
+\subsubsection*{Evidencia 1: Pantalla de gesti\'on de escenarios}
+
+La nueva pantalla de gesti\'on (\textit{manage.tsx}) permite a los
+usuarios con rol de administrador y gestor crear, editar y eliminar
+escenarios deportivos. La lista muestra todos los escenarios (activos
+e inactivos) con opciones de acci\'on:
+
+\begin{figure}[H]
+  \centering
+  \caption{Evidencia: Pantalla de gesti\'on de escenarios}
+  \label{fig:evidencia5-gestion}
+  \contenidoConFuente{%
+    \includegraphics[width=0.28\linewidth]{evidencia5-pantalla-gestion.png}%
+  }{Elaboraci\'on propia (captura de la aplicaci\'on).}
+\end{figure}
+
+% --- EVIDENCIA 2 ---
+\subsubsection*{Evidencia 2: Formulario de creaci\'on de escenario}
+
+El formulario de creaci\'on (\textit{scenario-form/\text{[}id\text{]}.tsx})
+incluye validaciones con Zod, obtenci\'on de ubicaci\'on GPS y subida
+de im\'agenes. Los campos se validan en tiempo real antes de enviar
+los datos a Supabase:
+
+\begin{figure}[H]
+  \centering
+  \caption{Evidencia: Formulario de creaci\'on de escenario}
+  \label{fig:evidencia5-formulario-crear}
+  \contenidoConFuente{%
+    \includegraphics[width=0.28\linewidth]{evidencia5-formulario-crear.png}%
+  }{Elaboraci\'on propia (captura de la aplicaci\'on).}
+\end{figure}
+
+% --- EVIDENCIA 3 ---
+\subsubsection*{Evidencia 3: Formulario de edici\'on de escenario}
+
+El mismo formulario se reutiliza para editar un escenario existente,
+cargando los datos actuales en los campos del formulario. Al enviar,
+se ejecuta un \textit{upsert} que actualiza el registro en Supabase:
+
+\begin{figure}[H]
+  \centering
+  \caption{Evidencia: Formulario de edici\'on de escenario}
+  \label{fig:evidencia5-formulario-editar}
+  \contenidoConFuente{%
+    \includegraphics[width=0.28\linewidth]{evidencia5-formulario-editar.png}%
+  }{Elaboraci\'on propia (captura de la aplicaci\'on).}
+\end{figure}
+
+% --- EVIDENCIA 4 ---
+\subsubsection*{Evidencia 4: Eliminaci\'on de escenario (soft delete)}
+
+La operaci\'on de eliminaci\'on suave cambia el estado del escenario
+a ``inactivo'', removi\'endolo del cat\'alogo p\'ublico sin eliminarlo
+de la base de datos. Solo los administradores pueden ejecutar esta
+operaci\'on:
+
+\begin{figure}[H]
+  \centering
+  \caption{Evidencia: Eliminaci\'on de escenario (soft delete)}
+  \label{fig:evidencia5-eliminar}
+  \contenidoConFuente{%
+    \includegraphics[width=0.28\linewidth]{evidencia5-eliminar-escenario.png}%
+  }{Elaboraci\'on propia (captura de la aplicaci\'on).}
+\end{figure}
+
+% --- EVIDENCIA 5 ---
+\subsubsection*{Evidencia 5: Detalle de escenario con eventos}
+
+La pantalla de detalle muestra la informaci\'on completa del
+escenario, incluyendo las im\'agenes almacenadas en Supabase Storage,
+los deportes disponibles y los eventos pr\'oximos. Los usuarios con
+permiso pueden crear y eliminar eventos:
+
+\begin{figure}[H]
+  \centering
+  \caption{Evidencia: Detalle de escenario con eventos}
+  \label{fig:evidencia5-detalle}
+  \contenidoConFuente{%
+    \includegraphics[width=0.28\linewidth]{evidencia5-detalle-eventos.png}%
+  }{Elaboraci\'on propia (captura de la aplicaci\'on).}
+\end{figure}
+
+% --- EVIDENCIA 6 ---
+\subsubsection*{Evidencia 6: Creaci\'on de evento}
+
+El formulario de creaci\'on de evento permite a los gestores y
+administradores agregar nuevas actividades a un escenario. Se
+validan campos como nombre, fecha, hora y descripci\'on:
+
+\begin{figure}[H]
+  \centering
+  \caption{Evidencia: Creaci\'on de evento}
+  \label{fig:evidencia5-crear-evento}
+  \contenidoConFuente{%
+    \includegraphics[width=0.28\linewidth]{evidencia5-crear-evento.png}%
+  }{Elaboraci\'on propia (captura de la aplicaci\'on).}
+\end{figure}
+
+% --- EVIDENCIA 7 ---
+\subsubsection*{Evidencia 7: Eliminaci\'on de evento}
+
+Los eventos pueden ser eliminados por los gestores y administradores.
+La eliminaci\'on es inmediata y se refleja en la interfaz tras
+invalidar el cach\'e de React Query:
+
+\begin{figure}[H]
+  \centering
+  \caption{Evidencia: Eliminaci\'on de evento}
+  \label{fig:evidencia5-eliminar-evento}
+  \contenidoConFuente{%
+    \includegraphics[width=0.28\linewidth]{evidencia5-eliminar-evento.png}%
+  }{Elaboraci\'on propia (captura de la aplicaci\'on).}
+\end{figure}
+
+% --- EVIDENCIA 8 ---
+\subsubsection*{Evidencia 8: Persistencia de sesi\'on tras cierre}
+
+Para verificar la persistencia, se cerr\'o la aplicaci\'on completamente
+y se reabri\'o. La sesi\'on del usuario se mantuvo activa sin solicitar
+credenciales, demostrando que AsyncStorage conserva los tokens JWT:
+
+\begin{figure}[H]
+  \centering
+  \caption{Evidencia: Sesi\'on persistente tras cierre}
+  \label{fig:evidencia5-sesion}
+  \contenidoConFuente{%
+    \includegraphics[width=0.28\linewidth]{appmovil-ejecutando-fisico.jpeg}%
+  }{Elaboraci\'on propia (captura de la aplicaci\'on).}
+\end{figure}
+
+% --- EVIDENCIA 9 ---
+\subsubsection*{Evidencia 9: Favoritos persistentes}
+
+Los favoritos guardados por el usuario persisten en Supabase y se
+recuperan autom\'aticamente al reabrir la aplicaci\'on. La lista de
+favoritos muestra los escenarios guardados con sus im\'agenes:
+
+\begin{figure}[H]
+  \centering
+  \caption{Evidencia: Favoritos persistentes tras cierre}
+  \label{fig:evidencia5-favoritos}
+  \contenidoConFuente{%
+    \includegraphics[width=0.28\linewidth]{evidencia-favorito-despues.jpg}%
+  }{Elaboraci\'on propia (captura de la aplicaci\'on).}
+\end{figure}
+
+% --- EVIDENCIA 10 ---
+\subsubsection*{Evidencia 10: Repositorio actualizado}
+
+El historial de commits documenta la evoluci\'on del proyecto con las
+nuevas funcionalidades de persistencia:
+
+\begin{lstlisting}[style=terminal]
+feat(manage): add scenario management screen
+feat(scenario-form): add create/edit scenario form
+feat(events): add event creation and deletion
+feat(persistence): implement AsyncStorage for session
+feat(supabase): add RLS policies and performance indexes
+fix(storage): restrict image upload to admin role
+\end{lstlisting}
+
+La captura general del repositorio se presenta en la
+figura~\ref{fig:repositorio-github} de la configuraci\'on de Git
+y GitHub.

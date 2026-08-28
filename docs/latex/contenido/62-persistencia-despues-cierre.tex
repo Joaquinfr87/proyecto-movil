@@ -1,0 +1,193 @@
+% ============================================================================
+%  SECCIÓN 5.6: PERSISTENCIA DESPUÉS DEL CIERRE
+% ============================================================================
+
+\section{Persistencia despu\'es del cierre}
+
+Uno de los objetivos principales de este avance es garantizar que la
+aplicaci\'on conserve los datos cr\'iticos despu\'es del cierre
+completo de la aplicaci\'on o del reinicio del dispositivo. A
+continuaci\'on se describe c\'omo cada mecanismo de persistencia
+opera despu\'es del cierre.
+
+\subsection{Sesi\'on de usuario con AsyncStorage}
+
+Cuando el usuario inicia sesi\'on, Supabase Auth almacena el token
+JWT y el refresh token en AsyncStorage. Al reabrir la aplicaci\'on,
+el servicio de Supabase recupera autom\'aticamente la sesi\'on
+almacenada:
+
+\begin{lstlisting}
+// Al iniciar la app: recuperar sesi\'on
+supabase.auth.getSession()
+  .then(({ data: { session } }) => {
+    setSession(session);
+    setLoading(false);
+  });
+\end{lstlisting}
+
+El flujo de persistencia de la sesi\'on es el siguiente:
+
+\begin{enumerate}
+  \item El usuario inicia sesi\'on con email y contrase~na.
+  \item Supabase retorna un token JWT y un refresh token.
+  \item Los tokens se almacenan en AsyncStorage de forma
+    autom\'atica.
+  \item La aplicaci\'on se cierra o el dispositivo se reinicia.
+  \item Al reabrir la app, \textit{getSession()} recupera los
+    tokens de AsyncStorage.
+  \item Si el token est\'a v\'alido, la sesi\'on se restaura.
+  \item Si el token expir\'o, se usa el refresh token para
+    obtener uno nuevo.
+  \item Si el refresh token tambi\'en expir\'o, el usuario
+    debe iniciar sesi\'on nuevamente.
+\end{enumerate}
+
+\begin{figure}[H]
+  \centering
+  \caption{Flujo de persistencia de la sesi\'on}
+  \label{fig:flujo-sesion}
+  \contenidoConFuente{%
+  \begin{tikzpicture}[
+    node distance=0.5cm,
+    nodo/.style={rectangle, draw=black!60, rounded corners,
+      minimum width=4.0cm, minimum height=0.5cm, align=center,
+      font=\footnotesize},
+    flecha/.style={-Stealth, thick, draw=black!60}
+  ]
+    \node[nodo] (login) {Inicio de sesi\'on};
+    \node[nodo, below=of login] (token) {Token JWT};
+    \node[nodo, below=of token] (store) {AsyncStorage};
+    \node[nodo, below=of store] (close) {Cierre de app};
+    \node[nodo, below=of close] (reopen) {Reabrir app};
+    \node[nodo, below=of reopen] (recover) {Recuperar sesi\'on};
+    \node[nodo, below=of recover] (valid) {Sesi\'on restaurada};
+    \draw[flecha] (login) -- (token);
+    \draw[flecha] (token) -- (store);
+    \draw[flecha] (store) -- (close);
+    \draw[flecha] (close) -- (reopen);
+    \draw[flecha] (reopen) -- (recover);
+    \draw[flecha] (recover) -- (valid);
+  \end{tikzpicture}%
+  }{Elaboraci\'on propia.}
+\end{figure}
+
+\subsection{Datos de dominio en Supabase}
+
+Los escenarios, eventos, im\'agenes y favoritos se almacenan
+permanentemente en la base de datos de Supabase. Al reabrir la
+aplicaci\'on, React Query ejecuta las consultas correspondientes
+y obtiene los datos actualizados del servidor:
+
+\begin{lstlisting}
+// Al reabrir la app: consultar escenarios
+return useQuery({
+  queryKey: ['scenarios'],
+  queryFn: fetchScenarios,
+  staleTime: 1000 * 60 * 5,
+});
+\end{lstlisting}
+
+Si el usuario ten\'ia favoritos guardados, estos se recuperan
+autom\'aticamente desde la tabla \textit{favorites} de Supabase:
+
+\begin{lstlisting}
+// Recuperar favoritos del usuario
+const { data } = await supabase
+  .from('favorites')
+  .select(`*, scenarios(*)`)
+  .eq('user_id', userId)
+  .order('created_at', { ascending: false });
+\end{lstlisting}
+
+\subsection{Cach\'e de React Query}
+
+El cach\'e de React Query se pierde al cerrar la aplicaci\'on,
+ya que se almacena en memoria. Sin embargo, esto no afecta la
+experiencia del usuario porque:
+
+\begin{enumerate}
+  \item Las consultas se ejecutan autom\'aticamente al reabrir
+    la aplicaci\'on.
+  \item Se muestra un indicador de carga mientras se obtienen
+    los datos del servidor.
+  \item Los datos se cach\'ean nuevamente durante 5 minutos
+    para consultas subsiguientes.
+\end{enumerate}
+
+Este comportamiento es intencional: React Query est\'a dise~nado
+para ser una capa de cach\'e ef\'mera que se regenera a partir del
+servidor, no un mecanismo de persistencia.
+
+\subsection{Verificaci\'on de persistencia}
+
+Para verificar que la persistencia funciona correctamente, se
+realizaron las siguientes pruebas:
+
+\begin{table}[H]
+  \centering
+  \caption{Verificaci\'on de persistencia tras cierre}
+  \contenidoConFuente{%
+    \begin{tablaAPA}
+      \begin{tabular}{@{}p{0.7cm}p{3.5cm}p{5.0cm}p{3.0cm}@{}}
+        \toprule
+        \textbf{ID} & \textbf{Prueba} & \textbf{Resultado} &
+        \textbf{Observaci\'on} \\
+        \midrule
+        V1 & Cerrar y reabrir la app &
+        La sesi\'on se mantiene activa sin pedir
+        credenciales & AsyncStorage conserva tokens. \\
+        \addlinespace
+        V2 & Cerrar y reabrir con favoritos &
+        Los favoritos aparecen en la lista &
+        Supabase conserva datos. \\
+        \addlinespace
+        V3 & Cerrar y reabrir tras crear escenario &
+        El escenario aparece en el cat\'alogo &
+        Datos en servidor. \\
+        \addlinespace
+        V4 & Cerrar y reabrir tras crear evento &
+        El evento se muestra en el detalle &
+        Datos en servidor. \\
+        \addlinespace
+        V5 & Desactivar internet y reabrir &
+        Se muestran datos del cach\'e anterior &
+        React Query cache. \\
+        \bottomrule
+      \end{tabular}
+    \end{tablaAPA}%
+  }{Elaboraci\'on propia en base a las pruebas
+  realizadas en dispositivo f\'isico.}
+\end{table}
+
+\subsection{Comparaci\'on antes y despu\'es del avance}
+
+\begin{table}[H]
+  \centering
+  \caption{Comparaci\'on de persistencia antes y despu\'es}
+  \contenidoConFuente{%
+    \begin{tablaAPA}
+      \begin{tabular}{@{}p{3.4cm}p{5.0cm}p{6.2cm}@{}}
+        \toprule
+        \textbf{Aspecto} & \textbf{Antes (PDF 4)} &
+        \textbf{Despu\'es (PDF 5)} \\
+        \midrule
+        Sesi\'on & Se perd\'ia al cerrar la app &
+        Se conserva con AsyncStorage. \\
+        \addlinespace
+        Favoritos & Se perd\'ian al cerrar la app &
+        Se conservan en Supabase. \\
+        \addlinespace
+        Escenarios & Solo lectura (sin CRUD) &
+        CRUD completo con persistencia. \\
+        \addlinespace
+        Eventos & Solo lectura &
+        Create y Delete con persistencia. \\
+        \addlinespace
+        Im\'agenes & Sin gesti\'on &
+        Subida y eliminaci\'on con Storage. \\
+        \bottomrule
+      \end{tabular}
+    \end{tablaAPA}%
+  }{Elaboraci\'on propia.}
+\end{table}
