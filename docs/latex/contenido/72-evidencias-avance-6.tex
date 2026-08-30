@@ -110,8 +110,17 @@ en Supabase:
 \begin{figure}[H]
 \centering
   \figuraAPA{fig:evidencia6-crear}{Evidencia: Creaci\'on de un registro (CREATE)}{%
-    \includegraphics[width=0.28\linewidth]{evidencia6-crear-registro.png}%
-  }{Elaboraci\'on propia (captura de la aplicaci\'on).}
+    \begin{minipage}[c]{0.20\linewidth}
+      \centering
+      \includegraphics[width=\linewidth]{evidencia6-crear-registro-app.jpeg}%
+      \par\vspace{3pt}{\footnotesize(a) Aplicaci\'on}
+    \end{minipage}\hfill
+    \begin{minipage}[c]{0.72\linewidth}
+      \centering
+      \includegraphics[width=\linewidth]{evidencia6-crear-registro-supabase.png}%
+      \par\vspace{3pt}{\footnotesize(b) Supabase}
+    \end{minipage}%
+  }{Elaboraci\'on propia (capturas de la aplicaci\'on y del Table Editor de Supabase).}
 \end{figure}
 
 % --- EVIDENCIA 9 ---
@@ -123,21 +132,54 @@ de datos:
 \begin{figure}[H]
 \centering
   \figuraAPA{fig:evidencia6-actualizar}{Evidencia: Actualizaci\'on de un registro (UPDATE)}{%
-    \includegraphics[width=0.28\linewidth]{evidencia6-actualizar-registro.png}%
-  }{Elaboraci\'on propia (captura de la aplicaci\'on).}
+    \begin{minipage}[c]{0.16\linewidth}
+      \centering
+      \includegraphics[width=\linewidth]{evidencia6-actualizar-registro-app.jpeg}%
+      \par\vspace{3pt}{\footnotesize(a) Aplicaci\'on}
+    \end{minipage}\hfill
+    \begin{minipage}[c]{0.16\linewidth}
+      \centering
+      \includegraphics[width=\linewidth]{evidencia6-actualizar-registro-app-buscador.jpeg}%
+      \par\vspace{3pt}{\footnotesize(b) Buscador}
+    \end{minipage}\hfill
+    \begin{minipage}[c]{0.60\linewidth}
+      \centering
+      \includegraphics[width=\linewidth]{evidencia6-actualizar-registro-supabase.png}%
+      \par\vspace{3pt}{\footnotesize(c) Supabase}
+    \end{minipage}%
+  }{Elaboraci\'on propia (capturas de la aplicaci\'on y del Table Editor de Supabase).}
 \end{figure}
 
 % --- EVIDENCIA 10 ---
 \subsubsection*{Evidencia 10: Eliminaci\'on de registros}
 
-La operaci\'on de eliminaci\'on borra o desactiva el registro y se
-comprueba tambi\'en desde Supabase:
+La operaci\'on de eliminaci\'on gestionada desde la aplicaci\'on usa un
+borrado suave (\emph{soft delete}): el escenario se desactiva cambiando
+su estado a \texttt{inactivo}, por lo que deja de mostrarse en el
+cat\'alogo pero el registro se conserva en la base de datos. El panel
+(a) muestra la vista de gesti\'on y el panel (b) el escenario localizado
+con el buscador; el panel (c) confirma en Supabase que el estado
+qued\'o en \texttt{inactivo}:
 
 \begin{figure}[H]
 \centering
-  \figuraAPA{fig:evidencia6-eliminar}{Evidencia: Eliminaci\'on de un registro (DELETE)}{%
-    \includegraphics[width=0.28\linewidth]{evidencia6-eliminar-registro.png}%
-  }{Elaboraci\'on propia (captura de la aplicaci\'on).}
+  \figuraAPA{fig:evidencia6-eliminar}{Evidencia: Eliminaci\'on de un registro (soft delete)}{%
+    \begin{minipage}[c]{0.16\linewidth}
+      \centering
+      \includegraphics[width=\linewidth]{evidencia6-eliminar-registro-app.jpeg}%
+      \par\vspace{3pt}{\footnotesize(a) Aplicaci\'on}
+    \end{minipage}\hfill
+    \begin{minipage}[c]{0.16\linewidth}
+      \centering
+      \includegraphics[width=\linewidth]{evidencia6-eliminar-registro-app-buscador.jpeg}%
+      \par\vspace{3pt}{\footnotesize(b) Buscador}
+    \end{minipage}\hfill
+    \begin{minipage}[c]{0.60\linewidth}
+      \centering
+      \includegraphics[width=\linewidth]{evidencia6-eliminar-registro-supabase.png}%
+      \par\vspace{3pt}{\footnotesize(c) Supabase}
+    \end{minipage}%
+  }{Elaboraci\'on propia (capturas de la aplicaci\'on y del Table Editor de Supabase).}
 \end{figure}
 
 % --- EVIDENCIA 11 ---
@@ -149,45 +191,94 @@ de Supabase, no datos escritos en el c\'odigo:
 \begin{figure}[H]
 \centering
   \figuraAPA{fig:evidencia6-datos-reales}{Evidencia: Datos reales en la interfaz}{%
-    \includegraphics[width=0.30\linewidth]{evidencia6-pantalla-datos-reales.png}%
-  }{Elaboraci\'on propia (captura de la aplicaci\'on).}
+    \begin{minipage}[c]{0.20\linewidth}
+      \centering
+      \includegraphics[width=\linewidth]{evidencia6-pantalla-datos-reales-app.jpeg}%
+      \par\vspace{3pt}{\footnotesize(a) Aplicaci\'on}
+    \end{minipage}\hfill
+    \begin{minipage}[c]{0.72\linewidth}
+      \centering
+      \includegraphics[width=\linewidth]{evidencia6-pantalla-datos-reales-supabase.png}%
+      \par\vspace{3pt}{\footnotesize(b) Supabase}
+    \end{minipage}%
+  }{Elaboraci\'on propia (capturas de la aplicaci\'on y del Table Editor de Supabase).}
 \end{figure}
 
 % --- EVIDENCIA 12 ---
 \subsubsection*{Evidencia 12: Manejo de estados de carga}
 
 Mientras la aplicaci\'on consulta Supabase se muestra un indicador de
-carga:
+carga en las distintas secciones de la aplicaci\'on:
 
 \begin{figure}[H]
 \centering
   \figuraAPA{fig:evidencia6-carga}{Evidencia: Estado de carga}{%
-    \includegraphics[width=0.28\linewidth]{evidencia6-estado-carga.png}%
-  }{Elaboraci\'on propia (captura de la aplicaci\'on).}
+    \begin{minipage}[c]{0.26\linewidth}
+      \centering
+      \includegraphics[width=\linewidth]{evidencia6-carga-gestion.jpeg}%
+      \par\vspace{3pt}{\footnotesize(a) Gesti\'on}
+    \end{minipage}\hfill
+    \begin{minipage}[c]{0.26\linewidth}
+      \centering
+      \includegraphics[width=\linewidth]{evidencia6-carga-buscador.jpeg}%
+      \par\vspace{3pt}{\footnotesize(b) Buscador}
+    \end{minipage}\hfill
+    \begin{minipage}[c]{0.26\linewidth}
+      \centering
+      \includegraphics[width=\linewidth]{evidencia6-carga-favoritos.jpeg}%
+      \par\vspace{3pt}{\footnotesize(c) Favoritos}
+    \end{minipage}%
+  }{Elaboraci\'on propia (capturas de la aplicaci\'on).}
 \end{figure}
 
 % --- EVIDENCIA 13 ---
 \subsubsection*{Evidencia 13: Manejo de errores}
 
 Ante una falla de conexi\'on la aplicaci\'on muestra un mensaje de error
-controlado en lugar de cerrarse:
+controlado en lugar de cerrarse, en las distintas secciones de la
+aplicaci\'on:
 
 \begin{figure}[H]
 \centering
   \figuraAPA{fig:evidencia6-error}{Evidencia: Manejo de errores de conexi\'on}{%
-    \includegraphics[width=0.28\linewidth]{evidencia6-estado-error.png}%
-  }{Elaboraci\'on propia (captura de la aplicaci\'on).}
+    \begin{minipage}[c]{0.20\linewidth}
+      \centering
+      \includegraphics[width=\linewidth]{evidencia6-error-gestion.jpeg}%
+      \par\vspace{3pt}{\footnotesize(a) Gesti\'on}
+    \end{minipage}\hfill
+    \begin{minipage}[c]{0.20\linewidth}
+      \centering
+      \includegraphics[width=\linewidth]{evidencia6-error-buscador.jpeg}%
+      \par\vspace{3pt}{\footnotesize(b) Buscador}
+    \end{minipage}\hfill
+    \begin{minipage}[c]{0.20\linewidth}
+      \centering
+      \includegraphics[width=\linewidth]{evidencia6-error-favoritos.jpeg}%
+      \par\vspace{3pt}{\footnotesize(c) Favoritos}
+    \end{minipage}\hfill
+    \begin{minipage}[c]{0.20\linewidth}
+      \centering
+      \includegraphics[width=\linewidth]{evidencia6-error-mapa.jpeg}%
+      \par\vspace{3pt}{\footnotesize(d) Mapa}
+    \end{minipage}%
+  }{Elaboraci\'on propia (capturas de la aplicaci\'on).}
 \end{figure}
 
 % --- EVIDENCIA 14 ---
 \subsubsection*{Evidencia 14: Repositorio GitHub actualizado}
 
 El historial de commits documenta la evoluci\'on del proyecto e incluye
-el avance de integraci\'on con Supabase:
+el avance de integraci\'on con Supabase. La salida del comando
+\texttt{git log} evidencia la rama de documentaci\'on \texttt{docs}
+actualizada e integrada con el c\'odigo de la aplicaci\'on:
 
-\begin{figure}[H]
-\centering
-  \figuraAPA{fig:evidencia6-repositorio}{Evidencia: Repositorio actualizado}{%
-    \includegraphics[width=0.60\linewidth]{evidencia6-repositorio-github.png}%
-  }{Elaboraci\'on propia (captura del repositorio en GitHub).}
-\end{figure}
+\begin{lstlisting}[style=terminal]
+$ git log --oneline -10
+fe32a4e docs: agregar contenido del PDF 6 - integracion con Supabase y PostgreSQL
+de96e72 docs: completar avance PDF 5 y alinear formato de figuras
+5c48db0 fix: correccion de eliminacion de imagenes en Supabase Storage y base de datos con id y storage_path
+d4b7927 fix: restaurar lectura binaria Base64/Uint8Array para que las imagenes se suban con contenido real
+1079708 fix: migrar lectura de imagen a fetch arrayBuffer eliminando metodo deprecado de FileSystem
+df18d91 feat: correccion de favoritos, subida de imagenes en creacion, modelos 360,
+         persistencia de categorias y gestion de deportes
+\end{lstlisting}

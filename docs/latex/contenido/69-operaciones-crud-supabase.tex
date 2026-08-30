@@ -184,15 +184,41 @@ const { error } = await supabase
 
 \subsubsection{Delete: eliminaci\'on de registros}
 
-La eliminaci\'on se implementa de dos formas seg\'un la entidad:
+Al igual que en el avance~5, la eliminaci\'on se implementa de dos
+formas: un borrado suave (\emph{soft delete}) que conserva el registro
+cambiando su estado, y un borrado f\'isico que elimina la fila de la
+base de datos:
 
 \begin{itemize}
-  \item \textbf{Eliminaci\'on suave (soft delete):} los escenarios no se
-    borran de la base de datos; su estado cambia a ``inactivo'' y
-    desaparecen del cat\'alogo p\'ublico.
-  \item \textbf{Eliminaci\'on f\'isica:} eventos y favoritos se eliminan
-    directamente con \texttt{.delete()}.
+  \item \textbf{Borrado suave (soft delete) --- escenarios:} la operaci\'on
+    \emph{Deshabilitar} de la pantalla de gesti\'on cambia su estado a
+    ``inactivo''; el registro se conserva en la base de datos pero deja
+    de mostrarse en el cat\'alogo p\'ublico. La operaci\'on
+    \emph{Habilitar} restaura el estado a ``activo''. Este es el
+    comportamiento mostrado en la Evidencia~10 del avance~6.
+  \item \textbf{Borrado f\'isico (hard delete):} el bot\'on \emph{Eliminar}
+    de la pantalla de gesti\'on (disponible solo para el rol
+    administrador) borra definitivamente el escenario y sus im\'agenes de
+    Supabase Storage. Eventos y favoritos tambi\'en se eliminan de forma
+    directa con \texttt{.delete()}.
 \end{itemize}
+
+El borrado suave se implementa cambiando el estado del registro con el
+cliente de Supabase:
+
+\begin{lstlisting}
+async function softDeleteScenario(id: string) {
+  const { error } = await supabase
+    .from('scenarios')
+    .update({ estado: 'inactivo', updated_at: new Date().toISOString() })
+    .eq('id', id);
+
+  if (error) throw new Error(error.message);
+}
+\end{lstlisting}
+
+El borrado f\'isico usa el m\'etodo \texttt{.delete()} del cliente, como
+en el caso de los favoritos:
 
 \begin{lstlisting}
 async function removeFavorite(userId: string, scenarioId: string) {
