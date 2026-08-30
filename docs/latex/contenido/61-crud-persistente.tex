@@ -339,3 +339,46 @@ queryClient.invalidateQueries({
     \end{tablaAPA}%
   }{Elaboraci\'on propia en base al c\'odigo fuente del proyecto.}
 \end{table}
+
+\subsection{Dificultades encontradas en la implementaci\'on}
+
+Durante la implementaci\'on del CRUD persistente se presentaron las
+siguientes dificultades, junto con las soluciones aplicadas:
+
+\begin{table}[H]
+  \centering
+  \caption{Dificultades de la persistencia y soluciones aplicadas}
+  \label{tab:dificultades-avance5}
+  \contenidoConFuente{%
+    \begin{tablaAPA}
+      \begin{tabular}{@{}p{5.5cm}p{9.5cm}@{}}
+        \toprule
+        \textbf{Problema} & \textbf{Soluci\'on} \\
+        \midrule
+        La eliminaci\'on de un escenario no remov\'ia sus im\'agenes,
+        dejando archivos hu\'erfanos en el almacenamiento. & Se
+        implement\'o el \textit{hard delete} que primero consulta y
+        elimina las im\'agenes del \textit{storage} de Supabase y
+        despu\'es borra el registro, garantizando la consistencia. \\
+        \addlinespace
+        La pol\'itica de seguridad (RLS) imped\'ia que los usuarios
+        gestores guardaran o modificaran escenarios correctamente. & Se
+        ajustaron las pol\'iticas RLS por rol (administrador y gestor
+        pueden escribir; solo el propietario gestiona sus favoritos)
+        y se documentaron en la tabla de pol\'iticas de seguridad. \\
+        \addlinespace
+        El formulario de edici\'on requer\'ia actualizar o insertar con
+        una sola operaci\'on. & Se unific\'o la l\'ogica mediante
+        \textit{upsert}, que inserta si el registro no existe o actualiza
+        el existente, evitando la duplicaci\'on de c\'odigo. \\
+        \addlinespace
+        La subida de im\'agenes no estaba restringida, permitiendo que
+        cualquier rol subiera archivos. & Se ajust\'o la pol\'itica del
+        \textit{bucket} para restringir la subida y eliminaci\'on de
+        im\'agenes \'unicamente al rol administrador. \\
+        \bottomrule
+      \end{tabular}
+    \end{tablaAPA}%
+  }{Elaboraci\'on propia en base a las dificultades encontradas durante el
+  desarrollo.}
+\end{table}

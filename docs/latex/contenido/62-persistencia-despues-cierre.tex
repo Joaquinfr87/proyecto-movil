@@ -44,10 +44,8 @@ El flujo de persistencia de la sesi\'on es el siguiente:
 \end{enumerate}
 
 \begin{figure}[H]
-  \centering
-  \caption{Flujo de persistencia de la sesi\'on}
-  \label{fig:flujo-sesion}
-  \contenidoConFuente{%
+\centering
+  \figuraAPA{fig:flujo-sesion}{Flujo de persistencia de la sesi\'on}{%
   \begin{tikzpicture}[
     node distance=0.5cm,
     nodo/.style={rectangle, draw=black!60, rounded corners,
@@ -71,6 +69,26 @@ El flujo de persistencia de la sesi\'on es el siguiente:
   \end{tikzpicture}%
   }{Elaboraci\'on propia.}
 \end{figure}
+
+\subsection{Datos booleanos persistentes}
+
+Junto con los tokens, se persisten datos booleanos que reflejan el
+estado de una opci\'on o configuraci\'on. El mecanismo de
+persistencia local admite este tipo de valor adem\'as de texto,
+n\'umeros y listas de cadenas.
+
+En la aplicaci\'on, la sesi\'on del usuario se conserva mediante dos
+banderas booleanas provistas por la configuraci\'on de Supabase Auth:
+\begin{itemize}
+  \item \texttt{autoRefreshToken} -- indica si el token se renueva
+    autom\'aticamente antes de expirar.
+  \item \texttt{persistSession} -- indica si la sesi\'on debe
+    conservarse tras cerrar la aplicaci\'on.
+\end{itemize}
+
+Ambas se almacenan de forma persistente y se leen al volver a abrir
+la aplicaci\'on, por lo que el estado de la sesi\'on (iniciada o no
+iniciada) se conserva correctamente entre cierres.
 
 \subsection{Datos de dominio en Supabase}
 
@@ -158,6 +176,47 @@ realizaron las siguientes pruebas:
     \end{tablaAPA}%
   }{Elaboraci\'on propia en base a las pruebas
   realizadas en dispositivo f\'isico.}
+\end{table}
+
+\subsection{Pruebas de error: datos vac\'ios o inexistentes}
+
+Adem\'as de verificar que los datos persisten, se comprobaron los
+escenarios cr\'iticos en los que la informaci\'on almacenada no existe
+o ha sido eliminada. La aplicaci\'on maneja estos casos sin producir
+errores y ofrece retroalimentaci\'on al usuario:
+
+\begin{table}[H]
+  \centering
+  \caption{Pruebas de error sobre persistencia}
+  \contenidoConFuente{%
+    \begin{tablaAPA}
+      \begin{tabular}{@{}p{0.8cm}p{3.6cm}p{2.0cm}p{8.6cm}@{}}
+        \toprule
+        \textbf{ID} & \textbf{Prueba} & \textbf{Resultado} &
+        \textbf{Observaciones} \\
+        \midrule
+        E1 & Primera ejecuci\'on sin datos &
+        Aprobado & Al iniciar la app por primera vez, no hay sesi\'on
+        ni favoritos almacenados. La app muestra la pantalla de
+        inicio/cat\'alogo y los estados vac\'ios correspondientes, sin
+        errores. \\
+        \addlinespace
+        E2 & Sesiones expiradas o inexistentes &
+        Aprobado & Si el refresh token expir\'o o no existe, la app redirige
+        al inicio de sesi\'on sin pantallas en blanco ni excepciones. \\
+        \addlinespace
+        E3 & Favoritos eliminados & Aprobado &
+        Tras eliminar todos los favoritos, la lista muestra el estado
+        vac\'io (\textit{``A\'un no tienes favoritos''}) en lugar de un error. \\
+        \addlinespace
+        E4 & Escenarios desactivados & Aprobado &
+        Si todos los escenarios est\'an inactivos, el cat\'alogo p\'ublico
+        muestra un estado vac\'io con mensaje informativo. \\
+        \bottomrule
+      \end{tabular}
+    \end{tablaAPA}%
+  }{Elaboraci\'on propia en base a las pruebas realizadas en dispositivo
+  f\'isico.}
 \end{table}
 
 \subsection{Comparaci\'on antes y despu\'es del avance}

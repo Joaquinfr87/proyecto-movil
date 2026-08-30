@@ -36,7 +36,7 @@
 % --- Pie de página: línea horizontal y número de página a la derecha ---------
 \RequirePackage{fancyhdr}
 \setlength{\headheight}{17pt}     % altura para el encabezado (1 línea + regla)
-\setlength{\headsep}{40pt}
+\setlength{\headsep}{25pt}
 \pagestyle{fancy}
 \fancyhf{}
 \fancyfoot[R]{\thepage}
@@ -107,6 +107,35 @@
 \newcommand{\fuenteAPA}[1]{%
   \vspace{4pt}%
   {\setstretch{1}\footnotesize\textbf{FUENTE:} #1}%
+}
+
+% \figuraAPA{<label>}{<título>}{<contenido>}{<fuente>} coloca el título de la
+% figura a lo ancho del texto y la línea FUENTE alineada a la par del título
+% (también a ancho del texto), mientras la imagen (o diagrama TikZ) se centra
+% al ancho de su propio contenido. Así, el título y la fuente comparten la
+% misma alineación y el título no se ve achicado en imágenes estrechas
+% (p. ej. capturas de pantalla en orientación vertical). Si <label> viene
+% vacío, se omite el \label (caso de figuras sin referencia cruzada).
+\newcommand{\figuraAPA}[4]{%
+  \begin{lrbox}{\cajaContenido}#3\end{lrbox}%
+  % Título a ancho del texto (no se achica en imágenes estrechas)
+  \noindent
+  \if\relax\detokenize{#1}\relax
+    \captionsetup{width=\linewidth}\captionof{figure}{#2}%
+  \else
+    \captionsetup{width=\linewidth}\captionof{figure}{#2}\label{#1}%
+  \fi
+  \par
+  % Imagen centrada al ancho de su propio contenido
+  \begin{center}%
+    \parbox{\wd\cajaContenido}{%
+      \setstretch{1}%
+      \usebox{\cajaContenido}%
+    }%
+  \end{center}%
+  % FUENTE alineada igual que el título (a ancho del texto)
+  \vspace{6pt}%
+  {\setstretch{1}\footnotesize\textbf{FUENTE:} #4}%
 }
 
 % --- Gráficos y diagramas ----------------------------------------------------

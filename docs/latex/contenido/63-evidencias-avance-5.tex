@@ -17,10 +17,8 @@ escenarios deportivos. La lista muestra todos los escenarios (activos
 e inactivos) con opciones de acci\'on:
 
 \begin{figure}[H]
-  \centering
-  \caption{Evidencia: Pantalla de gesti\'on de escenarios}
-  \label{fig:evidencia5-gestion}
-  \contenidoConFuente{%
+\centering
+  \figuraAPA{fig:evidencia5-gestion}{Evidencia: Pantalla de gesti\'on de escenarios}{%
     \includegraphics[width=0.28\linewidth]{evidencia5-pantalla-gestion.png}%
   }{Elaboraci\'on propia (captura de la aplicaci\'on).}
 \end{figure}
@@ -34,10 +32,8 @@ de im\'agenes. Los campos se validan en tiempo real antes de enviar
 los datos a Supabase:
 
 \begin{figure}[H]
-  \centering
-  \caption{Evidencia: Formulario de creaci\'on de escenario}
-  \label{fig:evidencia5-formulario-crear}
-  \contenidoConFuente{%
+\centering
+  \figuraAPA{fig:evidencia5-formulario-crear}{Evidencia: Formulario de creaci\'on de escenario}{%
     \includegraphics[width=0.28\linewidth]{evidencia5-formulario-crear.png}%
   }{Elaboraci\'on propia (captura de la aplicaci\'on).}
 \end{figure}
@@ -50,10 +46,8 @@ cargando los datos actuales en los campos del formulario. Al enviar,
 se ejecuta un \textit{upsert} que actualiza el registro en Supabase:
 
 \begin{figure}[H]
-  \centering
-  \caption{Evidencia: Formulario de edici\'on de escenario}
-  \label{fig:evidencia5-formulario-editar}
-  \contenidoConFuente{%
+\centering
+  \figuraAPA{fig:evidencia5-formulario-editar}{Evidencia: Formulario de edici\'on de escenario}{%
     \includegraphics[width=0.28\linewidth]{evidencia5-formulario-editar.png}%
   }{Elaboraci\'on propia (captura de la aplicaci\'on).}
 \end{figure}
@@ -67,10 +61,8 @@ de la base de datos. Solo los administradores pueden ejecutar esta
 operaci\'on:
 
 \begin{figure}[H]
-  \centering
-  \caption{Evidencia: Eliminaci\'on de escenario (soft delete)}
-  \label{fig:evidencia5-eliminar}
-  \contenidoConFuente{%
+\centering
+  \figuraAPA{fig:evidencia5-eliminar}{Evidencia: Eliminaci\'on de escenario (soft delete)}{%
     \includegraphics[width=0.28\linewidth]{evidencia5-eliminar-escenario.png}%
   }{Elaboraci\'on propia (captura de la aplicaci\'on).}
 \end{figure}
@@ -84,10 +76,8 @@ los deportes disponibles y los eventos pr\'oximos. Los usuarios con
 permiso pueden crear y eliminar eventos:
 
 \begin{figure}[H]
-  \centering
-  \caption{Evidencia: Detalle de escenario con eventos}
-  \label{fig:evidencia5-detalle}
-  \contenidoConFuente{%
+\centering
+  \figuraAPA{fig:evidencia5-detalle}{Evidencia: Detalle de escenario con eventos}{%
     \includegraphics[width=0.28\linewidth]{evidencia5-detalle-eventos.png}%
   }{Elaboraci\'on propia (captura de la aplicaci\'on).}
 \end{figure}
@@ -100,10 +90,8 @@ administradores agregar nuevas actividades a un escenario. Se
 validan campos como nombre, fecha, hora y descripci\'on:
 
 \begin{figure}[H]
-  \centering
-  \caption{Evidencia: Creaci\'on de evento}
-  \label{fig:evidencia5-crear-evento}
-  \contenidoConFuente{%
+\centering
+  \figuraAPA{fig:evidencia5-crear-evento}{Evidencia: Creaci\'on de evento}{%
     \includegraphics[width=0.28\linewidth]{evidencia5-crear-evento.png}%
   }{Elaboraci\'on propia (captura de la aplicaci\'on).}
 \end{figure}
@@ -116,10 +104,8 @@ La eliminaci\'on es inmediata y se refleja en la interfaz tras
 invalidar el cach\'e de React Query:
 
 \begin{figure}[H]
-  \centering
-  \caption{Evidencia: Eliminaci\'on de evento}
-  \label{fig:evidencia5-eliminar-evento}
-  \contenidoConFuente{%
+\centering
+  \figuraAPA{fig:evidencia5-eliminar-evento}{Evidencia: Eliminaci\'on de evento}{%
     \includegraphics[width=0.28\linewidth]{evidencia5-eliminar-evento.png}%
   }{Elaboraci\'on propia (captura de la aplicaci\'on).}
 \end{figure}
@@ -132,10 +118,8 @@ y se reabri\'o. La sesi\'on del usuario se mantuvo activa sin solicitar
 credenciales, demostrando que AsyncStorage conserva los tokens JWT:
 
 \begin{figure}[H]
-  \centering
-  \caption{Evidencia: Sesi\'on persistente tras cierre}
-  \label{fig:evidencia5-sesion}
-  \contenidoConFuente{%
+\centering
+  \figuraAPA{fig:evidencia5-sesion}{Evidencia: Sesi\'on persistente tras cierre}{%
     \includegraphics[width=0.28\linewidth]{appmovil-ejecutando-fisico.jpeg}%
   }{Elaboraci\'on propia (captura de la aplicaci\'on).}
 \end{figure}
@@ -148,10 +132,8 @@ recuperan autom\'aticamente al reabrir la aplicaci\'on. La lista de
 favoritos muestra los escenarios guardados con sus im\'agenes:
 
 \begin{figure}[H]
-  \centering
-  \caption{Evidencia: Favoritos persistentes tras cierre}
-  \label{fig:evidencia5-favoritos}
-  \contenidoConFuente{%
+\centering
+  \figuraAPA{fig:evidencia5-favoritos}{Evidencia: Favoritos persistentes tras cierre}{%
     \includegraphics[width=0.28\linewidth]{evidencia-favorito-despues.jpg}%
   }{Elaboraci\'on propia (captura de la aplicaci\'on).}
 \end{figure}

@@ -33,10 +33,42 @@ La siguiente figura muestra la estructura general del contenido del archivo
 README del proyecto.
 
 \begin{figure}[H]
-  \centering
-  \caption{Contenido del archivo README del proyecto}
-  \label{fig:readme-proyecto}
-  \contenidoConFuente{%
+\centering
+  \figuraAPA{fig:readme-proyecto}{Contenido del archivo README del proyecto}{%
     \includegraphics[width=0.62\linewidth]{readme.jpeg}%
   }{Elaboraci\'on propia (captura del archivo README).}
 \end{figure}
+
+\subsection{Secci\'on de persistencia de datos en el README}
+
+Como parte del avance~5, el README del repositorio se actualiz\'o con una
+secci\'on titulada \textit{Persistencia de datos}. Esta secci\'on
+explica:
+
+\begin{itemize}
+  \item \textbf{Qu\'e informaci\'on se almacena:} la sesi\'on del usuario
+    (token JWT y refresh token) de forma local mediante AsyncStorage, y
+    los datos de dominio (escenarios, eventos, favoritos y perfil) en
+    Supabase.
+
+  \item \textbf{Por qu\'e se almacena:} para conservar la sesi\'on y los
+    favoritos entre aperturas de la aplicaci\'on, evitando que el usuario
+    tenga que iniciar sesi\'on o guardar sus preferencias
+    nuevamente.
+
+  \item \textbf{Qu\'e tecnolog\'ia se utiliz\'o:} AsyncStorage para el
+    almacenamiento local y Supabase (PostgreSQL con pol\'iticas RLS)
+    para la base de datos remota.
+
+  \item \textbf{Qu\'e ocurre al cerrar la aplicaci\'on:} la sesi\'on
+    persiste localmente y los datos de dominio permanecen en el servidor,
+    por lo que pueden recuperarse al abrir la aplicaci\'on nuevamente.
+
+  \item \textbf{Qu\'e informaci\'on puede eliminarse:} los favoritos,
+    los escenarios (soft/hard delete) y los eventos, que el usuario o
+    el administrador puede gestionar desde la aplicaci\'on.
+\end{itemize}
+
+Este apartado refleja la evoluci\'on del proyecto hacia una capa de
+persistencia documentada y reproducible por cualquier colaborador del
+repositorio.
