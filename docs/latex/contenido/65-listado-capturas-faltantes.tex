@@ -129,9 +129,69 @@ cu\'ales deben reemplazarse.
   }{Elaboraci\'on propia.}
 \end{table}
 
+\subsection*{Avance 6 -- Integraci\'on con Supabase}
+
+\begin{table}[H]
+  \small
+  \centering
+  \caption{Estado de capturas del avance 6}
+  \contenidoConFuente{%
+    \begin{tablaAPA}
+      \begin{tabular}{@{}p{0.6cm}p{4.6cm}p{4.4cm}p{2.0cm}p{2.6cm}@{}}
+        \toprule
+        \textbf{ID} & \textbf{Figura} & \textbf{Archivo} &
+        \textbf{Estado} & \textbf{Acci\'on requerida} \\
+        \midrule
+        F25 & Proyecto Supabase & evidencia6-proyecto-supabase.png &
+        \textbf{PENDIENTE} & Capturar el panel del proyecto. \\
+        \addlinespace
+        F26 & Table Editor & evidencia6-table-editor.png &
+        \textbf{PENDIENTE} & Capturar las tablas creadas. \\
+        \addlinespace
+        F27 & Estructura de tabla & evidencia6-estructura-tabla.png &
+        \textbf{PENDIENTE} & Capturar columnas/tipos de una tabla. \\
+        \addlinespace
+        F28 & Registros & evidencia6-registros-almacenados.png &
+        \textbf{PENDIENTE} & Capturar registros en la BD. \\
+        \addlinespace
+        F29 & Configuraci\'on & evidencia6-configuracion-proyecto.png &
+        \textbf{PENDIENTE} & Capturar .env / supabase.ts. \\
+        \addlinespace
+        F30 & Conexi\'on & evidencia6-conexion-establecida.png &
+        \textbf{PENDIENTE} & Capturar supabase status / sesi\'on. \\
+        \addlinespace
+        F31 & Consulta de datos & evidencia6-consulta-datos.png &
+        \textbf{PENDIENTE} & Capturar consulta con datos. \\
+        \addlinespace
+        F32 & Datos reales & evidencia6-pantalla-datos-reales.png &
+        \textbf{PENDIENTE} & Capturar app mostrando datos reales. \\
+        \addlinespace
+        F33 & Crear registro & evidencia6-crear-registro.png &
+        \textbf{PENDIENTE} & Capturar form + registro creado. \\
+        \addlinespace
+        F34 & Actualizar registro & evidencia6-actualizar-registro.png &
+        \textbf{PENDIENTE} & Capturar edici\'on/update. \\
+        \addlinespace
+        F35 & Eliminar registro & evidencia6-eliminar-registro.png &
+        \textbf{PENDIENTE} & Capturar eliminaci\'on/delete. \\
+        \addlinespace
+        F36 & Estado de carga & evidencia6-estado-carga.png &
+        \textbf{PENDIENTE} & Capturar indicador Cargando... \\
+        \addlinespace
+        F37 & Estado de error & evidencia6-estado-error.png &
+        \textbf{PENDIENTE} & Capturar error / sin conexi\'on. \\
+        \addlinespace
+        F38 & Repositorio & evidencia6-repositorio-github.png &
+        \textbf{PENDIENTE} & Capturar git log / push. \\
+        \bottomrule
+      \end{tabular}
+    \end{tablaAPA}%
+  }{Elaboraci\'on propia.}
+\end{table}
+
 \subsection*{Resumen de capturas faltantes}
 
-Del total de 24 figuras, el estado es:
+Del total de 24 figuras de los avances 3--5, el estado es:
 
 \begin{itemize}
   \item \textbf{15 reales} (F1--F15): no requieren acci\'on.
@@ -140,32 +200,45 @@ Del total de 24 figuras, el estado es:
   \item \textbf{2 duplicadas} (F23--F24): reutilizadas de avances
     anteriores; idealmente deben reemplazarse con capturas nuevas del
     avance 5.
+  \item \textbf{14 pendientes} (F25--F38): corresponden al avance 6 y
+    a\'un deben capturarse.
 \end{itemize}
 
 \subsection*{Capturas que debes tomar}
 
-Para completar las evidencias del avance 5, ejecuta la aplicaci\'on
-en un dispositivo f\'isico o emulador y toma las siguientes capturas:
+Del avance 6 quedan 14 capturas pendientes (F25--F38). Toma las fotos en
+este orden y gu\'ardalas en \texttt{figuras/} con los nombres exactos de
+la tabla anterior:
 
 \begin{enumerate}
-  \item \textbf{Pantalla de gesti\'on} (manage): muestra la lista de
-    escenarios con los botones de editar y eliminar.
-  \item \textbf{Formulario crear}: muestra el formulario vac\'io para
-    crear un nuevo escenario.
-  \item \textbf{Formulario editar}: muestra el formulario con los datos
-    de un escenario existente precargados.
-  \item \textbf{Eliminar escenario}: muestra el di\'alogo o acci\'on
-    de eliminaci\'on suave.
-  \item \textbf{Detalle con eventos}: muestra la pantalla de detalle
-    con al menos un evento visible.
-  \item \textbf{Crear evento}: muestra el formulario para agregar
-    un nuevo evento.
-  \item \textbf{Eliminar evento}: muestra la acci\'on de eliminar
-    un evento existente.
-  \item \textbf{Sesi\'on tras cierre}: captura de la app reabierta
-    sin pedir credenciales (muestra el cat\'alogo directamente).
-  \item \textbf{Favoritos persistentes}: captura de la pantalla de
-    favoritos con al menos un escenario guardado.
+  \item \textbf{Proyecto Supabase} (evidencia6-proyecto-supabase.png):
+    panel del proyecto con su configuraci\'on (URL y regi\'on).
+  \item \textbf{Table Editor} (evidencia6-table-editor.png): todas las
+    tablas creadas.
+  \item \textbf{Estructura de tabla} (evidencia6-estructura-tabla.png):
+    columnas y tipos de una tabla (p. ej. scenarios).
+  \item \textbf{Registros} (evidencia6-registros-almacenados.png):
+    filas de la tabla con los datos de prueba.
+  \item \textbf{Configuraci\'on} (evidencia6-configuracion-proyecto.png):
+    el \texttt{.env} y/o \texttt{src/services/supabase.ts}.
+  \item \textbf{Conexi\'on} (evidencia6-conexion-establecida.png):
+    salida de \texttt{pnpm supabase status} o sesi\'on activa.
+  \item \textbf{Consulta de datos} (evidencia6-consulta-datos.png):
+    una consulta devolviendo registros.
+  \item \textbf{Datos reales} (evidencia6-pantalla-datos-reales.png):
+    la app mostrando escenarios provenientes de Supabase.
+  \item \textbf{Crear registro} (evidencia6-crear-registro.png):
+    formulario de creaci\'on + registro guardado.
+  \item \textbf{Actualizar registro} (evidencia6-actualizar-registro.png):
+    edici\'on con el valor modificado.
+  \item \textbf{Eliminar registro} (evidencia6-eliminar-registro.png):
+    confirmaci\'on/resultado de la eliminaci\'on.
+  \item \textbf{Estado de carga} (evidencia6-estado-carga.png):
+    el indicador ``Cargando...'' de la app.
+  \item \textbf{Estado de error} (evidencia6-estado-error.png):
+    mensaje de error sin conexi\'on.
+  \item \textbf{Repositorio} (evidencia6-repositorio-github.png):
+    git log con los commits del avance.
 \end{enumerate}
 
 Reemplaza los archivos \texttt{.png} en \texttt{figuras/} con los

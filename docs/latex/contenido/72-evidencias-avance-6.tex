@@ -1,0 +1,193 @@
+% ============================================================================
+%  SECCIÓN 6.7: EVIDENCIAS DEL AVANCE 6
+% ============================================================================
+
+\section{Evidencias del avance}
+
+A continuaci\'on se presentan las evidencias del avance correspondiente al
+PDF~6, organizadas seg\'un la gu\'ia: proyecto en Supabase, tablas y
+registros, configuraci\'on de la conexi\'on, operaciones CRUD, estados de
+carga y error, y repositorio actualizado.
+
+% --- EVIDENCIA 1 ---
+\subsubsection*{Evidencia 1: Proyecto creado en Supabase}
+
+Se cre\'o un proyecto de Supabase como backend de la aplicaci\'on. El
+panel muestra la configuraci\'on general del proyecto, su URL y la
+informaci\'on del entorno:
+
+\begin{figure}[H]
+\centering
+  \figuraAPA{fig:evidencia6-proyecto}{Evidencia: Proyecto de Supabase creado}{%
+    \includegraphics[width=0.60\linewidth]{evidencia6-proyecto-supabase.png}%
+  }{Elaboraci\'on propia (captura del panel de Supabase).}
+\end{figure}
+
+% --- EVIDENCIA 2 ---
+\subsubsection*{Evidencia 2: Tablas creadas}
+
+El Table Editor de Supabase muestra las tablas creadas mediante las
+migraciones:
+
+\begin{figure}[H]
+\centering
+  \figuraAPA{fig:evidencia6-tablas}{Evidencia: Tablas creadas en Supabase}{%
+    \includegraphics[width=0.55\linewidth]{evidencia6-table-editor.png}%
+  }{Elaboraci\'on propia (captura del Table Editor).}
+\end{figure}
+
+% --- EVIDENCIA 3 ---
+\subsubsection*{Evidencia 3: Estructura de las tablas}
+
+La estructura de cada tabla define las columnas, los tipos de datos y
+las restricciones del modelo:
+
+\begin{figure}[H]
+\centering
+  \figuraAPA{fig:evidencia6-estructura}{Evidencia: Estructura de una tabla}{%
+    \includegraphics[width=0.55\linewidth]{evidencia6-estructura-tabla.png}%
+  }{Elaboraci\'on propia (captura del Table Editor).}
+\end{figure}
+
+% --- EVIDENCIA 4 ---
+\subsubsection*{Evidencia 4: Registros almacenados}
+
+Se insertaron datos de prueba que fueron verificados desde el panel antes
+de conectar la aplicaci\'on:
+
+\begin{figure}[H]
+\centering
+  \figuraAPA{fig:evidencia6-registros}{Evidencia: Registros almacenados en la base de datos}{%
+    \includegraphics[width=0.55\linewidth]{evidencia6-registros-almacenados.png}%
+  }{Elaboraci\'on propia (captura del Table Editor).}
+\end{figure}
+
+% --- EVIDENCIA 5 ---
+\subsubsection*{Evidencia 5: Proyecto configurado}
+
+El proyecto se configur\'o con las variables de entorno y el cliente de
+Supabase (\texttt{src/services/supabase.ts}):
+
+\begin{figure}[H]
+\centering
+  \figuraAPA{fig:evidencia6-configuracion}{Evidencia: Configuraci\'on del proyecto}{%
+    \includegraphics[width=0.50\linewidth]{evidencia6-configuracion-proyecto.png}%
+  }{Elaboraci\'on propia (captura del entorno de desarrollo).}
+\end{figure}
+
+% --- EVIDENCIA 6 ---
+\subsubsection*{Evidencia 6: Conexi\'on con Supabase}
+
+La conexi\'on se comprob\'o mediante el estado del entorno local y el
+inicio de sesi\'on desde la aplicaci\'on:
+
+\begin{figure}[H]
+\centering
+  \figuraAPA{fig:evidencia6-conexion}{Evidencia: Conexi\'on con Supabase establecida}{%
+    \includegraphics[width=0.60\linewidth]{evidencia6-conexion-establecida.png}%
+  }{Elaboraci\'on propia (captura de la terminal).}
+\end{figure}
+
+% --- EVIDENCIA 7 ---
+\subsubsection*{Evidencia 7: Consulta de datos}
+
+La consulta de escenarios devuelve los registros de la base de datos
+desde la aplicaci\'on:
+
+\begin{figure}[H]
+\centering
+  \figuraAPA{fig:evidencia6-consulta}{Evidencia: Consulta de datos desde Supabase}{%
+    \includegraphics[width=0.50\linewidth]{evidencia6-consulta-datos.png}%
+  }{Elaboraci\'on propia (captura de la aplicaci\'on).}
+\end{figure}
+
+% --- EVIDENCIA 8 ---
+\subsubsection*{Evidencia 8: Creaci\'on de registros}
+
+El formulario de gesti\'on crea un nuevo escenario que queda almacenado
+en Supabase:
+
+\begin{figure}[H]
+\centering
+  \figuraAPA{fig:evidencia6-crear}{Evidencia: Creaci\'on de un registro (CREATE)}{%
+    \includegraphics[width=0.28\linewidth]{evidencia6-crear-registro.png}%
+  }{Elaboraci\'on propia (captura de la aplicaci\'on).}
+\end{figure}
+
+% --- EVIDENCIA 9 ---
+\subsubsection*{Evidencia 9: Actualizaci\'on de registros}
+
+Al editar un escenario, los valores modificados se reflejan en la base
+de datos:
+
+\begin{figure}[H]
+\centering
+  \figuraAPA{fig:evidencia6-actualizar}{Evidencia: Actualizaci\'on de un registro (UPDATE)}{%
+    \includegraphics[width=0.28\linewidth]{evidencia6-actualizar-registro.png}%
+  }{Elaboraci\'on propia (captura de la aplicaci\'on).}
+\end{figure}
+
+% --- EVIDENCIA 10 ---
+\subsubsection*{Evidencia 10: Eliminaci\'on de registros}
+
+La operaci\'on de eliminaci\'on borra o desactiva el registro y se
+comprueba tambi\'en desde Supabase:
+
+\begin{figure}[H]
+\centering
+  \figuraAPA{fig:evidencia6-eliminar}{Evidencia: Eliminaci\'on de un registro (DELETE)}{%
+    \includegraphics[width=0.28\linewidth]{evidencia6-eliminar-registro.png}%
+  }{Elaboraci\'on propia (captura de la aplicaci\'on).}
+\end{figure}
+
+% --- EVIDENCIA 11 ---
+\subsubsection*{Evidencia 11: Aplicaci\'on mostrando datos reales}
+
+La aplicaci\'on muestra informaci\'on que proviene de la base de datos
+de Supabase, no datos escritos en el c\'odigo:
+
+\begin{figure}[H]
+\centering
+  \figuraAPA{fig:evidencia6-datos-reales}{Evidencia: Datos reales en la interfaz}{%
+    \includegraphics[width=0.30\linewidth]{evidencia6-pantalla-datos-reales.png}%
+  }{Elaboraci\'on propia (captura de la aplicaci\'on).}
+\end{figure}
+
+% --- EVIDENCIA 12 ---
+\subsubsection*{Evidencia 12: Manejo de estados de carga}
+
+Mientras la aplicaci\'on consulta Supabase se muestra un indicador de
+carga:
+
+\begin{figure}[H]
+\centering
+  \figuraAPA{fig:evidencia6-carga}{Evidencia: Estado de carga}{%
+    \includegraphics[width=0.28\linewidth]{evidencia6-estado-carga.png}%
+  }{Elaboraci\'on propia (captura de la aplicaci\'on).}
+\end{figure}
+
+% --- EVIDENCIA 13 ---
+\subsubsection*{Evidencia 13: Manejo de errores}
+
+Ante una falla de conexi\'on la aplicaci\'on muestra un mensaje de error
+controlado en lugar de cerrarse:
+
+\begin{figure}[H]
+\centering
+  \figuraAPA{fig:evidencia6-error}{Evidencia: Manejo de errores de conexi\'on}{%
+    \includegraphics[width=0.28\linewidth]{evidencia6-estado-error.png}%
+  }{Elaboraci\'on propia (captura de la aplicaci\'on).}
+\end{figure}
+
+% --- EVIDENCIA 14 ---
+\subsubsection*{Evidencia 14: Repositorio GitHub actualizado}
+
+El historial de commits documenta la evoluci\'on del proyecto e incluye
+el avance de integraci\'on con Supabase:
+
+\begin{figure}[H]
+\centering
+  \figuraAPA{fig:evidencia6-repositorio}{Evidencia: Repositorio actualizado}{%
+    \includegraphics[width=0.60\linewidth]{evidencia6-repositorio-github.png}%
+  }{Elaboraci\'on propia (captura del repositorio en GitHub).}
+\end{figure}

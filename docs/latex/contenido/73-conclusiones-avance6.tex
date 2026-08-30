@@ -1,0 +1,54 @@
+\subsection*{Conclusiones del avance 6}
+
+En el presente avance (PDF~6), la aplicaci\'on m\'ovil \nombreApp{} se
+integr\'o con un backend en la nube mediante Supabase y la base de datos
+PostgreSQL. Las principales conclusiones del avance son las siguientes:
+
+\begin{enumerate}
+  \item \textbf{Problema de los datos aislados resuelto.} Se comprendi\'o
+    la limitaci\'on de la persistencia local: los datos quedaban atados a
+    cada dispositivo. Con una base de datos centralizada, la informaci\'on
+    creada desde un dispositivo queda disponible para todos los usuarios.
+
+  \item \textbf{Frontend y backend diferenciados.} La aplicaci\'on m\'ovil
+    (Expo/React Native) se encarga de presentar e interactuar con la
+    informaci\'on, mientras que Supabase gestiona los datos, la API, la
+    autenticaci\'on y el almacenamiento de archivos de forma centralizada.
+
+  \item \textbf{Entorno local y en la nube configurados.} Se puso en
+    marcha Supabase local con Docker (\texttt{pnpm supabase start}) y se
+    sincronizaron las migraciones y los datos con el proyecto en la nube
+    mediante \texttt{supabase db push}.
+
+  \item \textbf{Modelo de datos PostgreSQL dise\~nado.} Se definieron las
+    siete tablas del sistema (profiles, scenarios, sports,
+    scenario\_sports, events, favorites, scenario\_images) con sus
+    claves primarias, claves for\'aneas y relaciones, cre\'andolas
+    mediante migraciones SQL.
+
+  \item \textbf{CRUD completo conectado a datos reales.} Se implementaron
+    las operaciones de creaci\'on, consulta, actualizaci\'on y eliminaci\'on
+    sobre las entidades principales (escenarios, eventos y favoritos),
+    de modo que las pantallas muestran informaci\'on proveniente de la
+    base de datos centralizada.
+
+  \item \textbf{Estados de carga y error contemplados.} La aplicaci\'on
+    maneja el tiempo de espera de las consultas con indicadores de carga
+    y ante fallas de conexi\'on muestra mensajes de error controlados,
+    evitando cierres inesperados.
+
+  \item \textbf{Pruebas del CRUD ejecutadas.} Se realizaron las pruebas de
+    CREATE, READ, UPDATE, DELETE y ERROR, verificando el comportamiento
+    esperado de la integraci\'on.
+
+  \item \textbf{Seguridad garantizada con RLS.} Las pol\'iticas de
+    seguridad a nivel de fila restringen el acceso a los datos seg\'un el
+    rol del usuario, y la recursi\'on infinita detectada se resolvi\'o con
+    una funci\'on \texttt{SECURITY DEFINER}.
+\end{enumerate}
+
+Con este avance la aplicaci\'on queda conectada a una base de datos
+real y centralizada, cumpliendo con el objetivo de dejar de depender del
+almacenamiento local de cada dispositivo y estableciendo las bases para
+la funcionalidad de una aplicaci\'on con datos compartidos entre todos
+los usuarios.

@@ -1,0 +1,182 @@
+% ============================================================================
+%  SECCIÓN 6.2: CONFIGURACIÓN DEL PROYECTO SUPABASE
+% ============================================================================
+
+\section{Configuraci\'on del proyecto Supabase}
+
+Este avance utiliza Supabase como backend y gestor de base de datos. Se
+opt\'o por este servicio porque ofrece un plan gratuito, una base de
+datos PostgreSQL administrada, autenticaci\'on integrada, API autom\'atica
+y almacenamiento de archivos, todo ello desde una \'unica plataforma.
+
+\subsection{Entorno de desarrollo local y en la nube}
+
+El proyecto mantiene dos entornos de Supabase:
+
+\begin{itemize}
+  \item \textbf{Local (desarrollo):} Supabase se ejecuta en
+    \textit{Docker} dentro de la m\'aquina de desarrollo. Levanta
+    PostgreSQL en el puerto \texttt{54322}, la API en el puerto
+    \texttt{54321} y el panel Studio en el puerto \texttt{54323}.
+    Las migraciones y el \textit{seed} se aplican autom\'aticamente.
+
+  \item \textbf{Cloud (producci\'on/datos reales):} un proyecto creado
+    en la plataforma web de Supabase, al que se sincronizan las
+    migraciones para disponer de una base de datos centralizada
+    accesible desde cualquier dispositivo.
+\end{itemize}
+
+\subsection{Puesta en marcha del entorno local}
+
+Para levantar el entorno local se utiliza la CLI de Supabase a trav\'es
+de los scripts de \texttt{package.json}. La primera ejecuci\'on descarga
+las im\'agenes de Docker, por lo que puede tardar algunos minutos:
+
+\begin{lstlisting}[style=terminal]
+$ pnpm supabase start      # levanta PostgreSQL, API y Studio (Docker)
+$ pnpm supabase status
+
+API URL:       http://127.0.0.1:54321
+DB URL:        postgresql://postgres:postgres@127.0.0.1:54322/postgres
+Studio URL:    http://127.0.0.1:54323
+Inbucket URL:  http://127.0.0.1:54324
+
+$ pnpm supabase db reset  # restablece la base (migraciones + seed)
+$ pnpm supabase stop      # detiene el entorno local
+\end{lstlisting}
+
+Si la base de datos se modifica, los tipos de TypeScript se regeneran
+desde el esquema local:
+
+\begin{lstlisting}[style=terminal]
+$ pnpm supabase gen types typescript --local > src/types/database.ts
+\end{lstlisting}
+
+El panel Studio se abre en \texttt{http://127.0.0.1:54323} y permite
+explorar las tablas, los usuarios registrados y los archivos subidos.
+
+\subsection{Sincronizaci\'on con el proyecto en la nube}
+
+Para conectar el entorno local con el proyecto de Supabase en la nube se
+vincula el proyecto y se empujan las migraciones, el \textit{seed} y la
+configuraci\'on:
+
+\begin{lstlisting}[style=terminal]
+$ pnpm supabase login                          # inicio de sesion (una vez)
+$ pnpm supabase link --project-ref <PROJECT-REF>
+$ pnpm supabase db push --seed                 # migraciones + datos de prueba
+$ pnpm supabase config push                    # config.toml (auth, storage)
+\end{lstlisting}
+
+\subsection{Exploraci\'on del panel de Supabase}
+
+Antes de programar se explor\'o el panel para reconocer los m\'odulos que
+luego se utilizan en el desarrollo:
+
+\begin{table}[H]
+  \centering
+  \caption{Secciones del panel de Supabase utilizadas}
+  \contenidoConFuente{%
+    \begin{tablaAPA}
+      \begin{tabular}{@{}p{3.6cm}p{4.8cm}p{6.0cm}@{}}
+        \toprule
+        \textbf{Secci\'on} & \textbf{Funci\'on} & \textbf{Uso en el proyecto} \\
+        \midrule
+        Table Editor & Gestor visual de tablas &
+        Revisar registros e insertar datos de prueba. \\
+        \addlinespace
+        SQL Editor & Consola de consultas SQL &
+        Ejecutar consultas de verificaci\'on. \\
+        \addlinespace
+        Authentication & Usuarios y roles &
+        Registrar usuarios y asignar rol de acceso. \\
+        \addlinespace
+        API & URL y claves de conexi\'on &
+        Configurar las variables de entorno. \\
+        \addlinespace
+        Project Settings & Configuraci\'on del proyecto &
+        Referencia del proyecto y regi\'on. \\
+        \bottomrule
+      \end{tabular}
+    \end{tablaAPA}%
+  }{Elaboraci\'on propia en base a la gu\'ia del avance.}
+\end{table}
+
+\subsection{Datos de conexi\'on del proyecto}
+
+La conexi\'on de la aplicaci\'on con Supabase se realiza mediante la URL
+del proyecto y la clave de acceso p\'ublica (\textit{anon key}). Los
+valores no se escriben directamente en el c\'odigo: se cargan desde las
+variables de entorno.
+
+\begin{table}[H]
+  \centering
+  \caption{Datos de configuraci\'on del proyecto Supabase}
+  \contenidoConFuente{%
+    \begin{tablaAPA}
+      \begin{tabular}{@{}p{3.4cm}p{6.0cm}p{4.6cm}@{}}
+        \toprule
+        \textbf{Concepto} & \textbf{Valor local} &
+        \textbf{Valor en la nube} \\
+        \midrule
+        URL de la API &
+        \texttt{http://127.0.0.1:54321} &
+        \texttt{https://<proyecto>.supabase.co} \\
+        \addlinespace
+        Key an\'onima (p\'ublica) &
+        \texttt{eyJ...demo} &
+        \texttt{eyJ...(anon key del proyecto)} \\
+        \addlinespace
+        Base de datos &
+        postgresql://127.0.0.1:54322 &
+        \texttt{db.<proyecto>.supabase.co} \\
+        \addlinespace
+        Regi\'on & Local (Docker) &
+        La definida al crear el proyecto \\
+        \bottomrule
+      \end{tabular}
+    \end{tablaAPA}%
+  }{Elaboraci\'on propia en base a la configuraci\'on del proyecto.}
+\end{table}
+
+Es importante no exponer las credenciales sensibles en repositorios
+p\'ublicos. Las claves se gestionan mediante el archivo \texttt{.env},
+que no se sube al repositorio.
+
+\subsection{Configuraci\'on de las variables de entorno}
+
+La plantilla de configuraci\'on se distribuye en \texttt{.env.example}:
+
+\begin{lstlisting}
+# Supabase - Desarrollo Local
+EXPO_PUBLIC_SUPABASE_URL=http://127.0.0.1:54321
+EXPO_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIs... (anon demo)
+
+# Supabase - Produccion (reemplaza con tus valores del Dashboard)
+# EXPO_PUBLIC_SUPABASE_URL=https://TU-PROYECTO.supabase.co
+# EXPO_PUBLIC_SUPABASE_ANON_KEY=tu-anon-key-aqui
+\end{lstlisting}
+
+Al trabajar con el proyecto en la nube se descomentan los valores de
+producci\'on y se indican la URL y la clave p\'ublica del proyecto.
+
+\subsection{Servicio de acceso a Supabase}
+
+La aplicaci\'on centraliza el acceso a Supabase en un \'unico m\'odulo de
+servicio, \texttt{src/services/supabase.ts}. Este archivo crea el cliente
+con las variables de entorno y con los tipos generados de la base de
+datos:
+
+\begin{lstlisting}
+import { createClient } from '@supabase/supabase-js';
+import { Database } from '../types/database';
+
+const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL!;
+const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY!;
+
+export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey);
+\end{lstlisting}
+
+Todos los \textit{hooks} de datos importan este cliente \'unico, lo que
+evita repetir la configuraci\'on en cada pantalla y mantiene una sola
+fuente de conexi\'on con el backend.

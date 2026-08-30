@@ -1,0 +1,261 @@
+% ============================================================================
+%  SECCIÓN 6.4: OPERACIONES CRUD CON SUPABASE
+% ============================================================================
+
+\section{Operaciones CRUD con Supabase}
+
+En este avance la aplicaci\'on deja de mostrar datos simulados y realiza
+operaciones de lectura y escritura directamente sobre la base de datos
+centralizada. El resultado es un CRUD completo sobre las entidades
+principales del proyecto, conectado a datos reales.
+
+\subsection{Datos de prueba}
+
+Antes de conectar la aplicaci\'on se insertaron registros de prueba para
+comprobar que las tablas funcionan correctamente. El \textit{seed}
+incluye tres usuarios con distintos roles y un cat\'alogo de escenarios
+deportivos reales:
+
+\begin{table}[H]
+  \centering
+  \caption{Usuarios de prueba del \textit{seed}}
+  \contenidoConFuente{%
+    \begin{tablaAPA}
+      \begin{tabular}{@{}p{4.4cm}p{4.4cm}p{3.4cm}@{}}
+        \toprule
+        \textbf{Email} & \textbf{Contrase\~na} & \textbf{Rol} \\
+        \midrule
+        \texttt{admin@test.com} & password123 & admin \\
+        \addlinespace
+        \texttt{gestor@test.com} & password123 & gestor \\
+        \addlinespace
+        \texttt{asistente@test.com} & password123 & asistente \\
+        \bottomrule
+      \end{tabular}
+    \end{tablaAPA}%
+  }{Elaboraci\'on propia en base al archivo \texttt{seed.sql}.}
+\end{table}
+
+\begin{table}[H]
+  \centering
+  \caption{Ejemplo de registros de escenarios}
+  \contenidoConFuente{%
+    \begin{tablaAPA}
+      \begin{tabular}{@{}p{6.4cm}p{3.0cm}p{3.4cm}@{}}
+        \toprule
+        \textbf{Nombre} & \textbf{Tipo} & \textbf{Capacidad} \\
+        \midrule
+        Estadio Hernando Siles & Estadio & 40000 \\
+        \addlinespace
+        Coliseo Eduardo Leon & Coliseo & 5000 \\
+        \addlinespace
+        Complejo Deportivo Capriles & Complejo & 3000 \\
+        \bottomrule
+      \end{tabular}
+    \end{tablaAPA}%
+  }{Elaboraci\'on propia en base al archivo \texttt{seed.sql}.}
+\end{table}
+
+Los registros se verificaron desde el panel de Supabase (Table Editor)
+antes de continuar con la conexi\'on desde la aplicaci\'on.
+
+\subsection{El concepto de CRUD}
+
+Las operaciones sobre la base de datos se agrupan en cuatro acciones
+b\'asicas conocidas como \textbf{CRUD}:
+
+\begin{enumerate}
+  \item \textbf{C - Create (crear):} insertar un nuevo registro.
+  \item \textbf{R - Read (leer):} consultar los registros almacenados.
+  \item \textbf{U - Update (actualizar):} modificar un registro.
+  \item \textbf{D - Delete (eliminar):} eliminar un registro.
+\end{enumerate}
+
+El CRUD es uno de los conceptos centrales del desarrollo: todas las
+pantallas de gesti\'on de la aplicaci\'on se basan en estas cuatro
+operaciones.
+
+\subsection{Flujo de datos din\'amicos}
+
+La pantalla principal ya no muestra datos escritos en el c\'odigo. El
+flujo es: la aplicaci\'on solicita los escenarios a Supabase, Supabase
+consulta PostgreSQL y los registros regresan para mostrarse en una
+\textit{ListView}:
+
+\begin{figure}[H]
+\centering
+  \figuraAPA{fig:flujo-datos-supabase}{Flujo de consulta de datos din\'amicos}{%
+  \begin{tikzpicture}[
+    node distance=0.6cm,
+    caja/.style={rectangle, draw=black!60, rounded corners,
+      minimum width=4.6cm, minimum height=0.65cm, align=center,
+      font=\small},
+    flecha/.style={-Stealth, thick}
+  ]
+    \node[caja] (app) {Aplicaci\'on (ListView)};
+    \node[caja, below=of app] (sup) {Supabase (consulta)};
+    \node[caja, below=of sup] (pg) {PostgreSQL (tablas)};
+    \node[caja, right=1.4cm of app] (ui)
+      {Escenarios\\ \footnotesize desde la base de datos};
+    \draw[flecha] (app) -- node[right, font=\footnotesize]
+      {solicita} (sup);
+    \draw[flecha] (sup) -- node[right, font=\footnotesize]
+      {SELECT} (pg);
+    \draw[flecha] (pg) -- node[left, font=\footnotesize]
+      {registros} (sup);
+    \draw[flecha] (sup) -- node[left, font=\footnotesize]
+      {devuelve} (app);
+    \draw[flecha] (app) -- node[above, font=\footnotesize]
+      {muestra} (ui);
+  \end{tikzpicture}
+  }{Elaboraci\'on propia.}
+\end{figure}
+
+\subsection{Implementaci\'on del CRUD}
+
+Las operaciones se organizan en \textit{hooks} de React Query que
+centralizan las consultas y el manejo de estados. A continuaci\'on se
+describen las implementaciones de cada operaci\'on del CRUD.
+
+\subsubsection{Read: consulta de escenarios}
+
+El hook \texttt{useScenarios} lee los escenarios activos con sus im\'agenes
+y deportes, ordenados por nombre:
+
+\begin{lstlisting}
+async function fetchScenarios() {
+  const { data, error } = await supabase
+    .from('scenarios')
+    .select(`
+      *,
+      scenario_images(url, is_primary, storage_path, display_order),
+      scenario_sports(sports(nombre))
+    `)
+    .eq('estado', 'activo')
+    .order('nombre');
+
+  if (error) throw new Error(error.message);
+  return data;
+}
+
+export function useScenarios() {
+  return useQuery({
+    queryKey: ['scenarios'],
+    queryFn: fetchScenarios,
+    staleTime: 1000 * 60 * 5,
+  });
+}
+\end{lstlisting}
+
+El resultado alimenta las pantallas de cat\'alogo y del mapa, por lo que
+los datos mostrados provienen directamente de la base de datos.
+
+\subsubsection{Create: creaci\'on de registros}
+
+La creaci\'on de registros se realiza con \texttt{.insert()}. Por ejemplo,
+guardar un favorito:
+
+\begin{lstlisting}
+async function addFavorite(userId: string, scenarioId: string) {
+  const { error } = await supabase
+    .from('favorites')
+    .insert({ user_id: userId, scenario_id: scenarioId });
+
+  if (error) throw new Error(error.message);
+}
+\end{lstlisting}
+
+En el caso de los escenarios, el formulario de gesti\'on valida los
+campos con Zod y ejecuta la inserci\'on; al finalizar se invalida el
+cach\'e de React Query para que la lista se actualice.
+
+\subsubsection{Update: actualizaci\'on de registros}
+
+La actualizaci\'on se realiza con \texttt{.update()} sobre el registro
+identificado. El formulario de edici\'on reutiliza el mismo componente
+del alta, cargando los datos existentes y enviando los nuevos valores:
+
+\begin{lstlisting}
+const { error } = await supabase
+  .from('scenarios')
+  .update({ capacidad: nuevaCapacidad, descripcion: nuevaDescripcion })
+  .eq('id', escenarioId);
+\end{lstlisting}
+
+\subsubsection{Delete: eliminaci\'on de registros}
+
+La eliminaci\'on se implementa de dos formas seg\'un la entidad:
+
+\begin{itemize}
+  \item \textbf{Eliminaci\'on suave (soft delete):} los escenarios no se
+    borran de la base de datos; su estado cambia a ``inactivo'' y
+    desaparecen del cat\'alogo p\'ublico.
+  \item \textbf{Eliminaci\'on f\'isica:} eventos y favoritos se eliminan
+    directamente con \texttt{.delete()}.
+\end{itemize}
+
+\begin{lstlisting}
+async function removeFavorite(userId: string, scenarioId: string) {
+  const { error } = await supabase
+    .from('favorites')
+    .delete()
+    .eq('user_id', userId)
+    .eq('scenario_id', scenarioId);
+
+  if (error) throw new Error(error.message);
+}
+\end{lstlisting}
+
+La subida de im\'agenes a Supabase Storage, documentada en el avance 5,
+complementa el CRUD: cada imagen se sube al bucket \texttt{scenario-images}
+y su referencia se registra en la tabla \texttt{scenario\_images}.
+
+\subsection{Conexi\'on del CRUD con el proyecto real}
+
+El CRUD no es un m\'odulo gen\'erico separado del proyecto: cada
+operaci\'on corresponde a una funcionalidad de \nombreApp{} definida desde
+el inicio. La relaci\'on es la siguiente:
+
+\begin{itemize}
+  \item \textbf{CRUD de escenarios:} creaci\'on, consulta, edici\'on y
+    baja de escenarios deportivos (gesti\'on interna para admin y gestor).
+  \item \textbf{CRUD de eventos:} creaci\'on y eliminaci\'on de eventos en
+    cada escenario.
+  \item \textbf{CRUD de favoritos:} consultar, agregar y quitar
+    escenarios favoritos del usuario autenticado.
+\end{itemize}
+
+\subsection{Resumen de operaciones CRUD}
+
+\begin{table}[H]
+  \centering
+  \caption{Resumen de operaciones CRUD implementadas}
+  \contenidoConFuente{%
+    \begin{tablaAPA}
+      \begin{tabular}{@{}p{2.6cm}p{3.6cm}p{5.4cm}@{}}
+        \toprule
+        \textbf{Entidad} & \textbf{Operaci\'on} & \textbf{Hook / funci\'on} \\
+        \midrule
+        escenarios & Read & {\footnotesize\ttfamily useScenarios /
+          useScenario} \\
+        \addlinespace
+        escenarios & Create / Update & {\footnotesize\ttfamily
+          formulario (upsert)} \\
+        \addlinespace
+        escenarios & Delete & {\footnotesize\ttfamily soft delete
+          (estado = inactivo)} \\
+        \addlinespace
+        eventos & Create / Delete & {\footnotesize\ttfamily
+          rutas de evento del gestor} \\
+        \addlinespace
+        favoritos & Create / Read / Delete & {\footnotesize\ttfamily
+          useToggleFavorite} \\
+        \bottomrule
+      \end{tabular}
+    \end{tablaAPA}%
+  }{Elaboraci\'on propia en base al c\'odigo fuente del proyecto.}
+\end{table}
+
+Con estas operaciones la aplicaci\'on queda conectada a datos reales:
+lo que se crea desde un dispositivo queda disponible para el resto de los
+usuarios a trav\'es de la base de datos centralizada.

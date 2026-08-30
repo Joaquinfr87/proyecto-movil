@@ -1,0 +1,122 @@
+% ============================================================================
+%  SECCIÓN 6.1: ANÁLISIS DE LA INTEGRACIÓN CON SUPABASE Y POSTGRESQL
+% ============================================================================
+
+\section{An\'alisis de la integraci\'on con Supabase y PostgreSQL}
+
+En los avances anteriores la aplicaci\'on \nombreApp{} conservaba la
+informaci\'on en el propio dispositivo (persistencia local) o la manten\'ia
+en memoria. Esa estrategia tiene una limitaci\'on fundamental: los datos
+no est\'an disponibles en otros dispositivos y dependen del almacenamiento
+de cada usuario. En este avance se incorpora un backend en la nube
+mediante \textit{Supabase}, que provee una base de datos \textit{PostgreSQL}
+centralizada, API, autenticaci\'on y almacenamiento de archivos.
+
+\subsection{El problema de los datos aislados}
+
+Para comprender la necesidad de una base de datos centralizada conviene
+analizar una situaci\'on concreta. Suponga que un administrador de
+\nombreApp{} registra un escenario deportivo en su dispositivo. Si la
+informaci\'on se almacena \'unicamente en ese tel\'efono, otro usuario que
+utilice un dispositivo distinto no podr\'a ver el nuevo escenario:
+
+\begin{figure}[H]
+\centering
+  \figuraAPA{fig:problema-datos-aislados}{Problema de los datos aislados: cada dispositivo queda con su propia informaci\'on}{%
+  \begin{tikzpicture}[
+    node distance=0.5cm,
+    caja/.style={rectangle, draw=black!60, rounded corners,
+      minimum width=1.9cm, minimum height=0.6cm, align=center,
+      font=\footnotesize},
+    flecha/.style={-Stealth, thick}
+  ]
+    \node[caja] (a) {Dispositivo A};
+    \node[caja, right=of a] (app1) {App};
+    \node[caja, right=of app1] (srv) {Servidor\\ centralizado};
+    \node[caja, right=of srv] (app2) {App};
+    \node[caja, right=of app2] (b) {Dispositivo B};
+    \draw[flecha] (a) -- (app1);
+    \draw[flecha] (app1) -- (srv);
+    \draw[flecha] (srv) -- (app2);
+    \draw[flecha] (app2) -- (b);
+  \end{tikzpicture}
+  }{Elaboraci\'on propia en base a la gu\'ia del avance.}
+\end{figure}
+
+Sin un servidor, el usuario A crea un registro y el usuario B no tiene c\'omo
+conocerlo. La soluci\'on es que toda la informaci\'on se consulte y se
+escriba en un mismo lugar accesible por ambos dispositivos: el servidor
+centralizado. All\'i aparece la necesidad de una base de datos compartida.
+
+\subsection{Diferenciaci\'on entre frontend y backend}
+
+La aplicaci\'on se divide en dos grandes componentes:
+
+\begin{itemize}
+  \item \textbf{Frontend:} la aplicaci\'on m\'ovil desarrollada con Expo
+    (\textit{React Native}). Abarca las pantallas, los botones, los
+    formularios, la navegaci\'on y la interacci\'on del usuario. Su
+    responsabilidad es presentar la informaci\'on y capturar las acciones
+    del usuario.
+
+  \item \textbf{Backend:} la infraestructura que gestiona los datos y los
+    servicios. En este proyecto corresponde a Supabase, que aporta la base
+    de datos PostgreSQL, la API, la autenticaci\'on y el almacenamiento
+    de im\'agenes. Su responsabilidad es administrar la informaci\'on de
+    forma centralizada y segura.
+\end{itemize}
+
+La idea fundamental es: la aplicaci\'on presenta e interact\'ua con la
+informaci\'on; Supabase permite gestionarla de forma centralizada y
+compartida entre todos los usuarios.
+
+\subsection{Arquitectura cliente--servidor con Supabase}
+
+La arquitectura del avance se representa en la figura
+\ref{fig:arquitectura-supabase}: la aplicaci\'on se comunica por Internet
+con Supabase, y este gestiona la base de datos PostgreSQL (API
+\textit{PostgREST}), la autenticaci\'on y el almacenamiento de archivos.
+
+\begin{figure}[H]
+\centering
+  \figuraAPA{fig:arquitectura-supabase}{Arquitectura con Supabase como backend}{%
+  \begin{tikzpicture}[
+    node distance=0.7cm,
+    caja/.style={rectangle, draw=black!60, rounded corners,
+      minimum width=5.6cm, minimum height=0.8cm, align=center,
+      font=\small},
+    flecha/.style={-Stealth, thick}
+  ]
+    \node[caja] (app) {APLICACI\'ON M\'OVIL \\[2pt]
+      \footnotesize Pantallas, formularios y l\'ogica};
+    \node[caja, below=of app] (sup)
+      {SUPABASE \\[2pt] \footnotesize Backend, API, autenticaci\'on y storage};
+    \node[caja, below=of sup] (pg)
+      {POSTGRESQL \\[2pt] \footnotesize Tablas, registros y relaciones};
+    \draw[flecha] (app) -- node[right, font=\footnotesize]
+      {Internet} (sup);
+    \draw[flecha] (sup) -- (pg);
+  \end{tikzpicture}
+  }{Elaboraci\'on propia en base a la gu\'ia del avance.}
+\end{figure}
+
+De esta manera los datos dejan de depender del dispositivo y quedan
+disponibles para todos los usuarios de la aplicaci\'on.
+
+\subsection{Evoluci\'on del proyecto}
+
+La integraci\'on de Supabase es la \'ultima etapa de la evoluci\'on de
+los datos del proyecto:
+
+\begin{enumerate}
+  \item \textbf{PDF~4:} l\'ogica de negocio y estado en memoria.
+  \item \textbf{PDF~5:} persistencia local (sesi\'on con AsyncStorage)
+    y primeras consultas al servicio de Supabase.
+  \item \textbf{PDF~6:} base de datos centralizada con Supabase y
+    PostgreSQL, con operaciones CRUD conectadas a datos reales.
+\end{enumerate}
+
+El resultado es una aplicaci\'on conectada a una base de datos centralizada
+en la nube, en la que las interfaces dejan de mostrar datos escritos
+directamente en el c\'odigo y pasan a mostrar informaci\'on proveniente
+del servidor.

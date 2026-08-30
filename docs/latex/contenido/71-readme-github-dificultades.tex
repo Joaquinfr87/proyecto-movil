@@ -1,0 +1,115 @@
+% ============================================================================
+%  SECCIÓN 6.6: ACTUALIZACIÓN DEL REPOSITORIO, EL README Y DIFICULTADES
+% ============================================================================
+
+\section{Actualizaci\'on del repositorio, el README y las dificultades}
+
+Al finalizar la integraci\'on se registr\'o el avance en el repositorio,
+se document\'o el backend en el README del proyecto y se registraron las
+dificultades encontradas durante el desarrollo.
+
+\subsection{Registro del avance en GitHub}
+
+Los cambios del avance se registraron con el flujo habitual de Git:
+
+\begin{lstlisting}[style=terminal]
+$ git add .
+$ git commit -m "feat(supabase): integracion con Supabase y operaciones CRUD"
+$ git push origin docs
+\end{lstlisting}
+
+El historial del repositorio evidencia la evoluci\'on del proyecto a
+trav\'es de los avances:
+
+\begin{lstlisting}[style=terminal]
+Commit 1: inicializacion del proyecto
+Commit 2: interfaces y navegacion
+Commit 3: logica y validaciones
+Commit 4: persistencia local
+Commit 5: Supabase + CRUD
+\end{lstlisting}
+
+\subsection{Documentaci\'on del backend en el README}
+
+El README incorpor\'o una secci\'on dedicada al backend y a la base de
+datos, describiendo la plataforma utilizada, las tablas creadas, la
+funcionalidad conectada y las operaciones CRUD implementadas. Adem\'as
+incluye la gu\'ia de puesta en marcha del entorno local:
+
+\begin{lstlisting}
+## Configuracion de Supabase (Desarrollo Local)
+
+Supabase corre localmente via Docker. Esto levanta:
+- PostgreSQL en puerto 54322
+- API (PostgREST) en puerto 54321
+- Studio (dashboard web) en puerto 54323
+
+### Levantar Supabase
+
+# Iniciar Supabase local
+pnpm supabase start
+
+# Resetear DB (migraciones + seed)
+pnpm supabase db reset
+
+## Supabase Cloud (Produccion)
+
+# Link local al proyecto cloud
+pnpm supabase link --project-ref TU-PROJECT-REF
+pnpm supabase db push --seed
+\end{lstlisting}
+
+El resultado final puede resumirse as\'i: la aplicaci\'on m\'ovil
+desarrollada con Expo se encuentra integrada con Supabase como backend y
+utiliza PostgreSQL para la persistencia de la informaci\'on. Se
+implementaron operaciones CRUD sobre las entidades principales del
+proyecto.
+
+\subsection{Dificultades encontradas}
+
+Durante la integraci\'on se presentaron las siguientes dificultades, que
+fueron analizadas y resueltas:
+
+\begin{table}[H]
+  \centering
+  \caption{Dificultades encontradas en el avance 6}
+  \contenidoConFuente{%
+    \begin{tablaAPA}
+      \begin{tabular}{@{}p{5.2cm}p{4.6cm}p{4.8cm}@{}}
+        \toprule
+        \textbf{Dificultad} & \textbf{An\'alisis} & \textbf{Soluci\'on} \\
+        \midrule
+        La aplicaci\'on no recuperaba los
+        registros de Supabase & Se revis\'o la configuraci\'on de
+        conexi\'on y la consulta realizada &
+        Se corrigi\'o la configuraci\'on y se
+        verific\'o la consulta nuevamente. \\
+        \addlinespace
+        Error de recursi\'on infinita en
+        las pol\'iticas RLS &
+        Las pol\'iticas consultaban la tabla
+        \texttt{profiles} de forma recursiva &
+        Se cre\'o una funci\'on
+        \texttt{get\_user\_role()} con
+        \texttt{SECURITY DEFINER} (migraci\'on 004). \\
+        \addlinespace
+        Los cambios locales no aparec\'ian
+        en el proyecto en la nube &
+        Las migraciones no se hab\'ian
+        sincronizado &
+        Se ejecut\'o \texttt{db push --seed}
+        para sincronizar esquema y datos. \\
+        \addlinespace
+        Im\'agenes que no se sub\'ian &
+        El bucket \texttt{scenario-images}
+        carec\'ia de permisos &
+        Se restringi\'o el acceso al rol
+        adecuado y se verific\'o la subida. \\
+        \bottomrule
+      \end{tabular}
+    \end{tablaAPA}%
+  }{Elaboraci\'on propia en base al registro del equipo de desarrollo.}
+\end{table}
+
+Estas dificultades permitieron consolidar el conocimiento sobre la
+integraci\'on de una aplicaci\'on m\'ovil con un backend en la nube.

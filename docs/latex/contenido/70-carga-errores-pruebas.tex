@@ -1,0 +1,139 @@
+% ============================================================================
+%  SECCIÓN 6.5: MANEJO DE ESTADOS DE CARGA, ERRORES Y PRUEBAS
+% ============================================================================
+
+\section{Manejo de estados de carga, errores y pruebas}
+
+Una aplicaci\'on conectada a un servidor depende de la red. Por ello es
+necesario contemplar los momentos de espera mientras se obtienen los
+datos y los errores que pueden ocurrir al comunicarse con Supabase,
+de manera que la aplicaci\'on nunca se cierre de forma inesperada.
+
+\subsection{Estados de carga}
+
+Mientras la aplicaci\'on consulta Supabase existe un tiempo de espera.
+Durante ese lapso la interfaz muestra un indicador de carga y, cuando los
+datos llegan, se muestran en la lista:
+
+\begin{figure}[H]
+\centering
+  \figuraAPA{fig:estados-carga}{Manejo del estado de carga en la interfaz}{%
+  \begin{tikzpicture}[
+    marco/.style={rectangle, draw=black!60, rounded corners,
+      minimum width=4.4cm, minimum height=5.6cm,
+      align=center, font=\footnotesize},
+    fila/.style={rectangle, draw=black!30, minimum width=3.6cm,
+      minimum height=0.55cm, align=center, font=\footnotesize},
+    salto/.style={-Stealth, thick}
+  ]
+    \node[marco] (carga) {ESCENARIOS};
+    \node[below=0.8cm of carga.north] {Cargando...};
+    \node[below=0.5cm of carga.center] {\textcolor{gray}{\Large \ldots}};
+    \node[below=0.12cm of carga.center] {\textcolor{gray}{\Large \ldots}};
+    \node[above=0.5cm of carga.south] {\textcolor{gray}{\Large \ldots}};
+
+    \node[marco, right=1.4cm of carga] (datos) {ESCENARIOS};
+    \node[fila, below=0.9cm of datos.north] (f1) {Estadio Hernando Siles};
+    \node[fila, below=0.12cm of f1] (f2) {Coliseo Eduardo Leon};
+    \node[fila, below=0.12cm of f2] (f3) {Complejo deportivo Capriles};
+
+    \draw[salto] ($(carga.east)+(0.15,0)$) -- node[above,
+      font=\footnotesize] {carga} ($(datos.west)+(-0.15,0)$);
+  \end{tikzpicture}
+  }{Elaboraci\'on propia.}
+\end{figure}
+
+En la implementaci\'on, React Query expone autom\'aticamente los estados
+de la consulta. La interfaz decide qu\'e mostrar seg\'un el estado:
+
+\begin{lstlisting}
+const { data, isLoading, isError, refetch } = useScenarios();
+
+if (isLoading) {
+  return <LoadingSpinner />;
+}
+
+if (isError) {
+  return <EmptyState message="No se pudo obtener la informacion" />;
+}
+
+// datos disponibles: renderizar la lista
+return <FlatList data={data} ... />;
+\end{lstlisting}
+
+\subsection{Manejo de errores de conexi\'on}
+
+La aplicaci\'on contempla al menos los siguientes escenarios de error:
+
+\begin{itemize}
+  \item \textbf{Sin conexi\'on:} no se pudo obtener la informaci\'on del
+    servidor. Se muestra un mensaje claro y la opci\'on de reintentar.
+  \item \textbf{Error al guardar:} fall\'o la operaci\'on de escritura.
+    Se informa al usuario para que intente nuevamente.
+  \item \textbf{Datos inv\'alidos:} las validaciones de formulario (Zod)
+    evitan enviar datos incorrectos al servidor.
+\end{itemize}
+
+Tanto las consultas como las mutaciones capturan el error devuelto por
+Supabase y lo transforman en un mensaje legible. Por ejemplo, en el hook
+de consulta:
+
+\begin{lstlisting}
+async function fetchScenarios() {
+  const { data, error } = await supabase
+    .from('scenarios')
+    .select('*');
+
+  if (error) {
+    throw new Error(error.message); // lo captura React Query
+  }
+  return data;
+}
+\end{lstlisting}
+
+De esta forma, si el servidor no est\'a disponible, la aplicaci\'on
+muestra un estado de error controlado en lugar de cerrarse.
+
+\subsection{Pruebas del CRUD}
+
+Se realizaron pruebas de las cuatro operaciones y del manejo de errores
+para verificar el comportamiento de la integraci\'on:
+
+\begin{table}[H]
+  \centering
+  \caption{Pruebas realizadas sobre el CRUD con Supabase}
+  \contenidoConFuente{%
+    \begin{tablaAPA}
+      \begin{tabular}{@{}p{2.2cm}p{4.4cm}p{6.6cm}@{}}
+        \toprule
+        \textbf{Prueba} & \textbf{Procedimiento} &
+        \textbf{Resultado esperado} \\
+        \midrule
+        Prueba 1: CREATE &
+        Crear un escenario desde el formulario &
+        El registro aparece en la tabla de Supabase. \\
+        \addlinespace
+        Prueba 2: READ &
+        Abrir la aplicaci\'on y consultar escenarios &
+        La lista muestra datos de la base de datos. \\
+        \addlinespace
+        Prueba 3: UPDATE &
+        Editar la capacidad de un escenario &
+        El cambio se refleja al volver a consultar. \\
+        \addlinespace
+        Prueba 4: DELETE &
+        Eliminar un evento o favorito &
+        El registro desaparece de Supabase. \\
+        \addlinespace
+        Prueba 5: ERROR &
+        Desconectar la red e intentar una consulta &
+        Se muestra el mensaje de error controlado. \\
+        \bottomrule
+      \end{tabular}
+    \end{tablaAPA}%
+  }{Elaboraci\'on propia en base a las pruebas ejecutadas.}
+\end{table}
+
+El resultado de las pruebas confirma que las operaciones leen y escriben
+correctamente sobre la base de datos centralizada y que la interfaz
+responde de forma adecuada ante los estados de carga y error.
