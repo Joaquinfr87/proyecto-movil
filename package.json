@@ -69,7 +69,8 @@
     "lint": "eslint src/",
     "lint:fix": "eslint src/ --fix",
     "format": "prettier --write src/",
-    "format:check": "prettier --check src/"
+    "format:check": "prettier --check src/",
+    "upload:360": "node scripts/upload-360.js"
   },
   "private": true
 }

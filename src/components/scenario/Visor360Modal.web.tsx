@@ -77,7 +77,8 @@ export function Visor360Modal({
             "mouseZoom": true,
             "hfov": 100,
             "minHfov": 50,
-            "maxHfov": 120
+            "maxHfov": 120,
+            "crossOrigin": "anonymous"
           });
         } catch (e) {
           console.error("Error al cargar visor 360:", e);

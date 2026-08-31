@@ -27,6 +27,7 @@ import { LoadingSpinner } from '../../components/common/LoadingSpinner';
 import { EmptyState } from '../../components/common/EmptyState';
 import { InteractiveStadiumMap } from '../../components/scenario/InteractiveStadiumMap';
 import { Visor360Modal } from '../../components/scenario/Visor360Modal';
+import { getSector360Url, STADIUM_SECTOR_TEMPLATE } from '../../utils/sectorTemplates';
 import { colors, spacing, borderRadius, fontSize, fontWeight } from '../../theme';
 import { getRole, canManageContent } from '../../utils/permissions';
 import type { ScenarioSector } from '../../types';
@@ -301,58 +302,24 @@ export default function ScenarioDetailScreen() {
 
           {/* Mapa Interactivo de Sectores y Visor 360 (T-059, T-060, T-061) */}
           {(() => {
-            const sectors =
+            const sectors: ScenarioSector[] =
               scenario.scenario_sectors && scenario.scenario_sectors.length > 0
-                ? scenario.scenario_sectors
+                ? scenario.scenario_sectors.map((sec) => ({
+                    ...sec,
+                    foto_360_url: getSector360Url(sec),
+                  }))
                 : (scenario.nombre?.toLowerCase().includes('capriles') ||
-                   scenario.tipo?.toLowerCase().includes('estadio'))
-                ? [
-                    {
-                      id: 'sec-cancha',
-                      scenario_id: scenario.id,
-                      nombre: 'Cancha Central',
-                      svg_path: 'M 300 200 L 500 200 L 500 400 L 300 400 Z',
-                      foto_360_url: 'https://pannellum.org/images/alma.jpg',
-                      color_hex: '#22c55e',
-                      display_order: 1,
-                    },
-                    {
-                      id: 'sec-norte',
-                      scenario_id: scenario.id,
-                      nombre: 'Curva Norte',
-                      svg_path: 'M 260 80 Q 400 30 540 80 L 510 180 Q 400 140 290 180 Z',
-                      foto_360_url: 'https://pannellum.org/images/cerro-toco-0.jpg',
-                      color_hex: '#3b82f6',
-                      display_order: 2,
-                    },
-                    {
-                      id: 'sec-sur',
-                      scenario_id: scenario.id,
-                      nombre: 'Curva Sur',
-                      svg_path: 'M 290 420 Q 400 460 510 420 L 540 520 Q 400 570 260 520 Z',
-                      foto_360_url: 'https://pannellum.org/images/bma-0.jpg',
-                      color_hex: '#ef4444',
-                      display_order: 3,
-                    },
-                    {
-                      id: 'sec-pref',
-                      scenario_id: scenario.id,
-                      nombre: 'Tribuna Preferencia',
-                      svg_path: 'M 120 120 L 260 190 L 260 410 L 120 480 Z',
-                      foto_360_url: 'https://pannellum.org/images/jfk.jpg',
-                      color_hex: '#f59e0b',
-                      display_order: 4,
-                    },
-                    {
-                      id: 'sec-gen',
-                      scenario_id: scenario.id,
-                      nombre: 'Tribuna General',
-                      svg_path: 'M 540 190 L 680 120 L 680 480 L 540 410 Z',
-                      foto_360_url: 'https://pannellum.org/images/milan.jpg',
-                      color_hex: '#8b5cf6',
-                      display_order: 5,
-                    },
-                  ]
+                   scenario.tipo?.toLowerCase().includes('estadio') ||
+                   scenario.tipo?.toLowerCase().includes('cancha'))
+                ? STADIUM_SECTOR_TEMPLATE.map((sec, idx) => ({
+                    id: `sec-${idx + 1}`,
+                    scenario_id: scenario.id,
+                    nombre: sec.nombre,
+                    svg_path: sec.svg_path,
+                    foto_360_url: getSector360Url(sec),
+                    color_hex: sec.color_hex,
+                    display_order: sec.display_order,
+                  }))
                 : [];
 
             if (sectors.length === 0) return null;
@@ -361,8 +328,12 @@ export default function ScenarioDetailScreen() {
               <InteractiveStadiumMap
                 sectors={sectors}
                 onSectorPress={(sector) => {
-                  if (sector.foto_360_url) {
-                    setSelectedSector(sector);
+                  const fotoUrl = getSector360Url(sector);
+                  if (fotoUrl) {
+                    setSelectedSector({
+                      ...sector,
+                      foto_360_url: fotoUrl,
+                    });
                   } else {
                     Alert.alert('Aviso', 'Este sector aún no tiene vista 360° disponible.');
                   }
