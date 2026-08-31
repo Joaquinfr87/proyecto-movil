@@ -237,6 +237,7 @@ export default function ScenarioFormScreen() {
           queryClient.invalidateQueries({ queryKey: ['scenario', id] }),
           queryClient.invalidateQueries({ queryKey: ['scenarios'] }),
           queryClient.invalidateQueries({ queryKey: ['all-scenarios'] }),
+          queryClient.invalidateQueries({ queryKey: ['scenarios-map'] }),
         ]);
       }
     };
@@ -333,6 +334,7 @@ export default function ScenarioFormScreen() {
         queryClient.invalidateQueries({ queryKey: ['all-scenarios'] }),
         queryClient.invalidateQueries({ queryKey: ['scenario', scenarioId] }),
         queryClient.invalidateQueries({ queryKey: ['favorites'] }),
+        queryClient.invalidateQueries({ queryKey: ['scenarios-map'] }),
       ]);
 
       const successMsg = isEditing

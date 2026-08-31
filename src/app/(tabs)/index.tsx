@@ -52,7 +52,7 @@ export default function MapScreen() {
     error,
     refetch,
   } = useQuery<Scenario[]>({
-    queryKey: ['scenarios'],
+    queryKey: ['scenarios-map'],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('scenarios')

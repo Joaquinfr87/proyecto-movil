@@ -129,6 +129,7 @@ export function useUpsertScenario() {
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['all-scenarios'] });
       queryClient.invalidateQueries({ queryKey: ['scenarios'] });
+      queryClient.invalidateQueries({ queryKey: ['scenarios-map'] });
       queryClient.invalidateQueries({ queryKey: ['favorites'] });
       if (data?.id) {
         queryClient.invalidateQueries({ queryKey: ['scenario', data.id] });
@@ -145,6 +146,7 @@ export function useDeleteScenario() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['all-scenarios'] });
       queryClient.invalidateQueries({ queryKey: ['scenarios'] });
+      queryClient.invalidateQueries({ queryKey: ['scenarios-map'] });
       queryClient.invalidateQueries({ queryKey: ['favorites'] });
       queryClient.invalidateQueries({ queryKey: ['scenario'] });
     },
@@ -159,6 +161,7 @@ export function useHardDeleteScenario() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['all-scenarios'] });
       queryClient.invalidateQueries({ queryKey: ['scenarios'] });
+      queryClient.invalidateQueries({ queryKey: ['scenarios-map'] });
       queryClient.invalidateQueries({ queryKey: ['favorites'] });
       queryClient.invalidateQueries({ queryKey: ['scenario'] });
     },
@@ -174,6 +177,7 @@ export function useToggleScenarioStatus() {
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['all-scenarios'] });
       queryClient.invalidateQueries({ queryKey: ['scenarios'] });
+      queryClient.invalidateQueries({ queryKey: ['scenarios-map'] });
       queryClient.invalidateQueries({ queryKey: ['favorites'] });
       if (variables?.id) {
         queryClient.invalidateQueries({ queryKey: ['scenario', variables.id] });
