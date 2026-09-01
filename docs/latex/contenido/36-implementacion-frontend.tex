@@ -1,0 +1,138 @@
+% ============================================================================
+%  3.6 IMPLEMENTACIÓN DEL FRONTEND
+% ============================================================================
+
+\section{Implementaci\'on del frontend}
+
+\subsection{Componente \texttt{EventRegistrationButton}}
+
+Se cre\'o un componente reutilizable que gestiona el estado del bot\'on
+de inscripci\'on:
+
+\begin{verbatim}
+function EventRegistrationButton({
+  eventId, eventName, userId,
+  isRegistering, isCancelling,
+  onRegister, onCancel,
+}: EventRegistrationButtonProps) {
+  const { data: registration, isLoading } =
+    useIsRegistered(userId, eventId);
+  const isRegistered = !!registration;
+
+  return (
+    <TouchableOpacity
+      style={[
+        styles.registerButton,
+        isRegistered && styles.registerButtonActive,
+      ]}
+      onPress={() => {
+        if (isRegistered) {
+          onCancel(eventId, eventName);
+        } else {
+          onRegister(eventId);
+        }
+      }}
+      disabled={isLoadingState}
+    >
+      <Ionicons
+        name={isRegistered
+          ? 'checkmark-circle'
+          : 'add-circle-outline'}
+        size={16}
+        color={isRegistered ? colors.white : colors.primary}
+      />
+      <Text style={...}>
+        {isRegistered ? 'Inscrito' : 'Inscribirse'}
+      </Text>
+    </TouchableOpacity>
+  );
+}
+\end{verbatim}
+
+\subsection{Integraci\'on en el detalle del escenario}
+
+En \texttt{src/app/scenario/[id].tsx} se modificaron las tarjetas de
+evento para incluir el bot\'on de inscripci\'on y el conteo de
+inscritos:
+
+\begin{verbatim}
+{scenario.events.map((event) => {
+  const counts = registrationCounts?.[event.id];
+  return (
+    <View key={event.id} style={styles.eventCard}>
+      {/* ... info del evento ... */}
+      {counts && (
+        <Text style={styles.registrationCount}>
+          {counts.confirmed_count} inscrito(s)
+        </Text>
+      )}
+      <View style={styles.eventActions}>
+        {user && (
+          <EventRegistrationButton
+            eventId={event.id}
+            userId={user.id}
+            onRegister={handleRegister}
+            onCancel={handleCancelRegistration}
+          />
+        )}
+      </View>
+    </View>
+  );
+})}
+\end{verbatim}
+
+\subsection{Secci\'on ``Mis inscripciones'' en el perfil}
+
+En \texttt{src/app/(tabs)/profile.tsx} se agreg\'o el componente
+\texttt{MyRegistrationsSection} que consulta y muestra las
+inscripciones del usuario:
+
+\begin{verbatim}
+function MyRegistrationsSection({ userId }) {
+  const { data: registrations, isLoading } =
+    useMyRegistrations(userId);
+
+  if (isLoading) return <ActivityIndicator />;
+  if (registrations?.length > 0) {
+    return (
+      <View style={styles.infoCard}>
+        {registrations.map((reg) => (
+          <View key={reg.id}>
+            <Ionicons name="checkmark-circle"
+              color={colors.success} />
+            <Text>Inscrito el {reg.registered_at}</Text>
+          </View>
+        ))}
+      </View>
+    );
+  }
+  return (
+    <View style={styles.emptyRegistrations}>
+      <Text>No tienes inscripciones aún</Text>
+    </View>
+  );
+}
+\end{verbatim}
+
+\subsection{Estilos personalizados}
+
+Se agregaron los siguientes estilos al archivo de estilos del
+detalle del escenario:
+
+\begin{table}[H]
+\centering
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Estilo} & \textbf{Descripci\'on} \\
+\midrule
+eventActions & Contenedor flex para botones de acci\'on \\
+registrationCount & Texto verde para conteo de inscritos \\
+registerButton & Bot\'on con borde azul, fondo blanco \\
+registerButtonActive & Bot\'on con fondo azul (inscrito) \\
+registerButtonDisabled & Opacidad reducida (cargando) \\
+registerButtonText & Texto azul del bot\'on \\
+registerButtonTextActive & Texto blanco del bot\'on activo \\
+\bottomrule
+\end{tabular}
+\caption{Estilos del m\'odulo de inscripci\'on}
+\end{table}

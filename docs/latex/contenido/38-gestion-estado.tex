@@ -1,0 +1,85 @@
+% ============================================================================
+%  3.8 GESTIÓN DE ESTADO
+% ============================================================================
+
+\section{Gesti\'on de estado}
+
+\subsection{Estado del servidor (React Query)}
+
+El m\'odulo utiliza \texttt{@tanstack/react-query} para gestionar
+el estado del servidor. Cada hook de consulta gestiona tres estados:
+
+\begin{itemize}
+  \item \textbf{isLoading:} Datos a\'un no cargados (muestra
+    indicador de progreso).
+  \item \textbf{isError:} Ocurri\'o un error en la consulta.
+  \item \textbf{data:} Datos cargados exitosamente.
+\end{itemize}
+
+\subsection{Estado de las mutaciones}
+
+Las mutaciones (\texttt{useRegisterForEvent}, \texttt{useCancelRegistration})
+gestionan el estado \texttt{isPending} para deshabilitar el bot\'on
+mientras se ejecuta la operaci\'on:
+
+\begin{verbatim}
+const { mutateAsync: registerEvent, isPending: isRegistering }
+  = useRegisterForEvent();
+const { mutateAsync: cancelReg, isPending: isCancelling }
+  = useCancelRegistration();
+\end{verbatim}
+
+\subsection{Flujo de estado}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  node distance=1.2cm,
+  state/.style={rectangle, draw=black!60, rounded corners,
+    minimum width=2.5cm, minimum height=0.6cm, align=center,
+    font=\footnotesize},
+  init/.style={state, fill=green!10},
+  loading/.style={state, fill=yellow!15},
+  error/.style={state, fill=red!10},
+  success/.style={state, fill=blue!10}
+]
+  \node[init] (idle) {Idle};
+  \node[loading, right=of idle] (loading) {Cargando...};
+  \node[success, right=of loading] (success) {Inscrito};
+  \node[error, below=of loading] (error) {Error};
+
+  \draw[-Stealth, thick] (idle) -- node[above, font=\scriptsize]
+    {Tap ``Inscribirse''} (loading);
+  \draw[-Stealth, thick] (loading) -- node[above, font=\scriptsize]
+    {\'Exito} (success);
+  \draw[-Stealth, thick] (loading) -- node[right, font=\scriptsize]
+    {Fallo} (error);
+  \draw[-Stealth, thick] (error) -- node[below, font=\scriptsize]
+    {Reintentar} (idle);
+  \draw[-Stealth, thick] (success) -- node[above, font=\scriptsize]
+    {Tap ``Cancelar''} (idle);
+\end{tikzpicture}
+\caption{Diagrama de estados del bot\'on de inscripci\'on}
+\end{figure}
+
+\subsection{Cache y invalidaci\'on}
+
+Los \texttt{queryKey} se estructuran para permitir invalidaci\'on
+selectiva:
+
+\begin{table}[H]
+\centering
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Query Key} & \textbf{Prop\'osito} \\
+\midrule
+event-registration, userId, eventId & Verificar inscripci\'on
+  individual \\
+event-registration-counts, eventIds & Conteo de inscripciones
+  por evento \\
+my-event-registrations, userId & Lista de inscripciones del
+  usuario \\
+\bottomrule
+\end{tabular}
+\caption{Estructura de query keys}
+\end{table}

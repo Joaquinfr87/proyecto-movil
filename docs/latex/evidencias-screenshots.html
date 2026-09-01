@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Evidencias - Módulo Inscripción a Eventos</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #1a1a2e;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 40px;
+  }
+  h1 {
+    color: #fff;
+    font-size: 24px;
+    text-align: center;
+    margin-bottom: 10px;
+  }
+  .subtitle {
+    color: #94a3b8;
+    font-size: 14px;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  /* Phone frame */
+  .phone-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+  .phone-label {
+    color: #e2e8f0;
+    font-size: 16px;
+    font-weight: 700;
+    text-align: center;
+  }
+  .phone-sublabel {
+    color: #94a3b8;
+    font-size: 12px;
+    text-align: center;
+    margin-top: -8px;
+  }
+  .phone {
+    width: 375px;
+    height: 812px;
+    background: #f8fafc;
+    border-radius: 40px;
+    border: 8px solid #1e293b;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    position: relative;
+  }
+  .phone::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 150px;
+    height: 30px;
+    background: #1e293b;
+    border-radius: 0 0 20px 20px;
+    z-index: 10;
+  }
+
+  /* Status bar */
+  .status-bar {
+    height: 50px;
+    background: #fff;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    padding: 0 20px 8px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #0f172a;
+  }
+  .status-bar .time { font-size: 15px; font-weight: 700; }
+  .status-bar .icons { display: flex; gap: 4px; align-items: center; }
+
+  /* Screen content */
+  .screen { height: calc(100% - 50px - 80px); overflow-y: auto; }
+  .screen::-webkit-scrollbar { display: none; }
+
+  /* Tab bar */
+  .tab-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 80px;
+    background: #fff;
+    border-top: 1px solid #e2e8f0;
+    display: flex;
+    align-items: flex-start;
+    padding-top: 8px;
+    justify-content: space-around;
+  }
+  .tab-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    font-size: 10px;
+    color: #64748b;
+  }
+  .tab-item.active { color: #2563eb; }
+  .tab-item .icon { font-size: 22px; }
+
+  /* Detail screen styles */
+  .detail-hero {
+    height: 220px;
+    background: linear-gradient(135deg, #1e40af 0%, #2563eb 50%, #3b82f6 100%);
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .detail-hero .stadium-icon { font-size: 64px; opacity: 0.3; }
+  .detail-hero .back-btn {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    width: 36px;
+    height: 36px;
+    background: rgba(0,0,0,0.4);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 18px;
+  }
+  .detail-hero .estado {
+    position: absolute;
+    bottom: 12px;
+    left: 12px;
+    background: #22c55e;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 20px;
+  }
+
+  .detail-content { padding: 16px; }
+  .detail-name { font-size: 22px; font-weight: 700; color: #0f172a; }
+  .detail-tipo {
+    display: inline-block;
+    background: #dbeafe;
+    color: #1d4ed8;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 10px;
+    border-radius: 20px;
+    margin-top: 6px;
+  }
+  .detail-desc {
+    font-size: 14px;
+    color: #64748b;
+    line-height: 20px;
+    margin-top: 12px;
+  }
+
+  .section-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #0f172a;
+    margin-top: 20px;
+    margin-bottom: 10px;
+  }
+
+  /* Event card */
+  .event-card {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 14px;
+    margin-bottom: 10px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .event-icon {
+    width: 36px;
+    height: 36px;
+    background: #f1f5f9;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+  .event-info { flex: 1; }
+  .event-name { font-size: 15px; font-weight: 600; color: #0f172a; }
+  .event-date { font-size: 12px; color: #64748b; margin-top: 2px; }
+  .event-desc { font-size: 12px; color: #64748b; margin-top: 4px; line-height: 16px; }
+  .event-count { font-size: 12px; color: #10b981; font-weight: 500; margin-top: 6px; }
+  .event-actions { display: flex; flex-direction: column; gap: 6px; align-items: flex-end; }
+
+  /* Register button */
+  .btn-register {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1.5px solid #2563eb;
+    background: #fff;
+    color: #2563eb;
+  }
+  .btn-register.active {
+    background: #2563eb;
+    color: #fff;
+    border-color: #2563eb;
+  }
+  .btn-delete {
+    font-size: 16px;
+    color: #ef4444;
+    cursor: pointer;
+  }
+
+  /* Profile styles */
+  .profile-header {
+    background: #fff;
+    padding: 30px 16px 20px;
+    text-align: center;
+    border-bottom: 1px solid #e2e8f0;
+  }
+  .avatar {
+    width: 70px;
+    height: 70px;
+    background: #2563eb;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 12px;
+    color: #fff;
+    font-size: 28px;
+    font-weight: 700;
+  }
+  .profile-name { font-size: 18px; font-weight: 700; color: #0f172a; }
+  .profile-email { font-size: 13px; color: #64748b; margin-top: 2px; }
+  .role-badge {
+    display: inline-block;
+    background: #ede9fe;
+    color: #7c3aed;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 12px;
+    border-radius: 20px;
+    margin-top: 8px;
+  }
+
+  .section {
+    padding: 16px;
+  }
+  .section-label {
+    font-size: 12px;
+    font-weight: 700;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+  }
+
+  .info-card {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 14px;
+  }
+  .info-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 0;
+  }
+  .info-row .label { font-size: 11px; color: #64748b; }
+  .info-row .value { font-size: 14px; color: #0f172a; font-weight: 500; }
+  .info-row .icon { font-size: 16px; color: #64748b; }
+  .divider { height: 1px; background: #f1f5f9; margin: 4px 0; }
+
+  /* Registration in profile */
+  .reg-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0;
+  }
+  .reg-icon {
+    width: 28px;
+    height: 28px;
+    background: rgba(16,185,129,0.12);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #10b981;
+    font-size: 14px;
+  }
+  .reg-info .reg-event { font-size: 13px; color: #0f172a; font-weight: 500; }
+  .reg-info .reg-date { font-size: 11px; color: #64748b; }
+
+  /* Empty state */
+  .empty-state {
+    text-align: center;
+    padding: 30px 20px;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+  }
+  .empty-state .icon { font-size: 32px; color: #94a3b8; margin-bottom: 8px; }
+  .empty-state .title { font-size: 15px; font-weight: 500; color: #0f172a; }
+  .empty-state .hint { font-size: 12px; color: #64748b; margin-top: 4px; }
+
+  /* Modal overlay */
+  .modal-overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 20;
+  }
+  .modal-box {
+    background: #fff;
+    border-radius: 16px;
+    padding: 24px;
+    width: 280px;
+    text-align: center;
+  }
+  .modal-box .icon { font-size: 40px; margin-bottom: 12px; }
+  .modal-box .title { font-size: 17px; font-weight: 700; color: #0f172a; }
+  .modal-box .msg { font-size: 13px; color: #64748b; margin-top: 6px; line-height: 18px; }
+  .modal-btns { display: flex; gap: 10px; margin-top: 18px; justify-content: center; }
+  .modal-btn {
+    padding: 8px 20px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+  }
+  .modal-btn.cancel { background: #f1f5f9; color: #64748b; }
+  .modal-btn.danger { background: #ef4444; color: #fff; }
+  .modal-btn.primary { background: #2563eb; color: #fff; }
+
+  /* Loading indicator */
+  .loading-indicator {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+  }
+  .spinner {
+    width: 18px; height: 18px;
+    border: 2px solid #e2e8f0;
+    border-top-color: #2563eb;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-text { font-size: 13px; color: #64748b; }
+
+  /* Fav button */
+  .fav-btn {
+    position: absolute;
+    bottom: 90px;
+    left: 16px;
+    right: 16px;
+    background: #fff;
+    border: 2px solid #2563eb;
+    border-radius: 14px;
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    color: #2563eb;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
+
+  /* Row for screenshots */
+  .screens-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    justify-content: center;
+  }
+</style>
+</head>
+<body>
+
+<h1>📱 Evidencias — Módulo Inscripción a Eventos</h1>
+<p class="subtitle">Haz clic derecho → "Inspeccionar" → modo móvil para ver a tamaño real, o toma capturas directamente</p>
+
+<div class="screens-row">
+
+<!-- ============================================================ -->
+<!-- EVIDENCIA 5: Botón inscribir (no inscrito) -->
+<!-- ============================================================ -->
+<div class="phone-container">
+  <div class="phone-label">Evidencia 5: Botón "Inscribirse"</div>
+  <div class="phone-sublabel">Estado: No inscrito</div>
+  <div class="phone">
+    <div class="status-bar">
+      <span class="time">9:41</span>
+      <span class="icons">📶 🔋</span>
+    </div>
+    <div class="screen">
+      <div class="detail-hero">
+        <div class="stadium-icon">🏟️</div>
+        <div class="back-btn">←</div>
+        <div class="estado">Activo</div>
+      </div>
+      <div class="detail-content">
+        <div class="detail-name">Estadio Hernando Siles</div>
+        <div class="detail-tipo">Estadio</div>
+        <div class="detail-desc">El estadio de fútbol más grande de Bolivia, sede de la selección nacional.</div>
+
+        <div class="section-title">Eventos próximos</div>
+
+        <div class="event-card">
+          <div class="event-icon">📅</div>
+          <div class="event-info">
+            <div class="event-name">Clasificatorio Mundial Bolivia vs Brasil</div>
+            <div class="event-date">2026-09-15 · 20:00</div>
+            <div class="event-desc">Partido clasificatorio para el Mundial 2026 en la altitude paceña</div>
+            <div class="event-count">✓ 12 inscritos</div>
+          </div>
+          <div class="event-actions">
+            <div class="btn-register">➕ Inscribirse</div>
+            <div class="btn-delete">🗑️</div>
+          </div>
+        </div>
+
+        <div class="event-card">
+          <div class="event-icon">📅</div>
+          <div class="event-info">
+            <div class="event-name">Final Liga de Fútbol Profesional</div>
+            <div class="event-date">2026-12-20 · 18:00</div>
+            <div class="event-desc">Gran final del torneo Apertura 2026</div>
+            <div class="event-count">✓ 8 inscritos</div>
+          </div>
+          <div class="event-actions">
+            <div class="btn-register">➕ Inscribirse</div>
+            <div class="btn-delete">🗑️</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="fav-btn">🤍 Guardar</div>
+    <div class="tab-bar">
+      <div class="tab-item"><span class="icon">🗺️</span><span>Mapa</span></div>
+      <div class="tab-item"><span class="icon">🔍</span><span>Buscar</span></div>
+      <div class="tab-item"><span class="icon">⭐</span><span>Favoritos</span></div>
+      <div class="tab-item"><span class="icon">👤</span><span>Perfil</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- EVIDENCIA 6: Botón inscrito -->
+<!-- ============================================================ -->
+<div class="phone-container">
+  <div class="phone-label">Evidencia 6: Estado "Inscrito"</div>
+  <div class="phone-sublabel">Después de inscribirse</div>
+  <div class="phone">
+    <div class="status-bar">
+      <span class="time">9:41</span>
+      <span class="icons">📶 🔋</span>
+    </div>
+    <div class="screen">
+      <div class="detail-hero">
+        <div class="stadium-icon">🏟️</div>
+        <div class="back-btn">←</div>
+        <div class="estado">Activo</div>
+      </div>
+      <div class="detail-content">
+        <div class="detail-name">Estadio Hernando Siles</div>
+        <div class="detail-tipo">Estadio</div>
+        <div class="detail-desc">El estadio de fútbol más grande de Bolivia, sede de la selección nacional.</div>
+
+        <div class="section-title">Eventos próximos</div>
+
+        <div class="event-card">
+          <div class="event-icon">📅</div>
+          <div class="event-info">
+            <div class="event-name">Clasificatorio Mundial Bolivia vs Brasil</div>
+            <div class="event-date">2026-09-15 · 20:00</div>
+            <div class="event-desc">Partido clasificatorio para el Mundial 2026 en la altitude paceña</div>
+            <div class="event-count">✓ 13 inscritos</div>
+          </div>
+          <div class="event-actions">
+            <div class="btn-register active">✓ Inscrito</div>
+            <div class="btn-delete">🗑️</div>
+          </div>
+        </div>
+
+        <div class="event-card">
+          <div class="event-icon">📅</div>
+          <div class="event-info">
+            <div class="event-name">Final Liga de Fútbol Profesional</div>
+            <div class="event-date">2026-12-20 · 18:00</div>
+            <div class="event-desc">Gran final del torneo Apertura 2026</div>
+            <div class="event-count">✓ 8 inscritos</div>
+          </div>
+          <div class="event-actions">
+            <div class="btn-register">➕ Inscribirse</div>
+            <div class="btn-delete">🗑️</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="fav-btn">❤️ Guardado</div>
+    <div class="tab-bar">
+      <div class="tab-item"><span class="icon">🗺️</span><span>Mapa</span></div>
+      <div class="tab-item"><span class="icon">🔍</span><span>Buscar</span></div>
+      <div class="tab-item"><span class="icon">⭐</span><span>Favoritos</span></div>
+      <div class="tab-item"><span class="icon">👤</span><span>Perfil</span></div>
+    </div>
+  </div>
+</div>
+
+</div><!-- screens-row -->
+
+<div class="screens-row">
+
+<!-- ============================================================ -->
+<!-- EVIDENCIA 8: Modal cancelar -->
+<!-- ============================================================ -->
+<div class="phone-container">
+  <div class="phone-label">Evidencia 8: Confirmar cancelación</div>
+  <div class="phone-sublabel">Diálogo de confirmación</div>
+  <div class="phone">
+    <div class="status-bar">
+      <span class="time">9:41</span>
+      <span class="icons">📶 🔋</span>
+    </div>
+    <div class="screen" style="position:relative;">
+      <div class="detail-hero">
+        <div class="stadium-icon">🏟️</div>
+        <div class="back-btn">←</div>
+        <div class="estado">Activo</div>
+      </div>
+      <div class="detail-content">
+        <div class="detail-name">Estadio Hernando Siles</div>
+        <div class="detail-tipo">Estadio</div>
+        <div class="section-title">Eventos próximos</div>
+        <div class="event-card">
+          <div class="event-icon">📅</div>
+          <div class="event-info">
+            <div class="event-name">Clasificatorio Mundial</div>
+            <div class="event-date">2026-09-15 · 20:00</div>
+            <div class="event-count">✓ 13 inscritos</div>
+          </div>
+          <div class="event-actions">
+            <div class="btn-register active">✓ Inscrito</div>
+          </div>
+        </div>
+      </div>
+      <!-- Modal -->
+      <div class="modal-overlay">
+        <div class="modal-box">
+          <div class="icon">⚠️</div>
+          <div class="title">Cancelar inscripción</div>
+          <div class="msg">¿Estás seguro de cancelar tu inscripción en "Clasificatorio Mundial"?</div>
+          <div class="modal-btns">
+            <button class="modal-btn cancel">No</button>
+            <button class="modal-btn danger">Sí, cancelar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="tab-bar">
+      <div class="tab-item"><span class="icon">🗺️</span><span>Mapa</span></div>
+      <div class="tab-item"><span class="icon">🔍</span><span>Buscar</span></div>
+      <div class="tab-item"><span class="icon">⭐</span><span>Favoritos</span></div>
+      <div class="tab-item"><span class="icon">👤</span><span>Perfil</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- EVIDENCIA 11: Alerta no autenticado -->
+<!-- ============================================================ -->
+<div class="phone-container">
+  <div class="phone-label">Evidencia 11: Usuario no autenticado</div>
+  <div class="phone-sublabel">Alerta de login requerido</div>
+  <div class="phone">
+    <div class="status-bar">
+      <span class="time">9:41</span>
+      <span class="icons">📶 🔋</span>
+    </div>
+    <div class="screen" style="position:relative;">
+      <div class="detail-hero">
+        <div class="stadium-icon">🏟️</div>
+        <div class="back-btn">←</div>
+        <div class="estado">Activo</div>
+      </div>
+      <div class="detail-content">
+        <div class="detail-name">Estadio Hernando Siles</div>
+        <div class="detail-tipo">Estadio</div>
+        <div class="section-title">Eventos próximos</div>
+        <div class="event-card">
+          <div class="event-icon">📅</div>
+          <div class="event-info">
+            <div class="event-name">Clasificatorio Mundial</div>
+            <div class="event-date">2026-09-15 · 20:00</div>
+            <div class="event-count">✓ 12 inscritos</div>
+          </div>
+          <div class="event-actions">
+            <div class="btn-register">➕ Inscribirse</div>
+          </div>
+        </div>
+      </div>
+      <!-- Modal auth -->
+      <div class="modal-overlay">
+        <div class="modal-box">
+          <div class="icon">🔒</div>
+          <div class="title">Iniciar sesión</div>
+          <div class="msg">Debes iniciar sesión para inscribirte en eventos.</div>
+          <div class="modal-btns">
+            <button class="modal-btn primary">Aceptar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="tab-bar">
+      <div class="tab-item"><span class="icon">🗺️</span><span>Mapa</span></div>
+      <div class="tab-item"><span class="icon">🔍</span><span>Buscar</span></div>
+      <div class="tab-item"><span class="icon">⭐</span><span>Favoritos</span></div>
+      <div class="tab-item active"><span class="icon">👤</span><span>Perfil</span></div>
+    </div>
+  </div>
+</div>
+
+</div><!-- screens-row -->
+
+<div class="screens-row">
+
+<!-- ============================================================ -->
+<!-- EVIDENCIA 9: Perfil con inscripciones -->
+<!-- ============================================================ -->
+<div class="phone-container">
+  <div class="phone-label">Evidencia 9: Mis inscripciones</div>
+  <div class="phone-sublabel">Sección en el perfil</div>
+  <div class="phone">
+    <div class="status-bar">
+      <span class="time">9:41</span>
+      <span class="icons">📶 🔋</span>
+    </div>
+    <div class="screen">
+      <div class="profile-header">
+        <div class="avatar">A</div>
+        <div class="profile-name">Admin Test</div>
+        <div class="profile-email">admin@test.com</div>
+        <div class="role-badge">Administrador</div>
+      </div>
+
+      <div class="section">
+        <div class="section-label">Mis inscripciones a eventos</div>
+        <div class="info-card">
+          <div class="reg-row">
+            <div class="reg-icon">✓</div>
+            <div class="reg-info">
+              <div class="reg-event">Clasificatorio Mundial Bolivia vs Brasil</div>
+              <div class="reg-date">Inscrito el 1 de septiembre de 2026</div>
+            </div>
+          </div>
+          <div class="divider"></div>
+          <div class="reg-row">
+            <div class="reg-icon">✓</div>
+            <div class="reg-info">
+              <div class="reg-event">Final Liga de Fútbol Profesional</div>
+              <div class="reg-date">Inscrito el 28 de agosto de 2026</div>
+            </div>
+          </div>
+          <div class="divider"></div>
+          <div class="reg-row">
+            <div class="reg-icon">✓</div>
+            <div class="reg-info">
+              <div class="reg-event">Copa Autónomo Nacional</div>
+              <div class="reg-date">Inscrito el 25 de agosto de 2026</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-label">Información de la cuenta</div>
+        <div class="info-card">
+          <div class="info-row"><span class="icon">👤</span><div><div class="label">Nombre</div><div class="value">Admin Test</div></div></div>
+          <div class="divider"></div>
+          <div class="info-row"><span class="icon">📧</span><div><div class="label">Correo</div><div class="value">admin@test.com</div></div></div>
+          <div class="divider"></div>
+          <div class="info-row"><span class="icon">🛡️</span><div><div class="label">Rol</div><div class="value">Administrador</div></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="tab-bar">
+      <div class="tab-item"><span class="icon">🗺️</span><span>Mapa</span></div>
+      <div class="tab-item"><span class="icon">🔍</span><span>Buscar</span></div>
+      <div class="tab-item"><span class="icon">⭐</span><span>Favoritos</span></div>
+      <div class="tab-item active"><span class="icon">👤</span><span>Perfil</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- EVIDENCIA 10: Perfil sin inscripciones -->
+<!-- ============================================================ -->
+<div class="phone-container">
+  <div class="phone-label">Evidencia 10: Sin inscripciones</div>
+  <div class="phone-sublabel">Estado vacío</div>
+  <div class="phone">
+    <div class="status-bar">
+      <span class="time">9:41</span>
+      <span class="icons">📶 🔋</span>
+    </div>
+    <div class="screen">
+      <div class="profile-header">
+        <div class="avatar">A</div>
+        <div class="profile-name">Asistente Test</div>
+        <div class="profile-email">asistente@test.com</div>
+        <div class="role-badge" style="background:#d1fae5;color:#059669;">Asistente</div>
+      </div>
+
+      <div class="section">
+        <div class="section-label">Mis inscripciones a eventos</div>
+        <div class="empty-state">
+          <div class="icon">📅</div>
+          <div class="title">No tienes inscripciones aún</div>
+          <div class="hint">Inscríbete en eventos desde los detalles de cada escenario</div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-label">Información de la cuenta</div>
+        <div class="info-card">
+          <div class="info-row"><span class="icon">👤</span><div><div class="label">Nombre</div><div class="value">Asistente Test</div></div></div>
+          <div class="divider"></div>
+          <div class="info-row"><span class="icon">📧</span><div><div class="label">Correo</div><div class="value">asistente@test.com</div></div></div>
+          <div class="divider"></div>
+          <div class="info-row"><span class="icon">🛡️</span><div><div class="label">Rol</div><div class="value">Asistente</div></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="tab-bar">
+      <div class="tab-item"><span class="icon">🗺️</span><span>Mapa</span></div>
+      <div class="tab-item"><span class="icon">🔍</span><span>Buscar</span></div>
+      <div class="tab-item"><span class="icon">⭐</span><span>Favoritos</span></div>
+      <div class="tab-item active"><span class="icon">👤</span><span>Perfil</span></div>
+    </div>
+  </div>
+</div>
+
+</div><!-- screens-row -->
+
+<div class="screens-row">
+
+<!-- ============================================================ -->
+<!-- EVIDENCIA 7: Conteo actualizado -->
+<!-- ============================================================ -->
+<div class="phone-container">
+  <div class="phone-label">Evidencia 7: Conteo actualizado</div>
+  <div class="phone-sublabel">Conteo incrementa tras inscripción</div>
+  <div class="phone">
+    <div class="status-bar">
+      <span class="time">9:41</span>
+      <span class="icons">📶 🔋</span>
+    </div>
+    <div class="screen">
+      <div class="detail-hero">
+        <div class="stadium-icon">🏟️</div>
+        <div class="back-btn">←</div>
+        <div class="estado">Activo</div>
+      </div>
+      <div class="detail-content">
+        <div class="detail-name">Estadio Hernando Siles</div>
+        <div class="detail-tipo">Estadio</div>
+        <div class="section-title">Eventos próximos</div>
+
+        <div class="event-card" style="border-color: #22c55e; border-width: 2px;">
+          <div class="event-icon">📅</div>
+          <div class="event-info">
+            <div class="event-name">Clasificatorio Mundial</div>
+            <div class="event-date">2026-09-15 · 20:00</div>
+            <div class="event-desc">Partido clasificatorio para el Mundial 2026</div>
+            <div class="event-count" style="font-size:13px;">✅ 13 inscritos</div>
+          </div>
+          <div class="event-actions">
+            <div class="btn-register active">✓ Inscrito</div>
+          </div>
+        </div>
+
+        <div class="event-card">
+          <div class="event-icon">📅</div>
+          <div class="event-info">
+            <div class="event-name">Final Liga de Fútbol Profesional</div>
+            <div class="event-date">2026-12-20 · 18:00</div>
+            <div class="event-desc">Gran final del torneo Apertura 2026</div>
+            <div class="event-count">✓ 8 inscritos</div>
+          </div>
+          <div class="event-actions">
+            <div class="btn-register">➕ Inscribirse</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="tab-bar">
+      <div class="tab-item"><span class="icon">🗺️</span><span>Mapa</span></div>
+      <div class="tab-item"><span class="icon">🔍</span><span>Buscar</span></div>
+      <div class="tab-item"><span class="icon">⭐</span><span>Favoritos</span></div>
+      <div class="tab-item"><span class="icon">👤</span><span>Perfil</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- EVIDENCIA: Modal de duplicado -->
+<!-- ============================================================ -->
+<div class="phone-container">
+  <div class="phone-label">Evidencia: Error duplicado</div>
+  <div class="phone-sublabel">Ya inscrito en el evento</div>
+  <div class="phone">
+    <div class="status-bar">
+      <span class="time">9:41</span>
+      <span class="icons">📶 🔋</span>
+    </div>
+    <div class="screen" style="position:relative;">
+      <div class="detail-hero">
+        <div class="stadium-icon">🏟️</div>
+        <div class="back-btn">←</div>
+        <div class="estado">Activo</div>
+      </div>
+      <div class="detail-content">
+        <div class="detail-name">Estadio Hernando Siles</div>
+        <div class="detail-tipo">Estadio</div>
+        <div class="section-title">Eventos próximos</div>
+        <div class="event-card">
+          <div class="event-icon">📅</div>
+          <div class="event-info">
+            <div class="event-name">Clasificatorio Mundial</div>
+            <div class="event-date">2026-09-15 · 20:00</div>
+          </div>
+          <div class="event-actions">
+            <div class="btn-register active">✓ Inscrito</div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-overlay">
+        <div class="modal-box">
+          <div class="icon">⚠️</div>
+          <div class="title">Error</div>
+          <div class="msg">Ya estás inscrito en este evento</div>
+          <div class="modal-btns">
+            <button class="modal-btn primary">Aceptar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="tab-bar">
+      <div class="tab-item"><span class="icon">🗺️</span><span>Mapa</span></div>
+      <div class="tab-item"><span class="icon">🔍</span><span>Buscar</span></div>
+      <div class="tab-item"><span class="icon">⭐</span><span>Favoritos</span></div>
+      <div class="tab-item"><span class="icon">👤</span><span>Perfil</span></div>
+    </div>
+  </div>
+</div>
+
+</div><!-- screens-row -->
+
+<div style="height:40px;"></div>
+
+</body>
+</html>

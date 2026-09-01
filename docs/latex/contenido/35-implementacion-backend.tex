@@ -1,0 +1,113 @@
+% ============================================================================
+%  3.5 IMPLEMENTACIÓN DEL BACKEND (Hooks de React Query)
+% ============================================================================
+
+\section{Implementaci\'on del backend}
+
+\subsection{Hooks personalizados}
+
+Se cre\'o el archivo \texttt{src/hooks/useEventRegistration.ts} con
+cinco hooks que encapsulan toda la l\'ogica de comunicaci\'on con
+Supabase:
+
+\begin{enumerate}
+  \item \textbf{useIsRegistered(userId, eventId):} Verifica si el
+    usuario est\'a inscrito en un evento espec\'ifico.
+  \item \textbf{useRegisterForEvent():} Inscribir al usuario en un
+    evento.
+  \item \textbf{useCancelRegistration():} Cancelar la inscripci\'on
+    del usuario.
+  \item \textbf{useMyRegistrations(userId):} Obtener todas las
+    inscripciones activas del usuario.
+  \item \textbf{useRegistrationCounts(eventIds):} Obtener el conteo
+    de inscripciones para una lista de eventos.
+\end{enumerate}
+
+\subsection{Funciones de API}
+
+Cada hook internamente llama a una funci\'on de API que interact\'ua
+directamente con Supabase:
+
+\subsubsection*{Verificar inscripci\'on}
+
+\begin{verbatim}
+async function checkRegistration(
+  userId: string, eventId: string
+): Promise<EventRegistration | null> {
+  const { data, error } = await supabase
+    .from('event_registrations')
+    .select('*')
+    .eq('user_id', userId)
+    .eq('event_id', eventId)
+    .in('status', ['confirmed', 'waitlist'])
+    .maybeSingle();
+
+  if (error) throw new Error(error.message);
+  return data as EventRegistration | null;
+}
+\end{verbatim}
+
+\subsubsection*{Inscribir en evento}
+
+\begin{verbatim}
+async function registerForEvent(
+  userId: string, eventId: string
+): Promise<EventRegistration> {
+  // Verificar si ya está inscrito
+  const existing = await checkRegistration(userId, eventId);
+  if (existing) {
+    throw new Error('Ya estás inscrito en este evento');
+  }
+
+  const { data, error } = await supabase
+    .from('event_registrations')
+    .insert({
+      user_id: userId,
+      event_id: eventId,
+      status: 'confirmed',
+    })
+    .select()
+    .single();
+
+  if (error) throw new Error(error.message);
+  return data as EventRegistration;
+}
+\end{verbatim}
+
+\subsubsection*{Cancelar inscripci\'on}
+
+\begin{verbatim}
+async function cancelRegistration(
+  userId: string, eventId: string
+): Promise<void> {
+  const { error } = await supabase
+    .from('event_registrations')
+    .delete()
+    .eq('user_id', userId)
+    .eq('event_id', eventId);
+
+  if (error) throw new Error(error.message);
+}
+\end{verbatim}
+
+\subsection{Invalidaci\'on de cach\'e}
+
+Todos los hooks utilizan \texttt{useQueryClient} para invalidar la
+cach\'e despu\'es de cada operaci\'on, garantizando que la interfaz
+se actualice con los datos m\'as recientes:
+
+\begin{verbatim}
+onSuccess: (_, variables) => {
+  queryClient.invalidateQueries({
+    queryKey: ['event-registration',
+      variables.userId, variables.eventId],
+  });
+  queryClient.invalidateQueries({
+    queryKey: ['event-registration-counts'],
+  });
+  queryClient.invalidateQueries({
+    queryKey: ['my-event-registrations',
+      variables.userId],
+  });
+},
+\end{verbatim}

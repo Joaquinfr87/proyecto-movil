@@ -23,6 +23,12 @@ import { useScenario } from '../../hooks/useScenarios';
 import { useIsFavorite, useToggleFavorite } from '../../hooks/useFavorites';
 import { useUploadImage } from '../../hooks/useUploadImage';
 import { useCreateEvent, useDeleteEvent } from '../../hooks/useEvents';
+import {
+  useIsRegistered,
+  useRegistrationCounts,
+  useRegisterForEvent,
+  useCancelRegistration,
+} from '../../hooks/useEventRegistration';
 import { LoadingSpinner } from '../../components/common/LoadingSpinner';
 import { EmptyState } from '../../components/common/EmptyState';
 import { InteractiveStadiumMap } from '../../components/scenario/InteractiveStadiumMap';
@@ -44,9 +50,13 @@ export default function ScenarioDetailScreen() {
   const { data: scenario, isLoading, error } = useScenario(id ?? '');
   const { data: isFavorite } = useIsFavorite(user?.id ?? '', id ?? '');
   const { toggleFavorite, isToggling } = useToggleFavorite();
-  const { uploadImage, isUploading } = useUploadImage();
-  const { mutateAsync: createEvent, isPending: isCreatingEvent } = useCreateEvent();
+  const { uploadImage, isUploading } = useUploadImage();  const { mutateAsync: createEvent, isPending: isCreatingEvent } = useCreateEvent();
   const { mutateAsync: deleteEvent, isPending: isDeletingEvent } = useDeleteEvent(id ?? '');
+  const { mutateAsync: registerEvent, isPending: isRegistering } = useRegisterForEvent();
+  const { mutateAsync: cancelReg, isPending: isCancelling } = useCancelRegistration();
+
+
+
 
   const [imageError, setImageError] = useState(false);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
@@ -75,6 +85,10 @@ export default function ScenarioDetailScreen() {
   // Solo admin y gestor pueden administrar (subir fotos, eventos)
   const role = getRole(user);
   const canManage = canManageContent(role);
+
+  // Event registration
+  const eventIds = (scenario?.events ?? []).map((e) => e.id);
+  const { data: registrationCounts } = useRegistrationCounts(eventIds);
 
   const primaryImage = sortedImages?.find((img) => img.is_primary);
   const imageUrl = !imageError
@@ -132,6 +146,43 @@ export default function ScenarioDetailScreen() {
     } catch (err) {
       const msg = err instanceof Error ? err.message : 'Error al crear evento';
       setEventError(msg);
+    }
+  };
+
+  const handleRegister = async (eventId: string) => {
+    if (!user?.id) {
+      Alert.alert('Iniciar sesión', 'Debes iniciar sesión para inscribirte.');
+      return;
+    }
+    try {
+      await registerEvent({ userId: user.id, eventId });
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Error al inscribirte';
+      Alert.alert('Error', msg);
+    }
+  };
+
+  const handleCancelRegistration = (eventId: string, eventName: string) => {
+    if (!user?.id) return;
+
+    const doCancel = async () => {
+      try {
+        await cancelReg({ userId: user.id, eventId });
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : 'Error al cancelar';
+        Alert.alert('Error', msg);
+      }
+    };
+
+    if (Platform.OS === 'web') {
+      if (window.confirm(`¿Cancelar inscripción en "${eventName}"?`)) {
+        doCancel();
+      }
+    } else {
+      Alert.alert('Cancelar inscripción', `¿Estás seguro de cancelar tu inscripción en "${eventName}"?`, [
+        { text: 'No', style: 'cancel' },
+        { text: 'Sí, cancelar', style: 'destructive', onPress: doCancel },
+      ]);
     }
   };
 
@@ -404,34 +455,56 @@ export default function ScenarioDetailScreen() {
               </View>
 
               {hasEvents ? (
-                scenario.events.map((event) => (
-                  <View key={event.id} style={styles.eventCard}>
-                    <View style={styles.eventDateBadge}>
-                      <Ionicons name="calendar-outline" size={16} color={colors.primary} />
-                    </View>
-                    <View style={styles.eventInfo}>
-                      <Text style={styles.eventName}>{event.nombre}</Text>
-                      <Text style={styles.eventDate}>
-                        {event.fecha} · {event.hora}
-                      </Text>
-                      {event.descripcion ? (
-                        <Text style={styles.eventDesc} numberOfLines={2}>
-                          {event.descripcion}
+                scenario.events.map((event) => {
+                  const counts = registrationCounts?.[event.id];
+                  return (
+                    <View key={event.id} style={styles.eventCard}>
+                      <View style={styles.eventDateBadge}>
+                        <Ionicons name="calendar-outline" size={16} color={colors.primary} />
+                      </View>
+                      <View style={styles.eventInfo}>
+                        <Text style={styles.eventName}>{event.nombre}</Text>
+                        <Text style={styles.eventDate}>
+                          {event.fecha} · {event.hora}
                         </Text>
-                      ) : null}
+                        {event.descripcion ? (
+                          <Text style={styles.eventDesc} numberOfLines={2}>
+                            {event.descripcion}
+                          </Text>
+                        ) : null}
+                        {counts && (
+                          <Text style={styles.registrationCount}>
+                            {counts.confirmed_count} inscrito{counts.confirmed_count !== 1 ? 's' : ''}
+                          </Text>
+                        )}
+                      </View>
+                      <View style={styles.eventActions}>
+                        {/* Botón de inscripción */}
+                        {user && (
+                          <EventRegistrationButton
+                            eventId={event.id}
+                            eventName={event.nombre}
+                            userId={user.id}
+                            isRegistering={isRegistering}
+                            isCancelling={isCancelling}
+                            onRegister={handleRegister}
+                            onCancel={handleCancelRegistration}
+                          />
+                        )}
+                        {canManage && (
+                          <TouchableOpacity
+                            style={styles.deleteEventButton}
+                            onPress={() => handleDeleteEvent(event.id, event.nombre)}
+                            disabled={isDeletingEvent}
+                            activeOpacity={0.7}
+                          >
+                            <Ionicons name="trash-outline" size={18} color={colors.error} />
+                          </TouchableOpacity>
+                        )}
+                      </View>
                     </View>
-                    {canManage && (
-                      <TouchableOpacity
-                        style={styles.deleteEventButton}
-                        onPress={() => handleDeleteEvent(event.id, event.nombre)}
-                        disabled={isDeletingEvent}
-                        activeOpacity={0.7}
-                      >
-                        <Ionicons name="trash-outline" size={18} color={colors.error} />
-                      </TouchableOpacity>
-                    )}
-                  </View>
-                ))
+                  );
+                })
               ) : (
                 <Text style={styles.noEventsText}>No hay eventos próximos registrados.</Text>
               )}
@@ -564,6 +637,70 @@ export default function ScenarioDetailScreen() {
         />
       ) : null}
     </View>
+  );
+}
+
+// ─── Componente de botón de inscripción a evento ──────────────────────────
+interface EventRegistrationButtonProps {
+  eventId: string;
+  eventName: string;
+  userId: string;
+  isRegistering: boolean;
+  isCancelling: boolean;
+  onRegister: (eventId: string) => void;
+  onCancel: (eventId: string, eventName: string) => void;
+}
+
+function EventRegistrationButton({
+  eventId,
+  eventName,
+  userId,
+  isRegistering,
+  isCancelling,
+  onRegister,
+  onCancel,
+}: EventRegistrationButtonProps) {
+  const { data: registration, isLoading } = useIsRegistered(userId, eventId);
+  const isRegistered = !!registration;
+  const isLoadingState = isRegistering || isCancelling || isLoading;
+
+  return (
+    <TouchableOpacity
+      style={[
+        styles.registerButton,
+        isRegistered && styles.registerButtonActive,
+        isLoadingState && styles.registerButtonDisabled,
+      ]}
+      onPress={() => {
+        if (isRegistered) {
+          onCancel(eventId, eventName);
+        } else {
+          onRegister(eventId);
+        }
+      }}
+      disabled={isLoadingState}
+      activeOpacity={0.7}
+    >
+      {isLoading ? (
+        <ActivityIndicator size="small" color={colors.primary} />
+      ) : (
+        <>
+          <Ionicons
+            name={isRegistered ? 'checkmark-circle' : 'add-circle-outline'}
+            size={16}
+            color={isRegistered ? colors.white : colors.primary}
+          />
+          <Text
+            style={[
+              styles.registerButtonText,
+              isRegistered && styles.registerButtonTextActive,
+            ]}
+          >
+            {isRegistered ? 'Inscrito' : 'Inscribirse'}
+          </Text>
+        </>
+      )}
+    </TouchableOpacity>
   );
 }
 
@@ -835,6 +972,43 @@ const styles = StyleSheet.create({
   },
   deleteEventButton: {
     padding: spacing.xs,
+  },
+  eventActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs,
+  },
+  registrationCount: {
+    fontSize: fontSize.xs,
+    color: colors.secondary,
+    fontWeight: fontWeight.medium,
+    marginTop: spacing.xs,
+  },
+  registerButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs,
+    borderRadius: borderRadius.full,
+    borderWidth: 1,
+    borderColor: colors.primary,
+    backgroundColor: colors.surface,
+  },
+  registerButtonActive: {
+    backgroundColor: colors.primary,
+    borderColor: colors.primary,
+  },
+  registerButtonDisabled: {
+    opacity: 0.6,
+  },
+  registerButtonText: {
+    fontSize: fontSize.xs,
+    fontWeight: fontWeight.semibold,
+    color: colors.primary,
+  },
+  registerButtonTextActive: {
+    color: colors.white,
   },
   noEventsText: {
     fontSize: fontSize.sm,

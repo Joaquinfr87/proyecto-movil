@@ -1,0 +1,57 @@
+% ============================================================================
+%  CONCLUSIONES
+% ============================================================================
+
+\section{Conclusiones}
+
+El desarrollo del m\'odulo de inscripci\'on a eventos deportivos en
+la aplicaci\'on \nombreApp{} demuestra la integraci\'on exitosa de
+m\'ultiples conocimientos trabajados durante la materia de
+Aplicaciones M\'oviles I:
+
+\begin{enumerate}
+  \item \textbf{An\'alisis y dise\~no:} Se identific\'o la necesidad
+    de un mecanismo de inscripci\'on a eventos, se defini\'o la
+    funcionalidad, y se dise\~naron las interfaces manteniendo la
+    consistencia visual del proyecto.
+
+  \item \textbf{Implementaci\'on de interfaz:} Se crearon nuevos
+    componentes (\texttt{EventRegistrationButton},
+    \texttt{MyRegistrationsSection}) que se integran
+    arm\'onicamente con la aplicaci\'on existente.
+
+  \item \textbf{Navegaci\'on:} El m\'odulo se accede desde la
+    pantalla de detalle del escenario (secci\'on de eventos) y
+    desde la pantalla de perfil (secci\'on ``Mis inscripciones'').
+
+  \item \textbf{L\'ogica de negocio:} Las operaciones de
+    inscripci\'on, cancelaci\'on y consulta se implementaron
+    mediante hooks personalizados de React Query.
+
+  \item \textbf{Validaciones:} Se implementaron validaciones de
+    autenticaci\'on, duplicados, integridad referencial y
+    confirmaci\'on de acci\'on.
+
+  \item \textbf{Manejo de estado:} React Query gestiona
+    eficientemente el estado del servidor, la cach\'e y la
+    invalidaci\'on selectiva.
+
+  \item \textbf{Persistencia:} Toda la informaci\'on se almacena
+    en Supabase (PostgreSQL) con pol\'iticas RLS granulares.
+
+  \item \textbf{CRUD:} Se implementaron operaciones CREATE, READ
+    y DELETE sobre la tabla \texttt{event\_registrations}.
+
+  \item \textbf{Manejo de errores:} Se contemplaron errores de
+    red, datos inv\'alidos, duplicados y usuarios no
+    autenticados.
+
+  \item \textbf{Integraci\'on:} El m\'odulo forma parte
+    integral de la aplicaci\'on y no funciona como un proyecto
+    independiente.
+\end{enumerate}
+
+El m\'odulo cumple con todos los requisitos m\'inimos establecidos
+en la gu\'ia del examen integrador (PDF~7) y demuestra la
+capacidad de resolver un desaf\'io real de desarrollo de software
+m\'ovil utilizando las tecnolog\'ias trabajadas durante la materia.

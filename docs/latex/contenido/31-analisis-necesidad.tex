@@ -1,0 +1,66 @@
+% ============================================================================
+%  3.1 ANÁLISIS DE LA NECESIDAD
+% ============================================================================
+
+\section{An\'alisis de la necesidad}
+
+\subsection{Contexto del proyecto}
+
+La aplicaci\'on \nombreApp{} es un sistema m\'ovil para la
+visualizaci\'on interactiva de escenarios deportivos a nivel nacional
+en Bolivia. Permite a los ciudadanos localizar y acceder a informaci\'on
+confiable sobre infraestructura deportiva del pa\'is, incluyendo
+estadios, coliseos, canchas m\'ultiples y polideportivos.
+
+El sistema actual cuenta con las siguientes funcionalidades principales:
+
+\begin{itemize}
+  \item \textbf{Mapa interactivo:} Ubicaci\'on de escenarios en un mapa
+    con MapLibre (nativo y web).
+  \item \textbf{Detalle de escenario:} Informaci\'on completa incluyendo
+    imagenes, deportes disponibles, horarios y eventos pr\'oximos.
+  \item \textbf{Favoritos:} Guardado de escenarios de inter\'es del
+    usuario.
+  \item \textbf{B\'usqueda:} B\'usqueda por nombre, deporte o
+    ubicaci\'on.
+  \item \textbf{Gesti\'on:} CRUD de escenarios para roles admin y gestor.
+  \item \textbf{Visor 360:} Exploraci\'on panor\'amica de sectores del
+    estadio.
+  \item \textbf{Eventos:} Creaci\'on y consulta de eventos deportivos
+    asociados a escenarios.
+\end{itemize}
+
+\subsection{El problema identificado}
+
+Si bien la aplicaci\'on permite \textit{ver} los eventos pr\'oximos
+asociados a cada escenario, no existe un mecanismo para que los
+usuarios \textbf{se inscriban} a dichos eventos. Esto genera las
+siguientes limitaciones:
+
+\begin{enumerate}
+  \item \textbf{Sin seguimiento:} El usuario no tiene forma de indicar
+    qu\'e eventos le interesan asistir.
+  \item \textbf{Sin conteo de asistencia:} No se conoce cu\'antas
+    personas planean asistir a cada evento.
+  \item \textbf{Sin recordatorios:} No hay base para futuras
+    notificaciones de eventos pr\'oximos.
+  \item \textbf{Experiencia incompleta:} La app muestra eventos pero
+    no permite interactuar con ellos de manera significativa.
+\end{enumerate}
+
+\subsection{Justificaci\'on del nuevo m\'odulo}
+
+La incorporaci\'on de un m\'odulo de inscripci\'on a eventos resuelve
+estas limitaciones y aporta valor tanto al usuario final como al
+gestor del escenario:
+
+\begin{itemize}
+  \item \textbf{Para el usuario:} Puede inscribirse a eventos de
+    inter\'es, cancelar su inscripci\'on, y consultar sus inscripciones
+    desde su perfil.
+  \item \textbf{Para el gestor:} Puede ver cu\'antas personas est\'an
+    inscritas en cada evento, lo que le permite planificar
+    log\'istica y capacidad.
+  \item \textbf{Para el admin:} Tiene visibilidad completa de todas las
+    inscripciones del sistema.
+\end{itemize}

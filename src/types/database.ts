@@ -228,8 +228,41 @@ export interface Database {
         };
         Relationships: [];
       };
+      event_registrations: {
+        Row: {
+          id: string;
+          user_id: string;
+          event_id: string;
+          status: 'confirmed' | 'cancelled' | 'waitlist';
+          registered_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          event_id: string;
+          status?: 'confirmed' | 'cancelled' | 'waitlist';
+          registered_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          event_id?: string;
+          status?: 'confirmed' | 'cancelled' | 'waitlist';
+          registered_at?: string;
+        };
+        Relationships: [];
+      };
     };
-    Views: Record<string, never>;
+    Views: {
+      event_registration_counts: {
+        Row: {
+          event_id: string;
+          confirmed_count: number;
+          waitlist_count: number;
+        };
+        Relationships: [];
+      };
+    };
     Functions: Record<string, never>;
     Enums: {
       user_role: 'admin' | 'gestor' | 'asistente';

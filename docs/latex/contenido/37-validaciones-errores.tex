@@ -1,0 +1,95 @@
+% ============================================================================
+%  3.7 VALIDACIONES Y MANEJO DE ERRORES
+% ============================================================================
+
+\section{Validaciones y manejo de errores}
+
+\subsection{Validaciones implementadas}
+
+El m\'odulo incluye las siguientes validaciones:
+
+\begin{enumerate}
+  \item \textbf{Autenticaci\'on:} Antes de inscribirse, se verifica
+    que el usuario est\'a logueado. Si no lo est\'a, se muestra un
+    alerta ``Iniciar sesi\'on''.
+
+  \item \textbf{Duplicados:} La funci\'on \texttt{registerForEvent}
+    verifica si ya existe una inscripci\'on activa antes de insertar.
+    Si existe, lanza el error ``Ya est\'as inscrito en este evento''.
+
+  \item \textbf{Restricci\'on SQL:} La tabla tiene una restricci\'on
+    \texttt{UNIQUE (user\_id, event\_id)} que previene duplicados
+    a nivel de base de datos.
+
+  \item \textbf{Estado:} Solo se permiten los valores ``confirmed'',
+    ``cancelled'' y ``waitlist'' mediante la restricci\'on CHECK.
+
+  \item \textbf{Integridad referencial:} Las foreign keys
+    \texttt{user\_id $\to$ profiles} y \texttt{event\_id $\to$ events}
+    garantizan que las referencias sean v\'alidas.
+\end{enumerate}
+
+\subsection{Manejo de errores}
+
+\subsubsection*{Errores de red / Supabase}
+
+Todas las funciones de API capturan errores de Supabase y los
+re-lanzan como \texttt{Error} con el mensaje descriptivo:
+
+\begin{verbatim}
+if (error) throw new Error(error.message);
+\end{verbatim}
+
+\subsubsection*{Errores en la interfaz}
+
+Los handlers en React capturan los errores y muestran alertas:
+
+\begin{verbatim}
+const handleRegister = async (eventId) => {
+  if (!user?.id) {
+    Alert.alert('Iniciar sesión',
+      'Debes iniciar sesión para inscribirte.');
+    return;
+  }
+  try {
+    await registerEvent({ userId: user.id, eventId });
+  } catch (err) {
+    const msg = err instanceof Error
+      ? err.message
+      : 'Error al inscribirte';
+    Alert.alert('Error', msg);
+  }
+};
+\end{verbatim}
+
+\subsubsection*{Confirmaci\'on antes de cancelar}
+
+Para la cancelaci\'on se muestra un di\'alogo de confirmaci\'on
+antes de ejecutar la acci\'on, tanto en web como en m\'ovil:
+
+\begin{itemize}
+  \item \textbf{Web:} \texttt{window.confirm()}
+  \item \textbf{M\'ovil:} \texttt{Alert.alert()} con opciones
+    ``No'' y ``S\'i, cancelar''
+\end{itemize}
+
+\subsection{Tabla de validaciones}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{@{}lp{4cm}p{4cm}@{}}
+\toprule
+\textbf{Caso} & \textbf{Validaci\'on} & \textbf{Resultado} \\
+\midrule
+Usuario no logueado & \texttt{user?.id} null & Alerta de login \\
+Ya inscrito & \texttt{checkRegistration} retorna datos & Error
+  ``Ya est\'as inscrito'' \\
+Datos inv\'alidos & UNIQUE constraint en DB & Error de Supabase \\
+Red ca\'ida & Supabase lanza error & Alerta ``Error al
+  inscribirte'' \\
+Cancelar sin confirmar & Di\'alogo de confirmaci\'on & Acci\'on
+  cancelada \\
+\bottomrule
+\end{tabular}
+\caption{Tabla de validaciones del m\'odulo}
+\end{table}

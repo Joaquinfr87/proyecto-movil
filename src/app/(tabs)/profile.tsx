@@ -1,8 +1,9 @@
-import { View, Text, StyleSheet, TouchableOpacity, Alert, Platform, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Alert, Platform, ScrollView, ActivityIndicator } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { colors, spacing, borderRadius, fontSize, fontWeight } from '../../theme';
 import { useAuth } from '../../context/AuthContext';
 import { getRole } from '../../utils/permissions';
+import { useMyRegistrations } from '../../hooks/useEventRegistration';
 
 const ROLE_LABELS: Record<string, string> = {
   admin: 'Administrador',
@@ -154,6 +155,9 @@ export default function ProfileScreen() {
         </View>
       </View>
 
+      {/* Mis inscripciones a eventos */}
+      <MyRegistrationsSection userId={user?.id} />
+
       {/* Botón cerrar sesión */}
       <TouchableOpacity style={styles.logoutButton} onPress={handleSignOut}>
         <Ionicons name="log-out-outline" size={20} color={colors.error} />
@@ -162,6 +166,50 @@ export default function ProfileScreen() {
 
       <Text style={styles.version}>SportApp v1.0</Text>
     </ScrollView>
+  );
+}
+
+// ─── Sección de inscripciones del usuario ─────────────────────────────────
+function MyRegistrationsSection({ userId }: { userId: string | undefined }) {
+  const { data: registrations, isLoading } = useMyRegistrations(userId);
+
+  if (!userId) return null;
+
+  return (
+    <View style={styles.section}>
+      <Text style={styles.sectionTitle}>Mis inscripciones a eventos</Text>
+      {isLoading ? (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="small" color={colors.primary} />
+          <Text style={styles.loadingText}>Cargando inscripciones...</Text>
+        </View>
+      ) : registrations && registrations.length > 0 ? (
+        <View style={styles.infoCard}>
+          {registrations.map((reg, index) => (
+            <View key={reg.id}>
+              {index > 0 && <View style={styles.divider} />}
+              <View style={styles.registrationRow}>
+                <View style={styles.registrationIcon}>
+                  <Ionicons name="checkmark-circle" size={20} color={colors.success} />
+                </View>
+                <View style={styles.registrationContent}>
+                  <Text style={styles.registrationEventId}>Evento</Text>
+                  <Text style={styles.registrationDate}>
+                    Inscrito el {new Date(reg.registered_at).toLocaleDateString('es-BO')}
+                  </Text>
+                </View>
+              </View>
+            </View>
+          ))}
+        </View>
+      ) : (
+        <View style={styles.emptyRegistrations}>
+          <Ionicons name="calendar-outline" size={32} color={colors.textSecondary} />
+          <Text style={styles.emptyRegistrationsText}>No tienes inscripciones aún</Text>
+          <Text style={styles.emptyRegistrationsHint}>Inscríbete en eventos desde los detalles de cada escenario</Text>
+        </View>
+      )}
+    </View>
   );
 }
 
@@ -285,5 +333,65 @@ const styles = StyleSheet.create({
     fontSize: fontSize.xs,
     color: colors.textSecondary,
     marginTop: spacing.lg,
+  },
+  loadingContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    padding: spacing.md,
+    backgroundColor: colors.surface,
+    borderRadius: borderRadius.lg,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  loadingText: {
+    fontSize: fontSize.sm,
+    color: colors.textSecondary,
+  },
+  registrationRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    paddingVertical: spacing.xs,
+  },
+  registrationIcon: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: colors.success + '20',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  registrationContent: {
+    flex: 1,
+  },
+  registrationEventId: {
+    fontSize: fontSize.sm,
+    color: colors.text,
+    fontWeight: fontWeight.medium,
+  },
+  registrationDate: {
+    fontSize: fontSize.xs,
+    color: colors.textSecondary,
+  },
+  emptyRegistrations: {
+    alignItems: 'center',
+    padding: spacing.xl,
+    backgroundColor: colors.surface,
+    borderRadius: borderRadius.lg,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  emptyRegistrationsText: {
+    fontSize: fontSize.md,
+    color: colors.text,
+    fontWeight: fontWeight.medium,
+    marginTop: spacing.sm,
+  },
+  emptyRegistrationsHint: {
+    fontSize: fontSize.sm,
+    color: colors.textSecondary,
+    textAlign: 'center',
+    marginTop: spacing.xs,
   },
 });

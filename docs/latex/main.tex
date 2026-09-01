@@ -1,0 +1,91 @@
+% ============================================================================
+%  DOCUMENTO PRINCIPAL
+%  Informe de documentación: Módulo de Inscripción a Eventos
+%  (Examen Integrador - PDF 7)
+% ============================================================================
+
+\documentclass[12pt,letterpaper]{article}
+
+% --- Carga de la configuración de formato (APA + Helvetica) ------------------
+\usepackage{formato/preambulo}
+
+% ============================================================================
+%  DATOS DEL DOCUMENTO
+% ============================================================================
+\newcommand{\tituloDocumento}{Desarrollo de un Sistema M\'ovil para la
+  Visualizaci\'on Interactiva de Escenarios Deportivos a Nivel Nacional}
+\newcommand{\nombreApp}{DeporteYa}
+\newcommand{\equipo}{Sudoers}
+\newcommand{\integrantes}{%
+  Angel Gabriel Rojas Hinojosa \par
+  Joaquin Alessandro Felipez Rojas \par
+  Nicolas Sebastian Reguerin Meneses \par
+  David Willy Cruz Huanca}
+\newcommand{\universidad}{Universidad Privada Domingo Savio}
+\newcommand{\facultad}{Facultad de Ingenier\'ia}
+\newcommand{\carrera}{Ingenier\'ia en Sistemas}
+\newcommand{\asignatura}{Aplicaciones M\'oviles I}
+\newcommand{\docente}{Vladimir Wilmar Rojas Condori}
+\newcommand{\ciudad}{Cochabamba--Bolivia}
+\newcommand{\fechaEntrega}{\today}
+
+\begin{document}
+
+% --- Numeración: romano antes del Capítulo I, arábigo desde el Capítulo I ---
+\pagenumbering{roman}
+
+% --- Portada ---
+\input{formato/portada}
+
+% --- Resumen ---
+\input{contenido/00-resumen}
+
+% --- Índices ---
+\newpage
+\tableofcontents
+\newpage
+\listoftables
+\newpage
+\listoffigures
+\clearpage
+
+% --- Cambio a numeración arábiga ---
+\clearpage
+\pagenumbering{arabic}
+
+% ============================================================================
+%  CAPÍTULO III: DESARROLLO DEL MÓDULO DE INSCRIPCIÓN A EVENTOS
+% ============================================================================
+
+\caratulaCapitulo{CAP\'ITULO III}{DESARROLLO DEL M\'ODULO DE INSCRIPCI\'ON A EVENTOS}
+
+\input{contenido/31-analisis-necesidad}
+\input{contenido/32-definicion-funcionalidad}
+\input{contenido/33-diseno-interfaz}
+\input{contenido/34-modelo-datos}
+\input{contenido/35-implementacion-backend}
+\input{contenido/36-implementacion-frontend}
+\input{contenido/37-validaciones-errores}
+\input{contenido/38-gestion-estado}
+\input{contenido/39-pruebas}
+\input{contenido/40-evidencias}
+
+% ============================================================================
+%  CONCLUSIONES
+% ============================================================================
+\newpage
+\encabezadoCapitulo{CONCLUSIONES}{}
+\addcontentsline{toc}{part}{CONCLUSIONES}
+\input{contenido/41-conclusiones}
+
+% ============================================================================
+%  REFERENCIAS
+% ============================================================================
+\newpage
+\encabezadoCapitulo{REFERENCIAS}{}
+\addcontentsline{toc}{part}{REFERENCIAS}
+\bibliographystyle{apacite}
+\nocite{*}
+\bibliography{formato/referencias}
+
+\end{document}

@@ -1,0 +1,228 @@
+% ============================================================================
+%  3.10 EVIDENCIAS
+% ============================================================================
+
+\section{Evidencias del desarrollo}
+
+A continuaci\'on se presentan las evidencias del desarrollo del
+m\'odulo de inscripci\'on a eventos, organizadas seg\'un las pruebas
+realizadas. Cada evidencia incluye una captura de pantalla que
+demuestra el funcionamiento de la funcionalidad implementada.
+
+\subsection{Evidencia 1: Migraci\'on aplicada en Supabase}
+
+Se ejecut\'o la migraci\'on \texttt{011\_event\_registrations.sql}
+mediante \texttt{supabase db reset}. La tabla
+\texttt{event\_registrations} se cre\'o correctamente con todas sus
+columnas, restricciones y pol\'iticas RLS.
+
+\begin{figure}[H]
+\centering
+  \figuraAPA{fig:evidencia-migracion}{Evidencia: Migraci\'on aplicada exitosamente en Supabase local}{%
+    \includegraphics[width=0.70\linewidth]{evidencia-migracion.png}%
+  }{Elaboraci\'on propia (captura de terminal con \texttt{supabase db reset}).}
+\end{figure}
+
+La salida del terminal confirma que la migraci\'on
+\texttt{011\_event\_registrations.sql} se aplic\'o sin errores,
+junto con todas las migraciones anteriores (001--010).
+
+\subsection{Evidencia 2: Tabla creada en Supabase Studio}
+
+Desde Supabase Studio (\texttt{http://127.0.0.1:54323}) se verific\'o
+que la tabla \texttt{event\_registrations} aparece en el
+\textit{Table Editor} con la estructura correcta.
+
+\begin{figure}[H]
+\centering
+  \figuraAPA{fig:evidencia-studio-tabla}{Evidencia: Tabla \texttt{event\_registrations} en Supabase Studio}{%
+    \includegraphics[width=0.75\linewidth]{evidencia-studio-tabla.png}%
+  }{Elaboraci\'on propia (captura del Table Editor de Supabase).}
+\end{figure}
+
+Se observan las columnas: \texttt{id}, \texttt{user\_id},
+\texttt{event\_id}, \texttt{status}, \texttt{registered\_at}, junto
+con las restricciones UNIQUE y CHECK.
+
+\subsection{Evidencia 3: Vista de conteo de inscripciones}
+
+La vista \texttt{event\_registration\_counts} est\'a disponible
+en Supabase Studio y retorna el conteo de inscripciones por evento.
+
+\begin{figure}[H]
+\centering
+  \figuraAPA{fig:evidencia-vista-conteo}{Evidencia: Vista \texttt{event\_registration\_counts} con datos de prueba}{%
+    \includegraphics[width=0.65\linewidth]{evidencia-vista-conteo.png}%
+  }{Elaboraci\'on propia (captura del SQL Editor de Supabase).}
+\end{figure}
+
+\subsection{Evidencia 4: REST API accesible}
+
+Se verific\'o mediante \texttt{curl} que la tabla
+\texttt{event\_registrations} y la vista
+\texttt{event\_registration\_counts} son accesibles a trav\'es de
+la REST API de Supabase.
+
+\begin{figure}[H]
+\centering
+  \figuraAPA{fig:evidencia-rest-api}{Evidencia: Endpoints de la REST API disponibles}{%
+    \includegraphics[width=0.65\linewidth]{evidencia-rest-api.png}%
+  }{Elaboraci\'on propia (captura de terminal con \texttt{curl}).}
+\end{figure}
+
+\subsection{Evidencia 5: Bot\'on de inscripci\'on en el detalle del escenario}
+
+En la pantalla de detalle del escenario, cada evento muestra el
+nuevo bot\'on ``Inscribirse'' junto con el conteo de inscritos.
+
+\begin{figure}[H]
+\centering
+  \figuraAPA{fig:evidencia-boton-inscripcion}{Evidencia: Bot\'on de inscripci\'on visible en la tarjeta de evento}{%
+    \includegraphics[width=0.45\linewidth]{evidencia-boton-inscripcion.png}%
+  }{Elaboraci\'on propia (captura de la aplicaci\'on m\'ovil).}
+\end{figure}
+
+Se observa el bot\'on con estilo de borde azul y el texto
+``Inscribirse'', indicando que el usuario a\'un no est\'a
+inscrito en el evento.
+
+\subsection{Evidencia 6: Inscripci\'on exitosa}
+
+Despu\'es de tocar ``Inscribirse'', el bot\'on cambia su estado
+visual: fondo azul, texto blanco y icono de checkmark, indicando
+que la inscripci\'on fue exitosa.
+
+\begin{figure}[H]
+\centering
+  \figuraAPA{fig:evidencia-inscrito}{Evidencia: Estado ``Inscrito'' despu\'es de la inscripci\'on exitosa}{%
+    \includegraphics[width=0.45\linewidth]{evidencia-inscrito.png}%
+  }{Elaboraci\'on propia (captura de la aplicaci\'on m\'ovil).}
+\end{figure}
+
+El conteo de insritos se actualiza autom\'aticamente despu\'es
+de la inscripci\'on (ej: ``5 inscritos'' $\to$ ``6 inscritos'').
+
+\subsection{Evidencia 7: Conteo de inscritos actualizado}
+
+Despu\'es de una inscripci\'on, el conteo mostrado debajo del
+evento se actualiza en tiempo real gracias a la invalidaci\'on
+de cach\'e de React Query.
+
+\begin{figure}[H]
+\centering
+  \figuraAPA{fig:evidencia-conteo}{Evidencia: Conteo de inscritos actualizado despu\'es de la inscripci\'on}{%
+    \includegraphics[width=0.45\linewidth]{evidencia-conteo.png}%
+  }{Elaboraci\'on propia (captura de la aplicaci\'on m\'ovil).}
+\end{figure}
+
+\subsection{Evidencia 8: Confirmaci\'on de cancelaci\'on}
+
+Al tocar el bot\'on ``Inscrito'' para cancelar, se muestra un
+di\'alogo de confirmaci\'on para evitar cancelaciones accidentales.
+
+\begin{figure}[H]
+\centering
+  \figuraAPA{fig:evidencia-cancelar}{Evidencia: Di\'alogo de confirmaci\'on al cancelar inscripci\'on}{%
+    \includegraphics[width=0.40\linewidth]{evidencia-cancelar.png}%
+  }{Elaboraci\'on propia (captura de la aplicaci\'on m\'ovil).}
+\end{figure}
+
+El usuario tiene dos opciones: ``No'' (mantiene la inscripci\'on)
+o ``S\'i, cancelar'' (elimina la inscripci\'on).
+
+\subsection{Evidencia 9: Secci\'on ``Mis inscripciones'' en el perfil}
+
+En la pantalla de perfil del usuario, se muestra la secci\'on
+``Mis inscripciones a eventos'' con todas las inscripciones activas.
+
+\begin{figure}[H]
+\centering
+  \figuraAPA{fig:evidencia-perfil-inscripciones}{Evidencia: Secci\'on ``Mis inscripciones'' en la pantalla de perfil}{%
+    \includegraphics[width=0.45\linewidth]{evidencia-perfil-inscripciones.png}%
+  }{Elaboraci\'on propia (captura de la aplicaci\'on m\'ovil).}
+\end{figure}
+
+Cada inscripci\'on muestra el icono de confirmaci\'on verde y la
+fecha en que se realiz\'o la inscripci\'on.
+
+\subsection{Evidencia 10: Estado vac\'io (sin inscripciones)}
+
+Un usuario que no tiene inscripciones ve un estado vac\'io con
+un icono descriptivo y un mensaje informativo.
+
+\begin{figure}[H]
+\centering
+  \figuraAPA{fig:evidencia-vacio}{Evidencia: Estado vac\'io cuando el usuario no tiene inscripciones}{%
+    \includegraphics[width=0.45\linewidth]{evidencia-vacio.png}%
+  }{Elaboraci\'on propia (captura de la aplicaci\'on m\'ovil).}
+\end{figure}
+
+El mensaje ``No tienes inscripciones a\'un'' orienta al usuario
+sobre c\'omo inscribirse desde los detalles de cada escenario.
+
+\subsection{Evidencia 11: Alerta de usuario no autenticado}
+
+Si un usuario no est\'a logueado e intenta inscribirse, se muestra
+una alerta indicando que debe iniciar sesi\'on.
+
+\begin{figure}[H]
+\centering
+  \figuraAPA{fig:evidencia-no-auth}{Evidencia: Alerta para usuario no autenticado}{%
+    \includegraphics[width=0.40\linewidth]{evidencia-no-auth.png}%
+  }{Elaboraci\'on propia (captura de la aplicaci\'on m\'ovil).}
+\end{figure}
+
+\subsection{Evidencia 12: Typecheck sin errores}
+
+Se ejecut\'o \texttt{tsc --noEmit} y el proyecto compila
+correctamente sin errores de tipo TypeScript.
+
+\begin{figure}[H]
+\centering
+  \figuraAPA{fig:evidencia-typecheck}{Evidencia: Typecheck exitoso sin errores de TypeScript}{%
+    \includegraphics[width=0.65\linewidth]{evidencia-typecheck.png}%
+  }{Elaboraci\'on propia (captura de terminal).}
+\end{figure}
+
+\subsection{Evidencia 13: Estructura de archivos del m\'odulo}
+
+Los archivos creados/modificados para el m\'odulo se organizan
+de la siguiente manera:
+
+\begin{figure}[H]
+\centering
+  \figuraAPA{fig:evidencia-estructura}{Evidencia: Estructura de archivos del m\'odulo de inscripci\'on}{%
+    \includegraphics[width=0.55\linewidth]{evidencia-estructura.png}%
+  }{Elaboraci\'on propia (captura del explorador de archivos).}
+\end{figure}
+
+\subsection{Resumen de archivos creados/modificados}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{@{}lp{4cm}p{3cm}@{}}
+\toprule
+\textbf{Archivo} & \textbf{Descripci\'on} & \textbf{Estado} \\
+\midrule
+011\_event\_registrations.sql & Migraci\'on con tabla y RLS & Nuevo \\
+useEventRegistration.ts & Hooks de React Query & Nuevo \\
+database.ts & Tipos de Supabase & Modificado \\
+index.ts & Tipos TypeScript & Modificado \\
+[id].tsx & Detalle del escenario & Modificado \\
+profile.tsx & Pantalla de perfil & Modificado \\
+\bottomrule
+\end{tabular}
+\caption{Archivos del m\'odulo de inscripci\'on}
+\end{table}
+
+\subsection{Evidencia 14: Git diff de los cambios}
+
+El repositorio muestra los cambios realizados en la rama
+\texttt{feature/event-registration}:
+
+\begin{figure}[H]
+\centering
+  \figuraAPA{fig:evidencia-git}{Evidencia: Estado de Git con los archivos modificados}{%
+    \includegraphics[width=0.65\linewidth]{evidencia-git.png}%
+  }{Elaboraci\'on propia (captura de terminal con \texttt{git status}).}
+\end{figure}

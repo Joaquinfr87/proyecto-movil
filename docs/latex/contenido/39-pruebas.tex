@@ -1,0 +1,82 @@
+% ============================================================================
+%  3.9 PRUEBAS
+% ============================================================================
+
+\section{Pruebas}
+
+\subsection{Pruebas realizadas}
+
+Se realizaron las siguientes pruebas para validar el funcionamiento
+del m\'odulo:
+
+\begin{enumerate}
+  \item \textbf{Prueba 1: Acceso al m\'odulo.} Se verific\'o que
+    los eventos se muestran en el detalle del escenario con el bot\'on
+    de inscripci\'on visible.
+
+  \item \textbf{Prueba 2: Inscripci\'on exitosa.} Un usuario
+    autenticado toca ``Inscribirse'' en un evento. El bot\'on cambia
+    a ``Inscrito'' con fondo azul. El conteo de inscritos se
+    incrementa en 1.
+
+  \item \textbf{Prueba 3: Inscripci\'on duplicada.} Se intent\'o
+    inscribir dos veces al mismo evento. Se mostr\'o el error
+    ``Ya est\'as inscrito en este evento''.
+
+  \item \textbf{Prueba 4: Cancelar inscripci\'on.} Un usuario
+    inscrito toca ``Inscrito''. Se muestra di\'alogo de
+    confirmaci\'on. Al confirmar, el bot\'on vuelve a
+    ``Inscribirse'' y el conteo disminuye.
+
+  \item \textbf{Prueba 5: Ver mis inscripciones.} En la pantalla
+    de perfil, la secci\'on ``Mis inscripciones'' muestra todas las
+    inscripciones activas del usuario.
+
+  \item \textbf{Prueba 6: Sin inscripciones.} Un usuario nuevo
+    ve el mensaje ``No tienes inscripciones a\'un'' en el perfil.
+
+  \item \textbf{Prueba 7: Persistencia.} Se inscribió, se cerr\'o
+    la app, se reabrió. La inscripci\'on persiste correctamente.
+
+  \item \textbf{Prueba 8: Usuario no autenticado.} Un usuario sin
+    sesi\'on ve la alerta ``Debes iniciar sesi\'on para
+    inscribirte''.
+
+  \item \textbf{Prueba 9: Manejo de errores de red.} Se simul\'o
+    una conexi\'on lenta. El bot\'on mostr\'o el indicador de
+    progreso y al fallar mostr\'o la alerta de error.
+
+  \item \textbf{Prueba 10: Verificaci\'on en Supabase.} Se
+    verific\'o desde Supabase Studio que los registros se crean
+    correctamente en la tabla \texttt{event\_registrations}.
+\end{enumerate}
+
+\subsection{Resultados de las pruebas}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{@{}cll@{}}
+\toprule
+\textbf{\#} & \textbf{Prueba} & \textbf{Resultado} \\
+\midrule
+1 & Acceso al m\'odulo & \checkmark\ Pass \\
+2 & Inscripci\'on exitosa & \checkmark\ Pass \\
+3 & Inscripci\'on duplicada & \checkmark\ Pass \\
+4 & Cancelar inscripci\'on & \checkmark\ Pass \\
+5 & Ver mis inscripciones & \checkmark\ Pass \\
+6 & Sin inscripciones & \checkmark\ Pass \\
+7 & Persistencia & \checkmark\ Pass \\
+8 & Usuario no autenticado & \checkmark\ Pass \\
+9 & Manejo de errores & \checkmark\ Pass \\
+10 & Verificaci\'on en Supabase & \checkmark\ Pass \\
+\bottomrule
+\end{tabular}
+\caption{Resultados de las pruebas del m\'odulo}
+\end{table}
+
+\subsection{TypeScript}
+
+Se ejecut\'o \texttt{tsc --noEmit} y el proyecto compila sin
+errores de tipo, lo que confirma la correcta integraci\'on de
+los tipos \texttt{EventRegistration} y
+\texttt{EventRegistrationCount} en toda la aplicaci\'on.

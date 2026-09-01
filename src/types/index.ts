@@ -69,3 +69,17 @@ export interface ScenarioSector {
   created_at?: string;
 }
 
+export interface EventRegistration {
+  id: string;
+  user_id: string;
+  event_id: string;
+  status: 'confirmed' | 'cancelled' | 'waitlist';
+  registered_at: string;
+}
+
+export interface EventRegistrationCount {
+  event_id: string;
+  confirmed_count: number;
+  waitlist_count: number;
+}
+

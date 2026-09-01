@@ -1,0 +1,106 @@
+% ============================================================================
+%  3.4 MODELO DE DATOS
+% ============================================================================
+
+\section{Modelo de datos}
+
+\subsection{Tabla \texttt{event\_registrations}}
+
+Se cre\'o una nueva tabla en PostgreSQL mediante la migraci\'on
+\texttt{011\_event\_registrations.sql}:
+
+\begin{verbatim}
+CREATE TABLE public.event_registrations (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID NOT NULL REFERENCES public.profiles(id)
+    ON DELETE CASCADE,
+  event_id UUID NOT NULL REFERENCES public.events(id)
+    ON DELETE CASCADE,
+  status TEXT NOT NULL DEFAULT 'confirmed'
+    CHECK (status IN ('confirmed', 'cancelled', 'waitlist')),
+  registered_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  UNIQUE (user_id, event_id)
+);
+\end{verbatim}
+
+\subsection{Campos de la tabla}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{@{}lllp{5cm}@{}}
+\toprule
+\textbf{Campo} & \textbf{Tipo} & \textbf{Restricci\'on} &
+  \textbf{Descripci\'on} \\
+\midrule
+id & UUID & PK, auto & Identificador \'unico \\
+user_id & UUID & FK $\to$ profiles & Usuario inscrito \\
+event_id & UUID & FK $\to$ events & Evento al que se inscribe \\
+status & TEXT & CHECK, default & Estado: confirmed, cancelled,
+  waitlist \\
+registered_at & TIMESTAMPTZ & default NOW() & Fecha de inscripci\'on \\
+\bottomrule
+\end{tabular}
+\caption{Campos de la tabla \texttt{event\_registrations}}
+\end{table}
+
+\subsection{Relaciones}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  node distance=1.5cm,
+  entity/.style={rectangle, draw=black, thick, minimum width=2.2cm,
+    minimum height=0.8cm, align=center, font=\footnotesize,
+    fill=blue!8},
+  relation/.style={-Stealth, thick}
+]
+  \node[entity] (profiles) {profiles};
+  \node[entity, right=of profiles] (reg) {event\_\\registrations};
+  \node[entity, right=of reg] (events) {events};
+
+  \draw[relation] (profiles) -- node[above, font=\scriptsize]
+    {user\_id} (reg);
+  \draw[relation] (reg) -- node[above, font=\scriptsize]
+    {event\_id} (events);
+\end{tikzpicture}
+\caption{Diagrama de relaciones del m\'odulo}
+\end{figure}
+
+\subsection{Pol\'iticas RLS (Row Level Security)}
+
+La tabla habilita RLS con las siguientes pol\'iticas:
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{@{}lp{4.5cm}p{4.5cm}@{}}
+\toprule
+\textbf{Pol\'itica} & \textbf{Acci\'on} & \textbf{Condici\'on} \\
+\midrule
+select\_own & SELECT & user\_id = auth.uid() \\
+select\_admin & SELECT & Rol = admin \\
+select\_gestor & SELECT & Es gestor del escenario \\
+insert\_own & INSERT & user\_id = auth.uid() \\
+update\_own & UPDATE & user\_id = auth.uid() \\
+delete\_own\_or\_admin & DELETE & user\_id = auth.uid() o admin \\
+\bottomrule
+\end{tabular}
+\caption{Pol\'iticas RLS de la tabla \texttt{event\_registrations}}
+\end{table}
+
+\subsection{Vista \texttt{event\_registration\_counts}}
+
+Se cre\'o una vista para obtener el conteo de inscripciones por evento:
+
+\begin{verbatim}
+CREATE OR REPLACE VIEW
+  public.event_registration_counts AS
+SELECT
+  event_id,
+  COUNT(*) FILTER (WHERE status = 'confirmed')
+    AS confirmed_count,
+  COUNT(*) FILTER (WHERE status = 'waitlist')
+    AS waitlist_count
+FROM public.event_registrations
+GROUP BY event_id;
+\end{verbatim}

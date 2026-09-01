@@ -1,0 +1,96 @@
+% ============================================================================
+%  3.2 DEFINICIÓN DE LA FUNCIONALIDAD
+% ============================================================================
+
+\section{Definici\'on de la funcionalidad}
+
+\subsection{Nombre de la funcionalidad}
+
+Inscripci\'on a Eventos Deportivos.
+
+\subsection{Objetivo}
+
+Permitir a los usuarios autenticados inscribirse a eventos deportivos
+asociados a los escenarios, cancelar dichas inscripciones, y consultar
+su estado desde la interfaz de la aplicaci\'on.
+
+\subsection{Usuarios involucrados}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{Rol} & \textbf{Acciones} & \textbf{Restricciones} \\
+\midrule
+Asistente & Inscribirse, cancelar, ver sus inscripciones & Solo sus propias \\
+Gestor & Ver inscripciones de sus eventos & Solo sus escenarios \\
+Admin & Ver todas las inscripciones, eliminar cualquiera & Sin restricciones \\
+\bottomrule
+\end{tabular}
+\caption{Roles y permisos del m\'odulo}
+\end{table}
+
+\subsection{Flujo de funcionamiento}
+
+El flujo principal de la funcionalidad se describe a continuaci\'on:
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  node distance=0.8cm,
+  caja/.style={rectangle, draw=black!60, rounded corners,
+    minimum width=2.8cm, minimum height=0.7cm, align=center,
+    font=\footnotesize, fill=blue!5},
+  flecha/.style={-Stealth, thick}
+]
+  \node[caja] (inicio) {Usuario};
+  \node[caja, right=of inicio] (escenario) {Detalle del\\escenario};
+  \node[caja, right=of escenario] (evento) {Selecciona\\evento};
+  \node[caja, below=of evento] (validar) {Validar\\datos};
+  \node[caja, left=of validar] (guardar) {Guardar en\\Supabase};
+  \node[caja, left=of guardando] (exito) {Inscripci\'on\\confirmada};
+  \node[caja, below=of validar] (error) {Mostrar\\error};
+
+  \draw[flecha] (inicio) -- (escenario);
+  \draw[flecha] (escenario) -- (evento);
+  \draw[flecha] (evento) -- (validar);
+  \draw[flecha] (validar) -- node[above, font=\scriptsize] {V\'alido} (guardar);
+  \draw[flecha] (validar) -- node[right, font=\scriptsize] {Inv\'alido} (error);
+  \draw[flecha] (guardar) -- (exito);
+\end{tikzpicture}
+\caption{Flujo de inscripci\'on a eventos}
+\end{figure}
+
+\subsection{Operaciones CRUD}
+
+El m\'odulo implementa las siguientes operaciones sobre la tabla
+\texttt{event\_registrations}:
+
+\begin{table}[H]
+\centering
+\begin{tabular}{@{}llp{6cm}@{}}
+\toprule
+\textbf{Operaci\'on} & \textbf{M\'etodo HTTP} & \textbf{Descripci\'on} \\
+\midrule
+CREATE & INSERT & El usuario se inscribe a un evento \\
+READ & SELECT & Consultar inscripciones propias o de un evento \\
+UPDATE & UPDATE & Cambiar estado de inscripci\'on (no implementado
+  actualmente, se usa DELETE) \\
+DELETE & DELETE & Cancelar inscripci\'on \\
+\bottomrule
+\end{tabular}
+\caption{Operaciones CRUD del m\'odulo}
+\end{table}
+
+\subsection{Persistencia}
+
+Toda la informaci\'on de inscripciones se almacena en Supabase
+(PostgreSQL), ya que requiere persistencia centralizada:
+\begin{itemize}
+  \item \textbf{Inspecci\'on:} Disponible para todos los dispositivos
+    del usuario (multi-dispositivo).
+  \item \textbf{Gesti\'on:} Los gestores y admins pueden consultar
+    inscripciones desde cualquier punto.
+  \item \textbf{Seguridad:} Las pol\'iticas RLS garantizan que cada
+    usuario solo vea sus propias inscripciones (salvo admin/gestor).
+\end{itemize}
