@@ -26,6 +26,7 @@ export interface UpsertScenarioData {
   latitud: number;
   longitud: number;
   estado?: string;
+  is_community?: boolean;
   created_by?: string | null;
 }
 
@@ -130,6 +131,7 @@ export function useUpsertScenario() {
       queryClient.invalidateQueries({ queryKey: ['all-scenarios'] });
       queryClient.invalidateQueries({ queryKey: ['scenarios'] });
       queryClient.invalidateQueries({ queryKey: ['scenarios-map'] });
+      queryClient.invalidateQueries({ queryKey: ['scenarios-community'] });
       queryClient.invalidateQueries({ queryKey: ['favorites'] });
       if (data?.id) {
         queryClient.invalidateQueries({ queryKey: ['scenario', data.id] });
@@ -147,6 +149,7 @@ export function useDeleteScenario() {
       queryClient.invalidateQueries({ queryKey: ['all-scenarios'] });
       queryClient.invalidateQueries({ queryKey: ['scenarios'] });
       queryClient.invalidateQueries({ queryKey: ['scenarios-map'] });
+      queryClient.invalidateQueries({ queryKey: ['scenarios-community'] });
       queryClient.invalidateQueries({ queryKey: ['favorites'] });
       queryClient.invalidateQueries({ queryKey: ['scenario'] });
     },
@@ -162,6 +165,7 @@ export function useHardDeleteScenario() {
       queryClient.invalidateQueries({ queryKey: ['all-scenarios'] });
       queryClient.invalidateQueries({ queryKey: ['scenarios'] });
       queryClient.invalidateQueries({ queryKey: ['scenarios-map'] });
+      queryClient.invalidateQueries({ queryKey: ['scenarios-community'] });
       queryClient.invalidateQueries({ queryKey: ['favorites'] });
       queryClient.invalidateQueries({ queryKey: ['scenario'] });
     },
@@ -178,6 +182,7 @@ export function useToggleScenarioStatus() {
       queryClient.invalidateQueries({ queryKey: ['all-scenarios'] });
       queryClient.invalidateQueries({ queryKey: ['scenarios'] });
       queryClient.invalidateQueries({ queryKey: ['scenarios-map'] });
+      queryClient.invalidateQueries({ queryKey: ['scenarios-community'] });
       queryClient.invalidateQueries({ queryKey: ['favorites'] });
       if (variables?.id) {
         queryClient.invalidateQueries({ queryKey: ['scenario', variables.id] });

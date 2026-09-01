@@ -876,3 +876,75 @@ VALUES
   )
 ON CONFLICT DO NOTHING;
 
+-- ============================================================
+-- ESCENARIOS COMUNITARIOS (POV) - Creados por usuarios
+-- Para testing de la pestaña POV
+-- ============================================================
+
+INSERT INTO public.scenarios (id, nombre, tipo, descripcion, capacidad, direccion, latitud, longitud, estado, is_community, created_by) VALUES
+
+-- La Paz - creado por asistente
+('f0eebc99-9c0b-4ef8-bb6d-6bb9bd380f01',
+ 'Canchita del Barrio Sopocachi',
+ 'Cancha',
+ 'Cancha de futsal comunitaria en el barrio Sopocachi. Ideal para partidos entre vecinos los fines de semana.',
+ 50,
+ 'Calle Guachalla esq. 20 de Octubre, Sopocachi, La Paz',
+ -16.5050,
+ -68.1300,
+ 'activo',
+ true,
+ 'c0eebc99-9c0b-4ef8-bb6d-6bb9bd380a33'),
+
+-- Cochabamba - creado por asistente
+('f0eebc99-9c0b-4ef8-bb6d-6bb9bd380f02',
+ 'Parque Lincoln - Espacio Deportivo',
+ 'Cancha multiple',
+ 'Espacio abierto junto al parque Lincoln con canchas improvisadas de voleibol y futbol. Los vecinos organizan campeonatos semanales.',
+ 100,
+ 'Av. Libertador esq. Calle Jordan, Cochabamba',
+ -17.3935,
+ -66.1570,
+ 'activo',
+ true,
+ 'c0eebc99-9c0b-4ef8-bb6d-6bb9bd380a33'),
+
+-- Santa Cruz - creado por gestor
+('f0eebc99-9c0b-4ef8-bb6d-6bb9bd380f03',
+ 'Skatepark Plan 3000',
+ 'Pista',
+ 'Skatepark construido por la comunidad en el Plan 3000. Rampas y rails para principiantes y avanzados.',
+ 30,
+ 'Av. Principal, Plan 3000, Santa Cruz',
+ -17.8100,
+ -63.1500,
+ 'activo',
+ true,
+ 'b0eebc99-9c0b-4ef8-bb6d-6bb9bd380a22'),
+
+-- Sucre - creado por asistente
+('f0eebc99-9c0b-4ef8-bb6d-6bb9bd380f04',
+ 'Cancha Comunitaria Recoleta',
+ 'Cancha',
+ 'Cancha de basquetbol al aire libre cerca de la plaza de la Recoleta con vista panoramica de Sucre.',
+ 40,
+ 'Calle Dalence, Barrio Recoleta, Sucre',
+ -19.0480,
+ -65.2590,
+ 'activo',
+ true,
+ 'c0eebc99-9c0b-4ef8-bb6d-6bb9bd380a33'),
+
+-- Oruro - creado por asistente
+('f0eebc99-9c0b-4ef8-bb6d-6bb9bd380f05',
+ 'Pista de Ciclismo Vinto',
+ 'Pista',
+ 'Circuito de ciclismo informal junto a la carretera a Vinto. Los ciclistas locales entrenan aqui los domingos por la mañana.',
+ 20,
+ 'Carretera Oruro-Vinto km 5, Oruro',
+ -17.9300,
+ -67.0800,
+ 'activo',
+ true,
+ 'c0eebc99-9c0b-4ef8-bb6d-6bb9bd380a33');
+

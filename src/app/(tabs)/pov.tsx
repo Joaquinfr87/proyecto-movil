@@ -5,16 +5,12 @@ import {
   ActivityIndicator,
   StyleSheet,
   Platform,
-  FlatList,
   TouchableOpacity,
-  ScrollView,
 } from 'react-native';
 import * as Location from 'expo-location';
 import { useRouter } from 'expo-router';
-import { useQuery } from '@tanstack/react-query';
 import { Ionicons } from '@expo/vector-icons';
-import { supabase } from '../../services/supabase';
-import { useUpcomingEvents } from '../../hooks/useEvents';
+import { useCommunityScenarios } from '../../hooks/useCommunityScenarios';
 import { Scenario } from '../../types';
 import { colors, spacing, borderRadius, fontSize, fontWeight } from '../../theme';
 
@@ -28,6 +24,8 @@ import { WebMapLibre } from '../../components/map/WebMapLibre';
 
 const MAP_STYLE_URL = `https://api.maptiler.com/maps/streets-v2/style.json?key=${process.env.EXPO_PUBLIC_MAPTILER_API_KEY}`;
 
+// Color diferenciado para marcadores comunitarios
+const COMMUNITY_COLOR = '#EF4444';
 
 const BOLIVIA_CENTER = {
   latitude: -17.0,
@@ -36,7 +34,7 @@ const BOLIVIA_CENTER = {
   longitudeDelta: 8,
 };
 
-export default function MapScreen() {
+export default function PovScreen() {
   const router = useRouter();
   const cameraRef = useRef<CameraRef>(null);
   const [userLocation, setUserLocation] =
@@ -45,30 +43,15 @@ export default function MapScreen() {
   const [locationRequesting, setLocationRequesting] = useState(false);
   const [selectedScenario, setSelectedScenario] = useState<Scenario | null>(null);
 
-  // T-023: Cargar escenarios desde Supabase (solo oficiales, no comunitarios)
+  // Cargar solo escenarios comunitarios
   const {
     data: scenarios,
     isLoading,
     error,
     refetch,
-  } = useQuery<Scenario[]>({
-    queryKey: ['scenarios-map'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('scenarios')
-        .select('*')
-        .eq('estado', 'activo')
-        .eq('is_community', false);
+  } = useCommunityScenarios();
 
-      if (error) throw error;
-      return data as Scenario[];
-    },
-  });
-
-  // T-045: Próximos eventos
-  const { data: upcomingEvents } = useUpcomingEvents();
-
-  // T-024: Obtener ubicacion del usuario (solo en nativo)
+  // Obtener ubicación del usuario (solo en nativo)
   useEffect(() => {
     if (Platform.OS === 'web') {
       setLocationLoading(false);
@@ -91,14 +74,14 @@ export default function MapScreen() {
 
         setUserLocation(location);
       } catch {
-        // Si falla la ubicacion, usar region por defecto (Bolivia)
+        // Si falla la ubicación, usar región por defecto (Bolivia)
       } finally {
         setLocationLoading(false);
       }
     })();
   }, []);
 
-  // Centrar mapa en la ubicacion del usuario cuando se obtiene
+  // Centrar mapa en la ubicación del usuario cuando se obtiene
   useEffect(() => {
     if (userLocation && cameraRef.current) {
       cameraRef.current.flyTo({
@@ -112,7 +95,7 @@ export default function MapScreen() {
     }
   }, [userLocation, locationLoading]);
 
-  // Si no hay ubicacion pero hay escenarios, ajustar camara a todos los marcadores
+  // Si no hay ubicación pero hay escenarios, ajustar cámara a todos los marcadores
   useEffect(() => {
     if (!userLocation && !locationLoading && scenarios && scenarios.length > 0 && cameraRef.current) {
       const lons = scenarios.map((s) => s.longitud);
@@ -125,7 +108,7 @@ export default function MapScreen() {
     }
   }, [locationLoading, scenarios]);
 
-  // Funcion para centrar mapa en ubicacion del usuario (boton)
+  // Función para centrar mapa en ubicación del usuario (botón)
   const requestAndCenterLocation = async () => {
     if (locationRequesting) return;
     setLocationRequesting(true);
@@ -152,7 +135,7 @@ export default function MapScreen() {
     }
   };
 
-  // Centrar camara en escenario seleccionado
+  // Centrar cámara en escenario seleccionado
   useEffect(() => {
     if (selectedScenario && cameraRef.current) {
       cameraRef.current.flyTo({
@@ -163,11 +146,39 @@ export default function MapScreen() {
     }
   }, [selectedScenario]);
 
-  // Solo bloquear si la query de escenarios fallo
+  // Navegar al formulario de creación POV con ubicación actual
+  const handleCreatePov = async () => {
+    let lat = '';
+    let lng = '';
+
+    if (userLocation) {
+      lat = userLocation.coords.latitude.toFixed(6);
+      lng = userLocation.coords.longitude.toFixed(6);
+    } else {
+      // Intentar obtener ubicación antes de navegar
+      try {
+        const { status } = await Location.requestForegroundPermissionsAsync();
+        if (status === 'granted') {
+          const location = await Location.getCurrentPositionAsync({
+            accuracy: Location.Accuracy.Balanced,
+          });
+          lat = location.coords.latitude.toFixed(6);
+          lng = location.coords.longitude.toFixed(6);
+          setUserLocation(location);
+        }
+      } catch {
+        // Continuar sin ubicación — el formulario intentará obtenerla
+      }
+    }
+
+    router.push(`/pov-form/new?lat=${lat}&lng=${lng}` as any);
+  };
+
+  // Solo bloquear si la query de escenarios falló
   if (error) {
     return (
       <View style={styles.loadingContainer}>
-        <Text style={styles.errorText}>Error al cargar escenarios</Text>
+        <Text style={styles.errorText}>Error al cargar puntos</Text>
         <Text style={styles.retryText} onPress={() => refetch()}>
           Toca para reintentar
         </Text>
@@ -175,53 +186,9 @@ export default function MapScreen() {
     );
   }
 
-  // Componente de carrusel/lista de próximos eventos (T-045)
-  const renderUpcomingEventsSection = () => {
-    if (!upcomingEvents || upcomingEvents.length === 0) return null;
-
-    return (
-      <View style={styles.eventsOverlay}>
-        <View style={styles.eventsHeaderRow}>
-          <Ionicons name="flash-outline" size={16} color={colors.primary} />
-          <Text style={styles.eventsTitle}>Próximos eventos</Text>
-        </View>
-
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.eventsScrollList}
-        >
-          {upcomingEvents.map((event) => (
-            <TouchableOpacity
-              key={event.id}
-              style={styles.eventCardItem}
-              onPress={() => router.push(`/scenario/${event.scenario_id}`)}
-              activeOpacity={0.85}
-            >
-              <View style={styles.eventBadge}>
-                <Ionicons name="calendar" size={12} color={colors.white} />
-                <Text style={styles.eventBadgeText}>{event.fecha}</Text>
-              </View>
-
-              <Text style={styles.eventCardName} numberOfLines={1}>
-                {event.nombre}
-              </Text>
-
-              {event.scenarios?.nombre ? (
-                <Text style={styles.eventScenarioName} numberOfLines={1}>
-                  📍 {event.scenarios.nombre}
-                </Text>
-              ) : null}
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
-      </View>
-    );
-  };
-
   // --- Web: Mapa interactivo MapTiler con MapLibre GL ---
   if (Platform.OS === 'web') {
-    const mapTilerKey = process.env.EXPO_PUBLIC_MAPTILER_API_KEY || '8flXCTBAstP9upY4EPP0';
+    const mapTilerKey = process.env.EXPO_PUBLIC_MAPTILER_API_KEY || '';
 
     return (
       <View style={styles.container}>
@@ -232,7 +199,7 @@ export default function MapScreen() {
           onMarkerClick={(scenario) => setSelectedScenario(scenario)}
         />
 
-        {/* Card flotante de escenario seleccionado (idéntico a Android) */}
+        {/* Card flotante de escenario seleccionado */}
         {selectedScenario && (
           <TouchableOpacity
             style={styles.scenarioCard}
@@ -241,6 +208,10 @@ export default function MapScreen() {
           >
             <View style={styles.scenarioCardContent}>
               <View style={styles.scenarioCardInfo}>
+                <View style={styles.communityBadge}>
+                  <Ionicons name="people" size={10} color={colors.white} />
+                  <Text style={styles.communityBadgeText}>Comunidad</Text>
+                </View>
                 <Text style={styles.scenarioCardTitle}>
                   {selectedScenario.nombre}
                 </Text>
@@ -263,20 +234,27 @@ export default function MapScreen() {
           </TouchableOpacity>
         )}
 
-        {/* Seccion Próximos Eventos */}
-        {renderUpcomingEventsSection()}
-
-        {/* Indicador de cantidad de escenarios */}
+        {/* Indicador de cantidad de puntos comunitarios */}
         <View style={styles.infoBar}>
+          <Ionicons name="people-outline" size={16} color={COMMUNITY_COLOR} />
           <Text style={styles.infoText}>
-            {scenarios?.length ?? 0} escenarios encontrados
+            {scenarios?.length ?? 0} puntos de la comunidad
           </Text>
         </View>
+
+        {/* FAB: Crear nuevo punto POV */}
+        <TouchableOpacity
+          style={styles.fab}
+          onPress={handleCreatePov}
+          activeOpacity={0.85}
+        >
+          <Ionicons name="add" size={28} color={colors.white} />
+        </TouchableOpacity>
 
         {/* Overlay de carga */}
         {isLoading && (
           <View style={styles.loadingOverlay}>
-            <ActivityIndicator size="large" color={colors.primary} />
+            <ActivityIndicator size="large" color={COMMUNITY_COLOR} />
             <Text style={styles.loadingOverlayText}>Cargando mapa...</Text>
           </View>
         )}
@@ -304,7 +282,7 @@ export default function MapScreen() {
           }}
         />
 
-        {/* Marcadores de escenarios */}
+        {/* Marcadores de escenarios comunitarios */}
         {scenarios?.map((scenario) => (
           <Marker
             key={scenario.id}
@@ -314,14 +292,14 @@ export default function MapScreen() {
           >
             <View style={styles.markerWrapper}>
               <View style={styles.markerPin}>
-                <Ionicons name="location" size={18} color={colors.white} />
+                <Ionicons name="people" size={16} color={colors.white} />
               </View>
               <View style={styles.markerArrow} />
             </View>
           </Marker>
         ))}
 
-        {/* T-024: Marcador de ubicacion del usuario */}
+        {/* Marcador de ubicación del usuario */}
         {userLocation && (
           <Marker
             lngLat={[
@@ -345,6 +323,10 @@ export default function MapScreen() {
         >
           <View style={styles.scenarioCardContent}>
             <View style={styles.scenarioCardInfo}>
+              <View style={styles.communityBadge}>
+                <Ionicons name="people" size={10} color={colors.white} />
+                <Text style={styles.communityBadgeText}>Comunidad</Text>
+              </View>
               <Text style={styles.scenarioCardTitle}>
                 {selectedScenario.nombre}
               </Text>
@@ -352,7 +334,7 @@ export default function MapScreen() {
                 {selectedScenario.tipo}
               </Text>
             </View>
-            <View style={styles.scenarioCardButton}>
+            <View style={[styles.scenarioCardButton, { backgroundColor: COMMUNITY_COLOR }]}>
               <Text style={styles.scenarioCardButtonText}>Ir</Text>
               <Ionicons name="arrow-forward" size={16} color={colors.white} />
             </View>
@@ -367,33 +349,40 @@ export default function MapScreen() {
         </TouchableOpacity>
       )}
 
-      {/* Boton de ubicacion estilo Google Maps */}
+      {/* Botón de ubicación estilo Google Maps */}
       <TouchableOpacity
         style={styles.locationButton}
         onPress={requestAndCenterLocation}
         activeOpacity={0.8}
       >
         {locationRequesting ? (
-          <ActivityIndicator size="small" color={colors.primary} />
+          <ActivityIndicator size="small" color={COMMUNITY_COLOR} />
         ) : (
-          <Ionicons name="locate" size={22} color={colors.primary} />
+          <Ionicons name="locate" size={22} color={COMMUNITY_COLOR} />
         )}
       </TouchableOpacity>
 
-      {/* T-045: Overlay Próximos Eventos */}
-      {renderUpcomingEventsSection()}
-
-      {/* Indicador de cantidad de escenarios */}
+      {/* Indicador de cantidad de puntos comunitarios */}
       <View style={styles.infoBar}>
+        <Ionicons name="people-outline" size={16} color={COMMUNITY_COLOR} />
         <Text style={styles.infoText}>
-          {scenarios?.length ?? 0} escenarios encontrados
+          {scenarios?.length ?? 0} puntos de la comunidad
         </Text>
       </View>
 
-      {/* Overlay de carga (ubicacion o escenarios) */}
+      {/* FAB: Crear nuevo punto POV */}
+      <TouchableOpacity
+        style={styles.fab}
+        onPress={handleCreatePov}
+        activeOpacity={0.85}
+      >
+        <Ionicons name="add" size={28} color={colors.white} />
+      </TouchableOpacity>
+
+      {/* Overlay de carga (ubicación o escenarios) */}
       {(isLoading || locationLoading) && (
         <View style={styles.loadingOverlay}>
-          <ActivityIndicator size="large" color={colors.primary} />
+          <ActivityIndicator size="large" color={COMMUNITY_COLOR} />
           <Text style={styles.loadingOverlayText}>
             {locationLoading ? 'Obteniendo ubicación...' : 'Cargando mapa...'}
           </Text>
@@ -417,7 +406,7 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: colors.primary,
+    backgroundColor: COMMUNITY_COLOR,
     borderWidth: 2,
     borderColor: colors.white,
     alignItems: 'center',
@@ -436,14 +425,14 @@ const styles = StyleSheet.create({
     borderTopWidth: 8,
     borderLeftColor: 'transparent',
     borderRightColor: 'transparent',
-    borderTopColor: colors.primary,
+    borderTopColor: COMMUNITY_COLOR,
     marginTop: -2,
   },
   userMarker: {
     width: 24,
     height: 24,
     borderRadius: 12,
-    backgroundColor: 'rgba(33, 150, 243, 0.3)',
+    backgroundColor: 'rgba(239, 68, 68, 0.3)',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -451,7 +440,7 @@ const styles = StyleSheet.create({
     width: 12,
     height: 12,
     borderRadius: 6,
-    backgroundColor: '#2196F3',
+    backgroundColor: COMMUNITY_COLOR,
     borderWidth: 2,
     borderColor: colors.white,
   },
@@ -460,11 +449,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: colors.background,
-  },
-  loadingText: {
-    marginTop: spacing.md,
-    fontSize: fontSize.md,
-    color: colors.textSecondary,
   },
   loadingOverlay: {
     position: 'absolute',
@@ -490,77 +474,8 @@ const styles = StyleSheet.create({
   },
   retryText: {
     fontSize: fontSize.md,
-    color: colors.primary,
+    color: COMMUNITY_COLOR,
     textDecorationLine: 'underline',
-  },
-  // T-045: Upcoming Events section overlay
-  eventsOverlay: {
-    position: 'absolute',
-    top: spacing.xl,
-    left: spacing.md,
-    right: spacing.md,
-    backgroundColor: 'rgba(255, 255, 255, 0.95)',
-    borderRadius: borderRadius.lg,
-    padding: spacing.sm,
-    shadowColor: colors.black,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.15,
-    shadowRadius: 6,
-    elevation: 5,
-  },
-  eventsHeaderRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-    marginBottom: spacing.xs,
-    paddingHorizontal: spacing.xs,
-  },
-  eventsTitle: {
-    fontSize: fontSize.xs,
-    fontWeight: fontWeight.bold,
-    color: colors.text,
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-  },
-  eventsScrollList: {
-    gap: spacing.xs,
-    paddingVertical: 2,
-  },
-  eventCardItem: {
-    backgroundColor: colors.surfaceVariant,
-    borderRadius: borderRadius.md,
-    paddingHorizontal: spacing.sm,
-    paddingVertical: spacing.xs,
-    borderWidth: 1,
-    borderColor: colors.border,
-    minWidth: 140,
-    maxWidth: 200,
-  },
-  eventBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 3,
-    backgroundColor: colors.primary,
-    alignSelf: 'flex-start',
-    paddingHorizontal: 6,
-    paddingVertical: 1,
-    borderRadius: borderRadius.full,
-    marginBottom: 4,
-  },
-  eventBadgeText: {
-    color: colors.white,
-    fontSize: 10,
-    fontWeight: fontWeight.semibold,
-  },
-  eventCardName: {
-    fontSize: fontSize.sm,
-    fontWeight: fontWeight.semibold,
-    color: colors.text,
-  },
-  eventScenarioName: {
-    fontSize: 11,
-    color: colors.textSecondary,
-    marginTop: 2,
   },
   infoBar: {
     position: 'absolute',
@@ -572,6 +487,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.md,
     borderRadius: 12,
     alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: spacing.xs,
     shadowColor: colors.black,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.15,
@@ -625,6 +543,22 @@ const styles = StyleSheet.create({
   scenarioCardInfo: {
     flex: 1,
   },
+  communityBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 3,
+    backgroundColor: COMMUNITY_COLOR,
+    alignSelf: 'flex-start',
+    paddingHorizontal: 6,
+    paddingVertical: 1,
+    borderRadius: borderRadius.full,
+    marginBottom: 4,
+  },
+  communityBadgeText: {
+    color: colors.white,
+    fontSize: 9,
+    fontWeight: fontWeight.semibold,
+  },
   scenarioCardTitle: {
     fontSize: fontSize.md,
     fontWeight: fontWeight.semibold,
@@ -636,7 +570,7 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   scenarioCardButton: {
-    backgroundColor: colors.primary,
+    backgroundColor: COMMUNITY_COLOR,
     borderRadius: borderRadius.md,
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
@@ -653,51 +587,21 @@ const styles = StyleSheet.create({
     marginLeft: spacing.sm,
     padding: spacing.xs,
   },
-  // Web fallback styles
-  webContainer: {
-    flex: 1,
-    backgroundColor: colors.background,
-    padding: spacing.lg,
-  },
-  webTitle: {
-    fontSize: fontSize.xl,
-    fontWeight: fontWeight.bold,
-    color: colors.text,
-    marginBottom: spacing.xs,
-  },
-  webSubtitle: {
-    fontSize: fontSize.sm,
-    color: colors.textSecondary,
-    marginBottom: spacing.md,
-  },
-  webList: {
-    paddingBottom: spacing.xl,
-    marginTop: spacing.md,
-  },
-  webCard: {
-    backgroundColor: colors.surface,
-    padding: spacing.md,
-    borderRadius: 12,
-    marginBottom: spacing.sm,
+  // FAB
+  fab: {
+    position: 'absolute',
+    bottom: 80,
+    right: spacing.md,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: COMMUNITY_COLOR,
+    justifyContent: 'center',
+    alignItems: 'center',
     shadowColor: colors.black,
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
-    elevation: 2,
-  },
-  webCardTitle: {
-    fontSize: fontSize.md,
-    fontWeight: fontWeight.semibold,
-    color: colors.text,
-  },
-  webCardType: {
-    fontSize: fontSize.sm,
-    color: colors.primary,
-    marginTop: spacing.xs,
-  },
-  webCardDir: {
-    fontSize: fontSize.sm,
-    color: colors.textSecondary,
-    marginTop: 2,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 8,
+    elevation: 6,
   },
 });

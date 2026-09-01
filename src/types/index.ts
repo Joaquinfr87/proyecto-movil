@@ -20,6 +20,7 @@ export interface Scenario {
   longitud: number;
   estado: string;
   horario: string | null;
+  is_community: boolean;
   created_by: string | null;
   created_at: string;
   updated_at: string;
