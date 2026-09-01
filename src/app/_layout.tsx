@@ -19,6 +19,7 @@ export default function RootLayout() {
             <Stack.Screen name="auth/register" />
             <Stack.Screen name="scenario/[id]" />
             <Stack.Screen name="scenario-form/[id]" />
+            <Stack.Screen name="bookings" options={{ headerShown: false }} />
           </Stack>
         </AuthGuard>
       </AuthProvider>

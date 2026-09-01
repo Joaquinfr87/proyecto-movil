@@ -438,6 +438,28 @@ export default function ScenarioDetailScreen() {
             </View>
           )}
 
+          {/* ── Módulo Reserva de Turno (examen-angel) ── */}
+          <View style={styles.section}>
+            <View style={styles.sectionHeaderRow}>
+              <Text style={styles.sectionTitle}>Reservar una Cancha</Text>
+            </View>
+            <TouchableOpacity
+              style={styles.bookingButton}
+              activeOpacity={0.85}
+              onPress={() =>
+                router.push(
+                  `/bookings/create?scenario_id=${id}&scenario_nombre=${encodeURIComponent(scenario.nombre)}`
+                )
+              }
+            >
+              <Ionicons name="calendar-outline" size={20} color={colors.white} />
+              <Text style={styles.bookingButtonText}>Reservar Turno</Text>
+            </TouchableOpacity>
+            <Text style={styles.bookingHint}>
+              Agenda tu bloque horario en este escenario y obtén un comprobante digital.
+            </Text>
+          </View>
+
           <View style={styles.bottomSpacer} />
         </View>
       </ScrollView>
@@ -976,4 +998,27 @@ const styles = StyleSheet.create({
   buttonDisabled: {
     opacity: 0.6,
   },
+  // ── Reserva de Turno (examen-angel) ──────────────────────────────────────
+  bookingButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: spacing.sm,
+    backgroundColor: colors.secondary,
+    borderRadius: borderRadius.lg,
+    paddingVertical: spacing.md,
+    marginTop: spacing.xs,
+  },
+  bookingButtonText: {
+    fontSize: fontSize.md,
+    fontWeight: fontWeight.semibold,
+    color: colors.white,
+  },
+  bookingHint: {
+    fontSize: fontSize.xs,
+    color: colors.textSecondary,
+    textAlign: 'center',
+    marginTop: spacing.xs,
+  },
 });
+

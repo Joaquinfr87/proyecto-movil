@@ -69,3 +69,52 @@ export interface ScenarioSector {
   created_at?: string;
 }
 
+// ── Reservas de Canchas Deportivas ───────────────────────────────────────────
+
+export type BookingStatus = 'confirmada' | 'completada' | 'cancelada';
+export type BookingActivity = 'amistoso' | 'entrenamiento' | 'torneo' | 'recreativo';
+
+export interface ScenarioBooking {
+  id: string;
+  booking_code: string;
+  scenario_id: string;
+  sector_id: string | null;
+  user_id: string;
+  booking_date: string;   // YYYY-MM-DD
+  start_time: string;     // HH:mm
+  end_time: string;       // HH:mm
+  activity_type: BookingActivity;
+  participants_count: number;
+  contact_phone: string;
+  notes: string | null;
+  status: BookingStatus;
+  cancellation_reason: string | null;
+  created_at: string;
+  updated_at: string;
+  // Joined
+  scenarios?: Pick<Scenario, 'id' | 'nombre' | 'tipo' | 'direccion'>;
+}
+
+export interface CreateBookingPayload {
+  scenario_id: string;
+  sector_id?: string | null;
+  booking_date: string;
+  start_time: string;
+  end_time: string;
+  activity_type: BookingActivity;
+  participants_count: number;
+  contact_phone: string;
+  notes?: string;
+}
+
+export interface UpdateBookingPayload {
+  id: string;
+  booking_date?: string;
+  start_time?: string;
+  end_time?: string;
+  participants_count?: number;
+  contact_phone?: string;
+  notes?: string;
+  status?: BookingStatus;
+  cancellation_reason?: string;
+}
