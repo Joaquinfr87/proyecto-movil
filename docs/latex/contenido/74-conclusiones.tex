@@ -1,0 +1,110 @@
+
+\subsection*{Conclusiones}
+
+Al concluir el desarrollo del sistema m\'ovil \nombreApp{} para la
+visualizaci\'on interactiva de escenarios deportivos a nivel nacional, se
+cumplieron los objetivos planteados en cada una de las etapas del proyecto,
+desde el diagn\'ostico de la problem\'atica hasta la implementaci\'on de una
+aplicaci\'on multiplataforma conectada a una base de datos centralizada. Las
+principales conclusiones del proyecto son las siguientes:
+
+\begin{enumerate}
+  \item \textbf{Problem\'atica diagnosticada.} Mediante el an\'alisis de los
+    antecedentes y las t\'ecnicas de recolecci\'on de datos aplicadas (encuestas
+    y entrevistas), se confirm\'o que la informaci\'on sobre los escenarios
+    deportivos del pa\'is se encuentra dispersa, desactualizada y sin un medio
+    unificado de consulta, lo que limita el acceso de la ciudadan\'ia a la
+    infraestructura deportiva nacional.
+
+  \item \textbf{Requerimientos definidos.} Se identificaron y documentaron los
+    requerimientos funcionales y no funcionales del sistema, as\'i como los tres
+    perfiles de usuario involucrados (asistentes, gestores y administradores),
+    lo que permiti\'o delimitar el alcance del producto m\'inimo viable (MVP).
+
+  \item \textbf{Arquitectura dise\~nada.} Se defini\'o la arquitectura del
+    sistema, el modelo de datos con siete tablas (profiles, scenarios,
+    scenario\_images, sports, scenario\_sports, events y favorites) y la interfaz
+    de usuario mediante wireframes, flujo de navegaci\'on y el tema visual de la
+    aplicaci\'on.
+
+  \item \textbf{Interfaz e interacci\'on implementadas.} La aplicaci\'on
+    evolucion\'o de una colecci\'on est\'atica de pantallas a una aplicaci\'on
+    interactiva que responde a las acciones del usuario, con validaci\'on de
+    formularios en tiempo real, gesti\'on de estado (local, global y del
+    servidor), b\'usqueda, filtros y favoritos.
+
+  \item \textbf{Persistencia local garantizada.} Se estableci\'o una
+    arquitectura de persistencia de tres niveles (AsyncStorage para la
+    sesi\'on, Supabase/PostgreSQL para los datos de dominio y React Query para
+    el cach\'e en memoria), asegurando que los datos cr\'iticos se conserven
+    tras el cierre de la aplicaci\'on.
+
+  \item \textbf{Integraci\'on con backend en la nube.} La aplicaci\'on qued\'o
+    conectada a Supabase y PostgreSQL, resolviendo el problema de los datos
+    aislados por dispositivo mediante una base de datos centralizada y
+    compartida, diferenciando claramente el frontend (Expo/React Native) del
+    backend (Supabase y almacenamiento de archivos).
+
+  \item \textbf{CRUD completo y seguro.} Se implementaron las operaciones de
+    creaci\'on, consulta, actualizaci\'on y eliminaci\'on sobre escenarios,
+    eventos y favoritos, contemplando los estados de carga y error, y
+    garantizando la seguridad mediante pol\'iticas RLS que restringen el acceso
+    a los datos seg\'un el rol del usuario.
+
+  \item \textbf{Metodolog\'ia \'agil aplicada.} El desarrollo se gestion\'o con
+    Scrum, organizando el trabajo en tres sprints con entregas incrementales,
+    historias de usuario, tablero kanban en GitHub Projects y una definici\'on
+    de hecho, lo que permiti\'o cumplir el MVP en el plazo previsto.
+
+  \item \textbf{Objetivo general alcanzado.} El sistema m\'ovil proporciona a
+    la ciudadan\'ia una plataforma \'unica y actualizada para localizar y
+    consultar informaci\'on confiable de los escenarios deportivos del pa\'is,
+    satisfaciendo el prop\'osito general del proyecto y sentando las bases para
+    su evoluci\'on futura.
+\end{enumerate}
+
+\subsection*{Recomendaciones}
+
+A partir de los resultados obtenidos y de las limitaciones identificadas
+durante el desarrollo del proyecto, se formulan las siguientes recomendaciones
+para la continuidad y mejora de la aplicaci\'on:
+
+\begin{enumerate}
+  \item \textbf{Desarrollar el visor panor\'amico 360\textdegree{}.} Actualmente la
+    aplicaci\'on utiliza im\'agenes de prueba y un solo modelo visual por
+    tarjeta o escenario (a trav\'es de la imagen principal de
+    scenario\_images). Se recomienda implementar, en base a la estructura de
+    cada escenario, un mapa interactivo de sectores (por ejemplo, ``Curva
+    Sur'', ``General'' o ``Cancha'') que permita al usuario abrir un visor
+    panor\'amico 360\textdegree{} con fotograf\'ias equirectangulares reales o
+    renderizadas correspondientes a cada sector. Para ello se sugiere crear la
+    tabla \texttt{scenario\_sectors}, renderizar el mapa con
+    \texttt{react-native-svg} y el visor mediante \texttt{react-native-webview}
+    con Pannellum, tomando como prueba de concepto el escenario ``F\'elix
+    Capriles''.
+
+  \item \textbf{Completar la gesti\'on de contenido.} Fomentar la incorporaci\'on
+    de escenarios reales por parte de los gestores y validar la informaci\'on
+    publicada por el administrador, de modo que el cat\'alogo deje de depender
+    de datos de prueba y refleje la oferta deportiva real del pa\'is.
+
+  \item \textbf{Ampliar las funcionalidades pendientes.} Implementar las
+    historias de usuario marcadas como pendientes, como la notificaci\'on de
+    eventos y la gesti\'on avanzada de usuarios, as\'i como los reportes
+    estad\'isticos que permitan conocer el uso y la demanda de los escenarios.
+
+  \item \textbf{Fortalecer la seguridad y el rendimiento.} Continuar revisando
+    las pol\'iticas RLS, la optimizaci\'on de consultas y el cach\'e de React
+    Query, y realizar pruebas de carga para garantizar un comportamiento
+    estable a medida que crezca el n\'umero de usuarios y de datos.
+
+  \item \textbf{Evaluar la usabilidad con usuarios reales.} Aplicar pruebas de
+    usabilidad y satisfacci\'on con asistentes, gestores y administradores con
+    el fin de validar las historias de usuario y orientar las mejoras de la
+    interfaz y la experiencia de uso.
+\end{enumerate}
+
+Con estas acciones la aplicaci\'on \nombreApp{} podr\'a consolidarse como una
+plataforma completa de visualizaci\'on e interacci\'on con los escenarios
+deportivos del pa\'is, aprovechando la arquitectura, la seguridad y la base de
+datos centralizada ya construidas.
