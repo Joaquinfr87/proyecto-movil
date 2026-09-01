@@ -44,6 +44,15 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="ratings"
+        options={{
+          title: 'Valoraciones',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="star-half-outline" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
         name="manage"
         options={{
           title: 'Gestión',

@@ -23,6 +23,8 @@ export interface Scenario {
   created_by: string | null;
   created_at: string;
   updated_at: string;
+  rating_average?: number | null;
+  rating_count?: number | null;
 }
 
 export interface Sport {
@@ -69,3 +71,18 @@ export interface ScenarioSector {
   created_at?: string;
 }
 
+export interface ScenarioRating {
+  id: string;
+  scenario_id: string;
+  user_id: string;
+  rating: number;
+  comment: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ScenarioRatingStats {
+  scenario_id: string;
+  average: number;
+  count: number;
+}

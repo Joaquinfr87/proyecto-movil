@@ -79,7 +79,15 @@ export interface Database {
           created_at?: string;
           updated_at?: string;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: 'scenarios_created_by_fkey';
+            columns: ['created_by'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
       };
       sports: {
         Row: {
@@ -112,7 +120,22 @@ export interface Database {
           scenario_id?: string;
           sport_id?: string;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: 'scenario_sports_scenario_id_fkey';
+            columns: ['scenario_id'];
+            isOneToOne: false;
+            referencedRelation: 'scenarios';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'scenario_sports_sport_id_fkey';
+            columns: ['sport_id'];
+            isOneToOne: false;
+            referencedRelation: 'sports';
+            referencedColumns: ['id'];
+          },
+        ];
       };
       events: {
         Row: {
@@ -145,7 +168,15 @@ export interface Database {
           created_at?: string;
           updated_at?: string;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: 'events_scenario_id_fkey';
+            columns: ['scenario_id'];
+            isOneToOne: false;
+            referencedRelation: 'scenarios';
+            referencedColumns: ['id'];
+          },
+        ];
       };
       favorites: {
         Row: {
@@ -163,7 +194,22 @@ export interface Database {
           scenario_id?: string;
           created_at?: string;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: 'favorites_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'favorites_scenario_id_fkey';
+            columns: ['scenario_id'];
+            isOneToOne: false;
+            referencedRelation: 'scenarios';
+            referencedColumns: ['id'];
+          },
+        ];
       };
       scenario_images: {
         Row: {
@@ -193,7 +239,15 @@ export interface Database {
           display_order?: number;
           created_at?: string;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: 'scenario_images_scenario_id_fkey';
+            columns: ['scenario_id'];
+            isOneToOne: false;
+            referencedRelation: 'scenarios';
+            referencedColumns: ['id'];
+          },
+        ];
       };
       scenario_sectors: {
         Row: {
@@ -226,11 +280,73 @@ export interface Database {
           display_order?: number;
           created_at?: string;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: 'scenario_sectors_scenario_id_fkey';
+            columns: ['scenario_id'];
+            isOneToOne: false;
+            referencedRelation: 'scenarios';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      scenario_ratings: {
+        Row: {
+          id: string;
+          scenario_id: string;
+          user_id: string;
+          rating: number;
+          comment: string;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          scenario_id: string;
+          user_id: string;
+          rating: number;
+          comment?: string;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          scenario_id?: string;
+          user_id?: string;
+          rating?: number;
+          comment?: string;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'scenario_ratings_scenario_id_fkey';
+            columns: ['scenario_id'];
+            isOneToOne: false;
+            referencedRelation: 'scenarios';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'scenario_ratings_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profiles';
+            referencedColumns: ['id'];
+          },
+        ];
       };
     };
     Views: Record<string, never>;
-    Functions: Record<string, never>;
+    Functions: {
+      scenario_rating_stats: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          scenario_id: string;
+          average: number;
+          count: number;
+        }[];
+      };
+    };
     Enums: {
       user_role: 'admin' | 'gestor' | 'asistente';
     };

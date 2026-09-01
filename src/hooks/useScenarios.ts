@@ -21,24 +21,24 @@ export interface ScenarioWithDetails extends Scenario {
   scenario_sectors?: ScenarioSector[];
 }
 
+export interface RatingAggregate {
+  average: number;
+  count: number;
+}
+
 // El seed guarda rutas relativas en la columna url (ej: 'scenario-images/{id}/image-1.jpg').
 // Esta funcion las convierte a URL publicas del bucket usando storage_path.
-export function resolveScenarioImages<T extends { scenario_images?: ScenarioImage[] }>(
-  row: T,
-): T {
+export function resolveScenarioImages<T extends { scenario_images?: ScenarioImage[] }>(row: T): T {
   return {
     ...row,
-    scenario_images:
-      (row.scenario_images ?? [])
-        .filter((img) => img.url || img.storage_path)
-        .map((img) => {
-          const url = /^https?:\/\//.test(img.url)
-            ? img.url
-            : supabase.storage
-                .from('scenario-images')
-                .getPublicUrl(img.storage_path).data.publicUrl;
-          return { ...img, url };
-        }),
+    scenario_images: (row.scenario_images ?? [])
+      .filter((img) => img.url || img.storage_path)
+      .map((img) => {
+        const url = /^https?:\/\//.test(img.url)
+          ? img.url
+          : supabase.storage.from('scenario-images').getPublicUrl(img.storage_path).data.publicUrl;
+        return { ...img, url };
+      }),
   };
 }
 
@@ -59,7 +59,28 @@ async function fetchScenarios(): Promise<ScenarioWithDetails[]> {
     throw new Error(error.message);
   }
 
-  return (data ?? []).map(resolveScenarioImages);
+  const rows = (data ?? []).map(resolveScenarioImages) as ScenarioWithDetails[];
+  const stats = await fetchRatingStatsMap();
+  return rows.map((row) => ({
+    ...row,
+    rating_average: stats[row.id]?.average ?? null,
+    rating_count: stats[row.id]?.count ?? 0,
+  }));
+}
+
+async function fetchRatingStatsMap(): Promise<Record<string, RatingAggregate>> {
+  try {
+    const { data, error } = await supabase.rpc('scenario_rating_stats');
+    if (error || !data) return {};
+    const map: Record<string, RatingAggregate> = {};
+    for (const row of data as { scenario_id: string; average: number; count: number }[]) {
+      map[row.scenario_id] = { average: Number(row.average), count: Number(row.count) };
+    }
+    return map;
+  } catch {
+    // La función puede no existir aún en Supabase Cloud; degradar a sin estadísticas
+    return {};
+  }
 }
 
 async function fetchScenarioById(id: string): Promise<ScenarioWithDetails | null> {

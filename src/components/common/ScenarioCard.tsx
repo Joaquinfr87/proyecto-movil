@@ -1,5 +1,12 @@
 import { useState, useRef } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, NativeSyntheticEvent, NativeScrollEvent } from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  NativeSyntheticEvent,
+  NativeScrollEvent,
+} from 'react-native';
 import { Image } from 'expo-image';
 import { Ionicons } from '@expo/vector-icons';
 import { colors, spacing, borderRadius, fontSize, fontWeight } from '../../theme';
@@ -16,6 +23,7 @@ export function ScenarioCard({ scenario, onPress }: ScenarioCardProps) {
     .filter((img) => img.url)
     .sort((a, b) => a.display_order - b.display_order);
   const hasMultipleImages = (images?.length ?? 0) > 1;
+  const hasRating = (scenario.rating_count ?? 0) > 0;
 
   const [activeIndex, setActiveIndex] = useState(0);
   const scrollRef = useRef<any>(null);
@@ -26,11 +34,7 @@ export function ScenarioCard({ scenario, onPress }: ScenarioCardProps) {
   };
 
   return (
-    <TouchableOpacity
-      style={styles.card}
-      onPress={() => onPress(scenario.id)}
-      activeOpacity={0.85}
-    >
+    <TouchableOpacity style={styles.card} onPress={() => onPress(scenario.id)} activeOpacity={0.85}>
       {/* Imagen / Carrusel */}
       <View style={styles.imageContainer}>
         {images && images.length > 0 ? (
@@ -80,7 +84,9 @@ export function ScenarioCard({ scenario, onPress }: ScenarioCardProps) {
 
         <View style={styles.infoRow}>
           <Ionicons name="people-outline" size={14} color={colors.textSecondary} />
-          <Text style={styles.infoText}>{scenario.capacidad?.toLocaleString() ?? '—'} personas</Text>
+          <Text style={styles.infoText}>
+            {scenario.capacidad?.toLocaleString() ?? '—'} personas
+          </Text>
         </View>
 
         <View style={styles.infoRow}>
@@ -89,6 +95,17 @@ export function ScenarioCard({ scenario, onPress }: ScenarioCardProps) {
             {scenario.direccion}
           </Text>
         </View>
+
+        {/* Valoración promedio */}
+        {hasRating ? (
+          <View style={styles.infoRow}>
+            <Ionicons name="star" size={14} color={colors.warning} />
+            <Text style={styles.ratingText}>
+              {(scenario.rating_average ?? 0).toFixed(1)} · {scenario.rating_count}{' '}
+              {scenario.rating_count === 1 ? 'valoración' : 'valoraciones'}
+            </Text>
+          </View>
+        ) : null}
 
         {/* Estado */}
         <View style={styles.footer}>
@@ -208,6 +225,12 @@ const styles = StyleSheet.create({
     fontSize: fontSize.sm,
     color: colors.textSecondary,
     flex: 1,
+  },
+  ratingText: {
+    fontSize: fontSize.sm,
+    color: colors.textSecondary,
+    flex: 1,
+    fontWeight: fontWeight.medium,
   },
   footer: {
     flexDirection: 'row',

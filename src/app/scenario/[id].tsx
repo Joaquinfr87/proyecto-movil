@@ -23,6 +23,10 @@ import { useScenario } from '../../hooks/useScenarios';
 import { useIsFavorite, useToggleFavorite } from '../../hooks/useFavorites';
 import { useUploadImage } from '../../hooks/useUploadImage';
 import { useCreateEvent, useDeleteEvent } from '../../hooks/useEvents';
+import { useScenarioRatings, useDeleteRating } from '../../hooks/useScenarioRatings';
+import { RatingFormModal } from '../../components/rating/RatingFormModal';
+import { RatingList } from '../../components/rating/RatingList';
+import { RatingStars } from '../../components/rating/RatingStars';
 import { LoadingSpinner } from '../../components/common/LoadingSpinner';
 import { EmptyState } from '../../components/common/EmptyState';
 import { InteractiveStadiumMap } from '../../components/scenario/InteractiveStadiumMap';
@@ -47,6 +51,16 @@ export default function ScenarioDetailScreen() {
   const { uploadImage, isUploading } = useUploadImage();
   const { mutateAsync: createEvent, isPending: isCreatingEvent } = useCreateEvent();
   const { mutateAsync: deleteEvent, isPending: isDeletingEvent } = useDeleteEvent(id ?? '');
+
+  // Valoraciones (Parte 7 del examen)
+  const { data: ratings } = useScenarioRatings(id ?? '');
+  const { mutateAsync: deleteRating } = useDeleteRating(user?.id ?? '');
+  const [ratingModalVisible, setRatingModalVisible] = useState(false);
+  const [editingRating, setEditingRating] = useState<{
+    id: string;
+    rating: number;
+    comment: string;
+  } | null>(null);
 
   const [imageError, setImageError] = useState(false);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
@@ -77,9 +91,7 @@ export default function ScenarioDetailScreen() {
   const canManage = canManageContent(role);
 
   const primaryImage = sortedImages?.find((img) => img.is_primary);
-  const imageUrl = !imageError
-    ? (primaryImage?.url ?? sortedImages?.[0]?.url ?? null)
-    : null;
+  const imageUrl = !imageError ? (primaryImage?.url ?? sortedImages?.[0]?.url ?? null) : null;
 
   const handleToggleFavorite = async () => {
     if (!user?.id || !id) return;
@@ -141,18 +153,14 @@ export default function ScenarioDetailScreen() {
         deleteEvent(eventId);
       }
     } else {
-      Alert.alert(
-        'Eliminar evento',
-        `¿Estás seguro de eliminar "${eventName}"?`,
-        [
-          { text: 'Cancelar', style: 'cancel' },
-          {
-            text: 'Eliminar',
-            style: 'destructive',
-            onPress: () => deleteEvent(eventId),
-          },
-        ],
-      );
+      Alert.alert('Eliminar evento', `¿Estás seguro de eliminar "${eventName}"?`, [
+        { text: 'Cancelar', style: 'cancel' },
+        {
+          text: 'Eliminar',
+          style: 'destructive',
+          onPress: () => deleteEvent(eventId),
+        },
+      ]);
     }
   };
 
@@ -173,6 +181,35 @@ export default function ScenarioDetailScreen() {
 
   const hasEvents = scenario.events && scenario.events.length > 0;
 
+  // Estadísticas de valoraciones
+  const myRating = (ratings ?? []).find((r) => r.user_id === user?.id);
+  const ratingCount = ratings?.length ?? 0;
+  const ratingAverage =
+    ratingCount > 0
+      ? Math.round((ratings!.reduce((acc, r) => acc + r.rating, 0) / ratingCount) * 10) / 10
+      : 0;
+
+  const handleOpenRatingForm = () => {
+    setEditingRating(
+      myRating ? { id: myRating.id, rating: myRating.rating, comment: myRating.comment } : null,
+    );
+    setRatingModalVisible(true);
+  };
+
+  const handleDeleteMyRating = (ratingId: string) => {
+    const msg = '¿Eliminar tu valoración de este escenario?';
+    if (Platform.OS === 'web') {
+      if (window.confirm(msg)) {
+        deleteRating(ratingId);
+      }
+    } else {
+      Alert.alert('Eliminar valoración', msg, [
+        { text: 'Cancelar', style: 'cancel' },
+        { text: 'Eliminar', style: 'destructive', onPress: () => deleteRating(ratingId) },
+      ]);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false} bounces>
@@ -189,7 +226,10 @@ export default function ScenarioDetailScreen() {
                 scrollEventThrottle={16}
               >
                 {sortedImages.map((img, index) => (
-                  <View key={img.storage_path ?? index} style={{ width: SCREEN_WIDTH, height: IMAGE_HEIGHT }}>
+                  <View
+                    key={img.storage_path ?? index}
+                    style={{ width: SCREEN_WIDTH, height: IMAGE_HEIGHT }}
+                  >
                     <Image
                       source={{ uri: img.url }}
                       style={styles.image}
@@ -205,7 +245,10 @@ export default function ScenarioDetailScreen() {
                   {sortedImages.map((_, index) => (
                     <View
                       key={index}
-                      style={[styles.detailDot, index === activeImageIndex && styles.detailDotActive]}
+                      style={[
+                        styles.detailDot,
+                        index === activeImageIndex && styles.detailDotActive,
+                      ]}
                     />
                   ))}
                 </View>
@@ -287,7 +330,11 @@ export default function ScenarioDetailScreen() {
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Información</Text>
             <View style={styles.infoCard}>
-              <InfoRow icon="people-outline" label="Capacidad" value={`${scenario.capacidad.toLocaleString()} personas`} />
+              <InfoRow
+                icon="people-outline"
+                label="Capacidad"
+                value={`${scenario.capacidad.toLocaleString()} personas`}
+              />
               <View style={styles.divider} />
               <InfoRow icon="location-outline" label="Dirección" value={scenario.direccion} />
               {scenario.horario ? (
@@ -304,56 +351,56 @@ export default function ScenarioDetailScreen() {
             const sectors =
               scenario.scenario_sectors && scenario.scenario_sectors.length > 0
                 ? scenario.scenario_sectors
-                : (scenario.nombre?.toLowerCase().includes('capriles') ||
-                   scenario.tipo?.toLowerCase().includes('estadio'))
-                ? [
-                    {
-                      id: 'sec-cancha',
-                      scenario_id: scenario.id,
-                      nombre: 'Cancha Central',
-                      svg_path: 'M 300 200 L 500 200 L 500 400 L 300 400 Z',
-                      foto_360_url: 'https://pannellum.org/images/alma.jpg',
-                      color_hex: '#22c55e',
-                      display_order: 1,
-                    },
-                    {
-                      id: 'sec-norte',
-                      scenario_id: scenario.id,
-                      nombre: 'Curva Norte',
-                      svg_path: 'M 260 80 Q 400 30 540 80 L 510 180 Q 400 140 290 180 Z',
-                      foto_360_url: 'https://pannellum.org/images/cerro-toco-0.jpg',
-                      color_hex: '#3b82f6',
-                      display_order: 2,
-                    },
-                    {
-                      id: 'sec-sur',
-                      scenario_id: scenario.id,
-                      nombre: 'Curva Sur',
-                      svg_path: 'M 290 420 Q 400 460 510 420 L 540 520 Q 400 570 260 520 Z',
-                      foto_360_url: 'https://pannellum.org/images/bma-0.jpg',
-                      color_hex: '#ef4444',
-                      display_order: 3,
-                    },
-                    {
-                      id: 'sec-pref',
-                      scenario_id: scenario.id,
-                      nombre: 'Tribuna Preferencia',
-                      svg_path: 'M 120 120 L 260 190 L 260 410 L 120 480 Z',
-                      foto_360_url: 'https://pannellum.org/images/jfk.jpg',
-                      color_hex: '#f59e0b',
-                      display_order: 4,
-                    },
-                    {
-                      id: 'sec-gen',
-                      scenario_id: scenario.id,
-                      nombre: 'Tribuna General',
-                      svg_path: 'M 540 190 L 680 120 L 680 480 L 540 410 Z',
-                      foto_360_url: 'https://pannellum.org/images/milan.jpg',
-                      color_hex: '#8b5cf6',
-                      display_order: 5,
-                    },
-                  ]
-                : [];
+                : scenario.nombre?.toLowerCase().includes('capriles') ||
+                    scenario.tipo?.toLowerCase().includes('estadio')
+                  ? [
+                      {
+                        id: 'sec-cancha',
+                        scenario_id: scenario.id,
+                        nombre: 'Cancha Central',
+                        svg_path: 'M 300 200 L 500 200 L 500 400 L 300 400 Z',
+                        foto_360_url: 'https://pannellum.org/images/alma.jpg',
+                        color_hex: '#22c55e',
+                        display_order: 1,
+                      },
+                      {
+                        id: 'sec-norte',
+                        scenario_id: scenario.id,
+                        nombre: 'Curva Norte',
+                        svg_path: 'M 260 80 Q 400 30 540 80 L 510 180 Q 400 140 290 180 Z',
+                        foto_360_url: 'https://pannellum.org/images/cerro-toco-0.jpg',
+                        color_hex: '#3b82f6',
+                        display_order: 2,
+                      },
+                      {
+                        id: 'sec-sur',
+                        scenario_id: scenario.id,
+                        nombre: 'Curva Sur',
+                        svg_path: 'M 290 420 Q 400 460 510 420 L 540 520 Q 400 570 260 520 Z',
+                        foto_360_url: 'https://pannellum.org/images/bma-0.jpg',
+                        color_hex: '#ef4444',
+                        display_order: 3,
+                      },
+                      {
+                        id: 'sec-pref',
+                        scenario_id: scenario.id,
+                        nombre: 'Tribuna Preferencia',
+                        svg_path: 'M 120 120 L 260 190 L 260 410 L 120 480 Z',
+                        foto_360_url: 'https://pannellum.org/images/jfk.jpg',
+                        color_hex: '#f59e0b',
+                        display_order: 4,
+                      },
+                      {
+                        id: 'sec-gen',
+                        scenario_id: scenario.id,
+                        nombre: 'Tribuna General',
+                        svg_path: 'M 540 190 L 680 120 L 680 480 L 540 410 Z',
+                        foto_360_url: 'https://pannellum.org/images/milan.jpg',
+                        color_hex: '#8b5cf6',
+                        display_order: 5,
+                      },
+                    ]
+                  : [];
 
             if (sectors.length === 0) return null;
 
@@ -385,6 +432,55 @@ export default function ScenarioDetailScreen() {
               </View>
             </View>
           ) : null}
+
+          {/* T-062: Valoraciones de escenarios */}
+          <View style={styles.section}>
+            <View style={styles.sectionHeaderRow}>
+              <View style={styles.sectionTitleGroup}>
+                <Text style={styles.sectionTitle}>Valoraciones</Text>
+                {ratingCount > 0 && (
+                  <Text style={styles.sectionCount}>
+                    {ratingCount} {ratingCount === 1 ? 'reseña' : 'reseñas'}
+                  </Text>
+                )}
+              </View>
+              <TouchableOpacity
+                style={styles.addEventButton}
+                onPress={handleOpenRatingForm}
+                activeOpacity={0.8}
+              >
+                <Ionicons
+                  name={myRating ? 'create-outline' : 'star-half-outline'}
+                  size={16}
+                  color={colors.primary}
+                />
+                <Text style={styles.addEventText}>
+                  {myRating ? 'Editar mi valoración' : 'Valorar'}
+                </Text>
+              </TouchableOpacity>
+            </View>
+
+            {/* Resumen de calificación */}
+            {ratingCount > 0 && (
+              <View style={styles.ratingSummary}>
+                <Text style={styles.ratingAverage}>{ratingAverage.toFixed(1)}</Text>
+                <View style={styles.ratingSummaryRight}>
+                  <RatingStars value={ratingAverage} size={18} />
+                  <Text style={styles.ratingSummaryText}>
+                    promedio de {ratingCount} {ratingCount === 1 ? 'valoración' : 'valoraciones'}
+                  </Text>
+                </View>
+              </View>
+            )}
+
+            {/* Lista de reseñas */}
+            <RatingList
+              ratings={ratings ?? []}
+              userId={user?.id}
+              onEdit={handleOpenRatingForm}
+              onDelete={(r) => handleDeleteMyRating(r.id)}
+            />
+          </View>
 
           {/* Eventos próximos (T-044) */}
           {(hasEvents || canManage) && (
@@ -553,6 +649,23 @@ export default function ScenarioDetailScreen() {
           </View>
         </View>
       </Modal>
+
+      {/* T-062: Modal de Valoración (crear / editar) */}
+      <RatingFormModal
+        visible={ratingModalVisible}
+        scenarioId={id ?? ''}
+        scenarioName={scenario.nombre}
+        userId={user?.id ?? ''}
+        initialRating={editingRating}
+        onClose={() => {
+          setRatingModalVisible(false);
+          setEditingRating(null);
+        }}
+        onSaved={() => {
+          setRatingModalVisible(false);
+          setEditingRating(null);
+        }}
+      />
 
       {/* Visor 360 Panorámico (T-060) */}
       {selectedSector && selectedSector.foto_360_url ? (
@@ -794,6 +907,41 @@ const styles = StyleSheet.create({
     fontSize: fontSize.sm,
     color: colors.primary,
     fontWeight: fontWeight.medium,
+  },
+  sectionTitleGroup: {
+    flexDirection: 'row',
+    alignItems: 'baseline',
+    gap: spacing.sm,
+  },
+  sectionCount: {
+    fontSize: fontSize.xs,
+    color: colors.textSecondary,
+    fontWeight: fontWeight.medium,
+  },
+  ratingSummary: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.md,
+    backgroundColor: colors.surface,
+    borderRadius: borderRadius.md,
+    padding: spacing.md,
+    borderWidth: 1,
+    borderColor: colors.border,
+    marginBottom: spacing.sm,
+  },
+  ratingAverage: {
+    fontSize: 40,
+    fontWeight: fontWeight.bold,
+    color: colors.text,
+    lineHeight: 44,
+  },
+  ratingSummaryRight: {
+    flex: 1,
+    gap: 4,
+  },
+  ratingSummaryText: {
+    fontSize: fontSize.xs,
+    color: colors.textSecondary,
   },
   eventCard: {
     flexDirection: 'row',
