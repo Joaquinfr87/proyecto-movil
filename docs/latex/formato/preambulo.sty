@@ -217,6 +217,23 @@
 \renewcommand{\cftpartfont}{\bfseries}
 \renewcommand{\cftpartpagefont}{\bfseries}
 \setlength{\cftbeforepartskip}{1.5em}
+% Títulos de los índices (Índice, Índice de tablas e Índice de figuras)
+% centrados.
+\renewcommand{\cfttoctitlefont}{\hfill\Large\bfseries}
+\renewcommand{\cftaftertoctitle}{\hfill}
+\renewcommand{\cftlottitlefont}{\hfill\Large\bfseries}
+\renewcommand{\cftafterlottitle}{\hfill}
+\renewcommand{\cftloftitlefont}{\hfill\Large\bfseries}
+\renewcommand{\cftafterloftitle}{\hfill}
+% Prefijo "FIGURA" / "TABLA" en las entradas de los índices de figuras y
+% tablas, coherente con las leyendas del cuerpo del documento. Se amplía el
+% ancho de la columna del número para acomodar el prefijo sin desbordes.
+\renewcommand{\cftfigpresnum}{\textbf{FIGURA }}
+\renewcommand{\cfttabpresnum}{\textbf{TABLA }}
+\renewcommand{\cftfigaftersnum}{:}
+\renewcommand{\cfttabaftersnum}{:}
+\setlength{\cftfignumwidth}{7em}
+\setlength{\cfttabnumwidth}{7em}
 
 % --- Hipervínculos -----------------------------------------------------------
 \RequirePackage[colorlinks=true, linkcolor=black, urlcolor=blue, citecolor=black]{hyperref}
