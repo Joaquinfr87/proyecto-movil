@@ -88,9 +88,9 @@ Si usas TeX Live estándar (Debian/Ubuntu), instala:
 
 ## Datos pendientes de editar (marcadores `[ ]`)
 En `main.tex`: autor, equipo, integrantes, universidad, facultad, carrera,
-asignatura y docente. En `contenido/31-propuesta-de-la-solucion.tex`: apartado
-de datos del equipo (integrantes, roles y responsable). Los montos del
-presupuesto (anexo D) también son referenciales.
+asignatura y docente. En `contenido/31-propuesta-de-la-solucion.tex` el
+apartado de datos del equipo ya est\'a completado. Los montos del
+presupuesto (anexo D) son referenciales.
 
 ## Guías de referencia
 - `guias/Guía Proyecto de Grado (Actualizado).md` — guía general de la universidad.
@@ -121,7 +121,7 @@ asignatura, docente, equipo, ciudad y año.
 - [x] Desarrollo de los marcos (teórico, conceptual, histórico y referencial)
 
 **Capítulo III: Propuesta del sistema**
-- [ ] Propuesta de la solución (datos del equipo por completar)
+- [x] Propuesta de la solución (datos del equipo)
 - [x] Mapa de funcionalidades
 - [x] Identificación de usuarios
 - [x] Funcionalidades preliminares
@@ -131,6 +131,10 @@ asignatura, docente, equipo, ciudad y año.
 - [x] Wireframes iniciales
 - [x] Tecnologías preliminares
 - [x] Referencias (APA)
+
+**Conclusiones**
+- [x] Conclusiones (una sola, del proyecto completo)
+- [x] Recomendaciones (incluye el visor panorámico 360°)
 
 **Anexos**
 - [x] Anexo A: Cronograma | Anexo B: Casos de uso | Anexo C: Modelo de datos
