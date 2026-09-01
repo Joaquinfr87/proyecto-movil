@@ -267,15 +267,23 @@ Las pruebas 1--12 se ejecutaron contra \textbf{Supabase local} (script de \emph{
 \label{sec:demo}
 
 La aplicación se ejecuta desde el proyecto nativo \texttt{android/} de Expo (SDK 57).
-Requisitos: JDK 17 y Android SDK (variables \texttt{ANDROID\_HOME} o \texttt{ANDROID\_SDK\_ROOT}
-apuntando al SDK).
+Para correrla en un \textbf{celular conectado por USB} a la PC:
 
 \begin{enumerate}
   \item Conectar el celular por USB y habilitar la \emph{depuración por USB}.
   \item Verificar la IP de la base: si se usa \textbf{Supabase local}, apuntar en \texttt{.env} a la
         IP de la máquina en la LAN (p.\ ej. \texttt{http://192.168.x.x:54321}) y la \emph{anon key}
         local. En emulador Android usar \texttt{http://10.0.2.2:54321}.
-  \item Compilar el APK en modo \texttt{release} (firmado con la \emph{debug key}, instalable):
+  \item Compilar e instalar directamente en el dispositivo conectado:
+
+\begin{verbatim}
+pnpm android
+\end{verbatim}
+
+Este comando (\texttt{expo run:android}) compila, instala y lanza la app en el celular.
+
+  \item Para generar solo el APK firmado (instalable manualmente), compilar en modo
+        \texttt{release} (firma con la \emph{debug key}):
 
 \begin{verbatim}
 cd android
@@ -289,8 +297,6 @@ El APK generado queda en
 adb install app-release.apk
 \end{verbatim}
 
-  \item Alternativa con Expo: \texttt{npx expo run:android} compila e instala directamente en el
-        dispositivo conectado.
 \end{enumerate}
 
 Al acceder por primera vez iniciar sesión con el usuario \emph{seed}:
